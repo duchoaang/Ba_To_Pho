@@ -1,0 +1,12 @@
+
+box-icon{
+    margin-top:8px;
+
+}
+.header__icon{
+    display:flex;
+}
+.nav__main{
+    display:flex;
+      justify-content: space-between;
+}
