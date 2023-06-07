@@ -3,9 +3,9 @@ import styles from './Button.module.scss';
 
 const cx = classnames.bind(styles);
 
-const Button = ({ children, classNames, leftIcon, rightIcon }) => {
+const Button = ({ children, className, leftIcon, rightIcon }) => {
     return (
-        <button className={cx('wrapper', classNames)}>
+        <button className={cx('wrapper', 'rounded', className)}>
             {leftIcon ?? null}
             <span className={(leftIcon ? 'ms-2' : '') + (rightIcon ? 'me-2' : '')}>{children}</span>
             {rightIcon ?? null}

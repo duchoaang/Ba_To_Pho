@@ -19,7 +19,7 @@ const Header = () => {
                     <span className="material-icons">search</span>
                 </div>
                 <div className={cx('actions')}>
-                    <Button className="me-5">Tai len</Button>
+                    <Button className="me-5">Tải lên</Button>
                     {user ? (
                         <button
                             onClick={() => {
@@ -30,15 +30,15 @@ const Header = () => {
                         </button>
                     ) : (
                         <>
-                            <button
+                            <Button
                                 className="me-2"
                                 onClick={() => {
                                     setUser(true);
                                 }}
                             >
-                                Dang nhap
-                            </button>
-                            <button>Dang ky</button>
+                                Đăng nhập
+                            </Button>
+                            <Button>Đăng ký</Button>
                         </>
                     )}
                 </div>

@@ -4,7 +4,7 @@
     height: 87px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
     background-color: $header-bg-color;
 }
 
@@ -14,7 +14,6 @@
 }
 
 .menu {
-    > li {
-        display: inline-block;
-    }
+    display: flex;
+    justify-content: space-around;
 }
