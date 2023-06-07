@@ -1,10 +1,11 @@
 import Header from '@/Header';
 import Footer from '@/Footer';
 
-const DefaultLayout = () => {
+const DefaultLayout = ({ children }) => {
     return (
         <>
             <Header />
+            {children}
             <Footer />
         </>
     );
