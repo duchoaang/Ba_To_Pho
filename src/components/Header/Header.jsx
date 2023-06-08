@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 
@@ -48,13 +49,17 @@ const SubMenu = ({ data }) => {
     return (
         <li className={cx('sub-menu')}>
             <div className="d-flex align-items-center pb-2">
-                {data.icon ? <span className="material-icons">{data.icon}</span> : null}
+                {data.icon ? (
+                    <span className="material-icons" style={{ color: '#1ab9f4' }}>
+                        {data.icon}
+                    </span>
+                ) : null}
                 <span className="ms-1">{data.title}</span>
-                {data.subItem ? <span class="material-icons">arrow_drop_down</span> : null}
+                {data.subItem ? <span className="material-icons">arrow_drop_down</span> : null}
             </div>
-            <ul>
+            <ul className="bg-white">
                 {data.subItem.map((title, index) => (
-                    <li key={index} className="p-1 ps-3">
+                    <li key={index} className="py-2 ps-4 pe-3">
                         {title}
                     </li>
                 ))}
@@ -67,7 +72,7 @@ const Header = () => {
     const [user, setUser] = useState(false);
     return (
         <>
-            <header class={cx('wrapper')}>
+            <header className={cx('wrapper')}>
                 <div className={cx('logo')}>
                     <img src="src/assets/logo.png" alt="Logo" className="w-100 h-100" />
                 </div>
@@ -83,15 +88,17 @@ const Header = () => {
                     </button>
                 </div>
                 <div className={cx('actions')}>
-                    <Button className="me-5">Tải lên</Button>
+                    <Link to="/upload">
+                        <Button className="me-5 btn btn-warning border">Tải lên</Button>
+                    </Link>
                     {user ? (
-                        <button
+                        <Button
                             onClick={() => {
                                 setUser(false);
                             }}
                         >
                             User
-                        </button>
+                        </Button>
                     ) : (
                         <>
                             <Button

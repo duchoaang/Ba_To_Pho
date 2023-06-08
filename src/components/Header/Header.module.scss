@@ -27,12 +27,13 @@
         position: absolute;
         overflow: hidden;
         transition: height ease 0.3s;
+        z-index: 1;
 
         > li {
             min-width: max-content;
 
             &:hover {
-                background-color: rgba(0, 0, 0, 0.05);
+                background-color: #eee;
             }
         }
     }

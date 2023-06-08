@@ -5,7 +5,7 @@ const DefaultLayout = ({ children }) => {
     return (
         <>
             <Header />
-            {children}
+            <div className="vw-100 overflow-hidden mt-4">{children}</div>
             <Footer />
         </>
     );
