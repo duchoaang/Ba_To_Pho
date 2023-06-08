@@ -7,7 +7,7 @@ from flask_login import LoginManager
 app = Flask(__name__)
 
 app.secret_key = '689567gh$^^&*#%^&*^&%^*DFGH^&*&*^*'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456@localhost/quanlybansach?charset=utf8mb4'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:%s@localhost/batopho?charset=utf8mb4' % quote("Admin@123")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['PAGE_SIZE'] = 8 # chỉnh số trang hiển thị product
 app.config['COMMENT_SIZE'] = 8
