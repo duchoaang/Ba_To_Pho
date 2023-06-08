@@ -1,0 +1,19 @@
+@import 'src/variables';
+
+.wrapper {
+    height: 87px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: $header-bg-color;
+}
+
+.logo {
+    height: 60px;
+    width: 60px;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-around;
+}
