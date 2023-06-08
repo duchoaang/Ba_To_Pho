@@ -1,5 +1,6 @@
 import Header from '@/Header';
 import Footer from '@/Footer';
+
 import Home from '@pages/Home';
 
 const DefaultLayout = ({ children }) => {
@@ -7,6 +8,7 @@ const DefaultLayout = ({ children }) => {
         <>
             <Header />
             {children}
+
             <Footer />
         </>
     );
