@@ -14,6 +14,31 @@
 }
 
 .menu {
-    display: flex;
-    justify-content: space-around;
+    height: 25px;
+}
+
+.sub-menu {
+    position: relative;
+    cursor: pointer;
+
+    > ul {
+        top: 25px;
+        height: 0;
+        position: absolute;
+        overflow: hidden;
+        transition: height ease 0.3s;
+        z-index: 1;
+
+        > li {
+            min-width: max-content;
+
+            &:hover {
+                background-color: #eee;
+            }
+        }
+    }
+
+    &:hover > ul {
+        height: max-content;
+    }
 }
