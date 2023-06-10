@@ -68,13 +68,55 @@ const SubMenu = ({ data }) => {
     );
 };
 
+const ModalWrapper = ({ show, children }) => {
+    return <div className={cx('modal-wrapper', { show })}>{children}</div>;
+};
+
 const Header = () => {
     const [user, setUser] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     return (
         <>
+            <ModalWrapper show={showModal}>
+                <div className={cx('modal-inner')}>
+                    <h2>Đăng nhập với...</h2>
+                    <div className="d-flex g-2 justify-content-center">
+                        <Button>Google</Button>
+                        <Button>Facebook</Button>
+                    </div>
+                    <p className="mt-3">hoặc</p>
+                    <form>
+                        <div className="mb-3 text-start">
+                            <label for="login-email" class="form-label">
+                                Tên người dùng hoặc email
+                            </label>
+                            <input type="email" class="form-control" id="login-email" placeholder="name@example.com" />
+                        </div>
+                        <div className="text-start">
+                            <label for="login-password" class="form-label">
+                                Mật khẩu
+                            </label>
+                            <input type="password" class="form-control" id="login-password" />
+                        </div>
+                        <div className="d-flex justify-content-between mt-3">
+                            <div>
+                                <input type="checkbox" id="login-remember" name="login-remember" />
+                                <label htmlFor="login-remember">Ghi nhớ tôi</label>
+                            </div>
+                            <Link to="/">Quên mật khẩu</Link>
+                        </div>
+                        <Button className="w-100 mt-3">ĐĂNG NHẬP</Button>
+                    </form>
+                    <p className="text-center mt-3">
+                        đây là lần đầu tiên của bạn? <Link to="/">Đăng ký ngay</Link>
+                    </p>
+                </div>
+            </ModalWrapper>
             <header className={cx('wrapper')}>
                 <div className={cx('logo')}>
-                    <img src="src/assets/logo.png" alt="Logo" className="w-100 h-100" />
+                    <Link to="/">
+                        <img src="/src/assets/logo.png" alt="Logo" className="w-100 h-100" />
+                    </Link>
                 </div>
                 <div className={cx('input', 'd-flex align-items-center')}>
                     <select className="form-select">
@@ -82,7 +124,7 @@ const Header = () => {
                         <option value="2">Câu hỏi</option>
                         <option value="3">Giáo sư</option>
                     </select>
-                    <input type="text" placeholder="Tim kiem tren tai lieu" className="form-control" />
+                    <input type="text" placeholder="Tìm kiếm trên tài liệu" className="form-control" />
                     <button className="btn">
                         <span className="material-icons">search</span>
                     </button>
@@ -104,7 +146,7 @@ const Header = () => {
                             <Button
                                 className="me-2"
                                 onClick={() => {
-                                    setUser(true);
+                                    setShowModal(true);
                                 }}
                             >
                                 Đăng nhập
