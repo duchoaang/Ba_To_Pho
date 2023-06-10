@@ -1,7 +1,8 @@
 import Home from '@pages/Home';
 import Upload from '@pages/Upload';
-import Register from './pages/Register/Register';
 import Documents from '@pages/Documents';
+import Detail from '@pages/Detail';
+
 const routes = [
     {
         path: '/',
@@ -14,10 +15,6 @@ const routes = [
     {
         path: '/documents',
         component: Documents,
-    },
-    {
-        path: '/register',
-        component: Register,
     },
 ];
 
