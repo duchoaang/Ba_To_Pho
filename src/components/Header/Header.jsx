@@ -109,7 +109,10 @@ const Header = () => {
                             >
                                 Đăng nhập
                             </Button>
-                            <Button>Đăng ký</Button>
+                            <Link to="/Register">
+                                {' '}
+                                <Button>Đăng ký</Button>
+                            </Link>
                         </>
                     )}
                 </div>
