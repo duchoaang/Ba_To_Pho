@@ -92,16 +92,21 @@ const Header = () => {
                     <p className="mt-3">hoặc</p>
                     <form>
                         <div className="mb-3 text-start">
-                            <label for="login-email" class="form-label">
+                            <label htmlFor="login-email" className="form-label">
                                 Tên người dùng hoặc email
                             </label>
-                            <input type="email" class="form-control" id="login-email" placeholder="name@example.com" />
+                            <input
+                                type="email"
+                                className="form-control"
+                                id="login-email"
+                                placeholder="name@example.com"
+                            />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="login-password" className="form-label">
                                 Mật khẩu
                             </label>
-                            <input type="password" class="form-control" id="login-password" />
+                            <input type="password" className="form-control" id="login-password" />
                         </div>
                         <div className="d-flex justify-content-between mt-3">
                             <div>
@@ -123,22 +128,27 @@ const Header = () => {
 
                     <form>
                         <div className="mb-3 text-start">
-                            <label for="login-email" class="form-label">
+                            <label htmlFor="register-email" className="form-label">
                                 Tên người dùng của bạn
                             </label>
-                            <input type="email" class="form-control" id="login-email" placeholder="name@example.com" />
+                            <input
+                                type="email"
+                                className="form-control"
+                                id="register-email"
+                                placeholder="name@example.com"
+                            />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="register-password" className="form-label">
                                 Mật khẩu
                             </label>
-                            <input type="password" class="form-control" id="login-password" />
+                            <input type="password" className="form-control" id="register-password" />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="register-password-2" className="form-label">
                                 Xác nhận mật khẩu
                             </label>
-                            <input type="password" class="form-control" id="login-password" />
+                            <input type="password" className="form-control" id="register-password-2" />
                         </div>
                         <div className="d-flex justify-content-between mt-3">
                             <div>

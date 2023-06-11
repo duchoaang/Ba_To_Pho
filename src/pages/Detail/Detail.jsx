@@ -129,16 +129,74 @@ const Detail = () => {
                 <div className="col-md-8">
                     <Nav />
                     <div className="info">
-                        <div className={cx('doc-info')}>
-                            <div className={cx('doc-img')}>
-                                <img src="/src/assets/docImg.jpg" alt="" />
+                        <div className={cx('doc-info', 'row')}>
+                            <div className="col-md-4 border rounded p-2">
+                                <img src="/src/assets/docImg.jpg" className="w-100" alt="" />
                             </div>
-                            <div className={cx('doc-details')}>
-                                <div className=""></div>
+                            <div className={cx('doc-details', 'col-md-8')}>
+                                <div className="doc-details-title">
+                                    <h4>
+                                        <b>
+                                            Quản lý khách sạn giao diện đẹp full code C# Winform + Csdl Sqlserver{' '}
+                                            <span className="text-success text-opacity-75">[Mã code 8321]</span>
+                                        </b>
+                                    </h4>
+                                    <div className="d-flex justify-content-between">
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                    <hr />
+                                    <div className="d-flex justify-content-between">
+                                        <div>
+                                            <span>Phí tải:</span>
+                                            <span className="ms-2">30 Xu</span>
+                                            <span className="ms-2">(1 Xu = 1.000đ)</span>
+                                        </div>
+                                        <Button leftIcon={<span className="material-icons">favorite</span>}>
+                                            YÊU THÍCH
+                                        </Button>
+                                    </div>
+                                    <hr />
+                                    <div className="d-flex justify-content-between">
+                                        <div>
+                                            <div className="d-flex g-2">
+                                                <span>Danh mục</span>
+                                                <span>Visual C#</span>
+                                            </div>
+                                            <div className="d-flex g-2">
+                                                <span>Thể loại</span>
+                                                <span>Phần mềm - Ứng dụng</span>
+                                            </div>
+                                            <div className="d-flex g-2">
+                                                <span>Nhóm code</span>
+                                                <span>Code tham khảo</span>
+                                            </div>
+                                            <div className="d-flex g-2">
+                                                <span>Ngày đăng</span>
+                                                <span>29-12-2016</span>
+                                            </div>
+                                            <div className="d-flex g-2">
+                                                <span>Loại file</span>
+                                                <span>Full code</span>
+                                            </div>
+                                            <div className="d-flex g-2">
+                                                <span>Dung lượng</span>
+                                                <span>26.7 MB</span>
+                                            </div>
+                                        </div>
+                                        <Button leftIcon={<span className="material-icons">download</span>}>
+                                            DOWNLOAD
+                                        </Button>
+                                    </div>
+                                    <hr />
+                                </div>
                             </div>
                         </div>
-                        <div className={cx('other-info')}>
-                            <span>Xem thêm</span>
+                        <div className={cx('other-info', 'row')}>
+                            <div className="col-md-4">
+                                <span>Xem thêm</span>
+                            </div>
+                            <div className="col-md-8"></div>
                         </div>
                     </div>
                     <div className={cx('description')}>

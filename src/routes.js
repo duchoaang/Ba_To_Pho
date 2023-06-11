@@ -16,6 +16,10 @@ const routes = [
         path: '/documents',
         component: Documents,
     },
+    {
+        path: '/documents/:id',
+        component: Detail,
+    },
 ];
 
 export { routes };
