@@ -1,6 +1,6 @@
 import hashlib
 
-from flask import request, redirect, url_for, render_template, flash, jsonify
+from flask import request, url_for, render_template, jsonify
 from flask_login import login_user, current_user
 
 from server import my_token
@@ -13,8 +13,7 @@ from server.my_token import generate_confirmation_token
 
 
 # "/register" ['POST']
-def sign_up():
-    print(request.json)
+def user_register():
     email = request.json.get('email')
     username = request.json.get('name')
     u = get_existed_user(username, email)
@@ -119,3 +118,7 @@ def user_login():
                 'status': 404
             }
             return jsonify(response_data), 404
+
+
+def user():
+    return jsonify({'ok': 'ok'})
