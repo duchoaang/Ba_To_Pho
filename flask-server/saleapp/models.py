@@ -90,7 +90,8 @@ class Document(BaseModel):
     captcha = Column(String(25), nullable=False)
     discount = Column(Float, default=0)
     gem_cost = Column(Float, nullable=False)
-    cloud_link = Column(String(255), nullable=False)
+    save_link = Column(String(255), nullable=False)
+    download_link = Column(String(255), nullable=False)
     status = Column(Enum(Status), default=Status.WAITING)
     user_id = Column(String(36), ForeignKey(User.id), nullable=False)
     document_type_id = Column(String(36), ForeignKey(DocumentType.id), nullable=False)
@@ -207,13 +208,13 @@ if __name__ == '__main__':
 
         d1 = Document(title='Cơ sở lập trình', content='Học lập trình cơ bản', owner='Võ Thị B', captcha='xTz9Kp',
                       discount=0, gem_cost=100000, user=u1, document_type=dt1,
-                      cloud_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
+                      save_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2", download_link="temp")
         d2 = Document(title='Toán cao cấp', content='Toán cao cấp', owner='Nguyễn Văn A', captcha='xTz9Kp',
                       discount=50000, gem_cost=80000, user=u1, document_type=dt2,
-                      cloud_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
+                      save_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2", download_link="temp")
         d3 = Document(title='Nhập môn hướng đối tượng', content='Hướng đối tượng cho người mới bắt đầu',
                       owner='Trần Thị C', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
-                      cloud_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
+                      save_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2", download_link="temp")
 
         db.session.add_all([d1, d2, d3])
 
