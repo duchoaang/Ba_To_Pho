@@ -1,5 +1,5 @@
 from flask import jsonify
-from server.dao import get_documents
+from server.dao import get_documents, get_categories
 from server.models import Status
 
 
@@ -12,3 +12,9 @@ def api_documents():
     documents_list = [doc.to_dict(fields=["id", "title", "owner", "img", "view_count", "captcha", "status"]) for doc in
                       documents]
     return jsonify(documents_list)
+
+
+def api_categories():
+    categories = get_categories()
+    categories_list = [cate.to_dict(fields=["name", "category_parent_id"]) for cate in categories]
+    return jsonify(categories_list)

@@ -25,8 +25,17 @@ def get_documents(title=None, category_id=None, created_date=None, username=None
     if created_date:
         d = d.filter(func.date(Document.created_date).__eq__(created_date.date()))
     if username:
-        d = d.filter(Document.user.username.contrains(username))
+        d = d.filter(Document.user.username.contains(username))
     return d.all()
+
+
+def get_categories(name=None, category_parent_id=None):
+    c = Category.query
+    if name:
+        c = c.filter(Category.name.contains(name))
+    if category_parent_id:
+        c = c.filter(Category.category_parent_id.__eq__(category_parent_id))
+    return c.all()
 
 
 def get_user_by_email(email):

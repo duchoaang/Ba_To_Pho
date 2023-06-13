@@ -58,7 +58,7 @@ class User(BaseModel, UserMixin):
     address = Column(String(100), nullable=True)  # updatesau
     gem = Column(Float, default=300000, nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
-    is_confirm = Column(Boolean, nullable=False, default=False)
+    is_confirm = Column(Boolean, nullable=False, default=True)
 
     documents = relationship('Document', backref='user', lazy=True)
     favour_lists = relationship('FavourList', backref='user', lazy=True)
