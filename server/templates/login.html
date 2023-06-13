@@ -1,0 +1,35 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="p-3 justify-content-center d-flex">
+
+    <form action="/user/login" method="post" class="row g-3 bg-dark text-white m-3 p-4 shadow-sm w-75">
+
+        <div class="col-md-12">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="username">
+        </div>
+        <div class="col-md-12">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password">
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul>
+            {% for category, message in messages %}
+            <span class="badge bg-{{ category }} text-dark p-3 w-100">{{message}}</span>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% if msg %}
+
+        {% endif %}
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Sign in</button>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}
