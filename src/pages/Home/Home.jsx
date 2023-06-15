@@ -2,7 +2,7 @@ import styles from './Home.module.scss';
 import classNames from 'classnames/bind';
 import 'bootstrap/dist/css/bootstrap.min.css';
 const cx = classNames.bind(styles);
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
 import { Link } from 'react-router-dom';
 
@@ -55,6 +55,22 @@ const Home = () => {
     const [popularCousre, setPopularCourse] = useState(true);
     const [newCourse, setNewCourse] = useState(false);
 
+    const [popularDocs, setPopularDocs] = useState([])
+    useEffect(() => {
+        fetch("http://localhost:5000/api/documents").then(
+            res => {
+                console.log(res)
+                return res.json()
+            }
+        ).then(
+            resData => {
+                setPopularDocs(resData)
+                console.log(resData)
+            }
+        ).catch(
+            error => console.log(error)
+        )
+    }, [])
     const handleSetPopularCourse = () => {
         setPopularCourse(!popularCousre);
         setNewCourse(popularCousre);
