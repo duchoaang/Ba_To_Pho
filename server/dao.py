@@ -9,17 +9,11 @@ from sqlalchemy.orm import aliased
 from server.models import *
 
 
-<<<<<<< HEAD
-def add_user(user):
-    db.session.add(user)
-    db.session.commit()
-=======
 def add_user(fields):
     user = User(username=fields['username'], password=fields['password'], email=fields['email'])
     db.session.add(user)
     db.session.commit()
     return user
->>>>>>> origin/backend-phat
 
 
 def get_documents(title=None, category_id=None, created_date=None, username=None, status=None):
@@ -37,18 +31,6 @@ def get_documents(title=None, category_id=None, created_date=None, username=None
     return d.all()
 
 
-<<<<<<< HEAD
-def get_categories(name=None, category_parent_id=None):
-    c = Category.query
-    if name:
-        c = c.filter(Category.name.contains(name))
-    if category_parent_id:
-        c = c.filter(Category.category_parent_id.__eq__(category_parent_id))
-    return c.all()
-
-
-=======
->>>>>>> origin/backend-phat
 def get_user_by_email(email):
     u = User.query.filter(User.email.__eq__(email)).first()
     if u:
@@ -91,8 +73,7 @@ def check_login(username, password):
                                  User.user_role.__eq__(UserRole.USER)).first()
 
 
-<<<<<<< HEAD
-=======
+
 def get_categories(name=None, category_parent_id=None):
     c = Category.query
     if name:
@@ -160,5 +141,4 @@ if __name__ == '__main__':
             "kw-3": "Phát",
         }
 
-        add_document(fields, categories, keywords)
->>>>>>> origin/backend-phat
+

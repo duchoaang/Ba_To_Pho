@@ -58,11 +58,7 @@ class User(BaseModel, UserMixin):
     address = Column(String(100), nullable=True)  # updatesau
     gem = Column(Float, default=300000, nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
-<<<<<<< HEAD
     is_confirm = Column(Boolean, nullable=False, default=True)
-=======
-    is_confirm = Column(Boolean, nullable=False, default=False)
->>>>>>> origin/backend-phat
 
     documents = relationship('Document', backref='user', lazy=True)
     favour_lists = relationship('FavourList', backref='user', lazy=True)
@@ -95,9 +91,7 @@ class Document(BaseModel):
     captcha = Column(String(25), nullable=False)
     discount = Column(Float, default=0)
     gem_cost = Column(Float, nullable=False)
-<<<<<<< HEAD
-    cloud_link = Column(String(255), nullable=False)
-=======
+
     cloud_link = Column(Text, nullable=False)
 
     # Update
@@ -108,7 +102,6 @@ class Document(BaseModel):
     cloudinary_image_secure_url = Column(Text, nullable=False)
 
     # --------
->>>>>>> origin/backend-phat
     status = Column(Enum(Status), default=Status.WAITING)
     user_id = Column(String(36), ForeignKey(User.id), nullable=False)
     document_type_id = Column(String(36), ForeignKey(DocumentType.id), nullable=False)
@@ -134,11 +127,7 @@ class FavourList(BaseModel):
         return self.id
 
 
-<<<<<<< HEAD
-class Category(db.Model):
-=======
 class Category(BaseModel):
->>>>>>> origin/backend-phat
     id = Column(String(36), primary_key=True, unique=True, default=generate_uuid)
     name = Column(String(50), unique=True, nullable=False)
     category_parent_id = Column(String(36), ForeignKey('category.id'), nullable=True)
@@ -229,15 +218,6 @@ if __name__ == '__main__':
 
         d1 = Document(title='Cơ sở lập trình', content='Học lập trình cơ bản', owner='Võ Thị B', captcha='xTz9Kp',
                       discount=0, gem_cost=100000, user=u1, document_type=dt1,
-<<<<<<< HEAD
-                      cloud_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
-        d2 = Document(title='Toán cao cấp', content='Toán cao cấp', owner='Nguyễn Văn A', captcha='xTz9Kp',
-                      discount=50000, gem_cost=80000, user=u1, document_type=dt2,
-                      cloud_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
-        d3 = Document(title='Nhập môn hướng đối tượng', content='Hướng đối tượng cho người mới bắt đầu',
-                      owner='Trần Thị C', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
-                      cloud_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
-=======
                       cloud_link="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloud_link_download="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
@@ -254,7 +234,6 @@ if __name__ == '__main__':
                       cloud_link_download="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
->>>>>>> origin/backend-phat
 
         db.session.add_all([d1, d2, d3])
 
