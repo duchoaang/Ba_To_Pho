@@ -14,7 +14,15 @@ def api_documents():
     return jsonify(documents_list)
 
 
+<<<<<<< HEAD
 def api_categories():
     categories = get_categories()
     categories_list = [cate.to_dict(fields=["name", "category_parent_id"]) for cate in categories]
     return jsonify(categories_list)
+=======
+# "/categories" ['GET']
+def api_categories():
+    categories = get_categories()
+    categories_list = [cate.to_dict(fields=["name", "category_parent_id"]) for cate in categories]
+    return jsonify(categories_list)
+>>>>>>> origin/backend-phat

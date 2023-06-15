@@ -1,14 +1,25 @@
 import hashlib
 
+<<<<<<< HEAD
 from flask import request, url_for, render_template, jsonify, session
 from flask_login import login_user, current_user
 from sqlalchemy.exc import IntegrityError
 
 from server import my_token, app
+=======
+from flask import request, url_for, render_template, jsonify
+from flask_login import login_user, current_user
+
+from server import my_token
+>>>>>>> origin/backend-phat
 from server.dao import get_existed_user, add_user, get_user_by_email, confirm_user, check_login
 from server.sendmail import send_email
 from server.my_token import generate_confirmation_token
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/backend-phat
 # -------------- "/user" ------------------
 
 
@@ -33,6 +44,12 @@ def user_register():
     password = hashlib.md5(password.encode()).hexdigest()
     fields['password'] = password
 
+<<<<<<< HEAD
+=======
+    user = add_user(fields)
+    login_user(user=user)
+
+>>>>>>> origin/backend-phat
     token = generate_confirmation_token(email)
     confirm_url = url_for('user_bp.confirm_email', token=token, _external=True)
     html = render_template('confirm.html', confirm_url=confirm_url)
@@ -44,6 +61,7 @@ def user_register():
         'message': msg,
         'status': 200
     }
+<<<<<<< HEAD
 
     key = app.config['USER_TEMP_KEY']
     session[key] = {
@@ -52,11 +70,14 @@ def user_register():
         "email": email,
         "is_confirm": False
     }
+=======
+>>>>>>> origin/backend-phat
     return jsonify(response_data), 200
 
 
 # "/confirm/<token>" ['GET']
 def confirm_email(token):
+<<<<<<< HEAD
     key = app.config['USER_TEMP_KEY']
 
     if key not in session:
@@ -71,11 +92,17 @@ def confirm_email(token):
     except:
         email = False
     if email is False:
+=======
+    try:
+        email = my_token.confirm_token(token)
+    except:
+>>>>>>> origin/backend-phat
         response_data = {
             'message': "Link xác thực đã hết hạn",
             'status': 404
         }
         return jsonify(response_data), 404
+<<<<<<< HEAD
 
     data = session[key]
     mail = data['email']
@@ -146,6 +173,23 @@ def get_confirm_status():
         return jsonify(response_data)
 
 
+=======
+    user = get_user_by_email(email)
+    if user.is_confirm:
+        response_data = {
+            'message': "Tài khoản đã được xác thực!",
+            'status': 304
+        }
+        return jsonify(response_data), 304
+    confirm_user(user)
+    response_data = {
+        'message': "Bạn đã xác thực tài khoản thành công!",
+        'status': 304
+    }
+    return jsonify(response_data), 200
+
+
+>>>>>>> origin/backend-phat
 # "/resend/confirm" ['GET']
 def resend_confirmation():
     if current_user.is_authenticated:
@@ -190,3 +234,9 @@ def user_login():
             }
             return jsonify(response_data), 404
 
+<<<<<<< HEAD
+=======
+
+def user():
+    return jsonify({'ok': 'ok'})
+>>>>>>> origin/backend-phat

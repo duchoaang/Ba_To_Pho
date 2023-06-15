@@ -1,1 +1,16 @@
+<<<<<<< HEAD
 venv 
+=======
+# Virtual environment
+.venv
+.env
+venv
+env
+
+# python cache file
+**/*/__pycache__
+
+# other environment files
+.idea
+.vscode
+>>>>>>> origin/backend-phat
