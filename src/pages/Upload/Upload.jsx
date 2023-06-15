@@ -22,18 +22,26 @@ const InputGroup = ({ title, children, info }) => {
 };
 
 const Upload = () => {
-    const [fileList, setFileList] = useState(null);
+    const [formData, setFormData] = useState({
+        title: '',
+        category: '',
+        description: '',
+        author: '',
+        keywords: '',
+        file: null,
+        image: null,
+    });
     const handleFileChange = (e) => {
-        setFileList(e.target.files);
+        setFormData({ ...formData, [e.target.name]: e.target.type === 'file' ? e.target.files[0] : e.target.value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!fileList) return;
 
         const data = new FormData();
-        files.forEach((file, i) => {
-            data.append(`file-${i}`, file, file.name);
+
+        Object.entries(formData).map(([key, value] = entry) => {
+            key === 'file' || key === 'image' ? data.append(key, value, value.name) : data.append(key, value);
         });
 
         // 👇 Uploading the files using the fetch API to the server
@@ -46,8 +54,6 @@ const Upload = () => {
             .catch((err) => console.error(err));
     };
 
-    const files = fileList ? [...fileList] : [];
-
     return (
         <form className={cx('wrapper')} method="POST" onSubmit={handleSubmit}>
             <section className="border border-warning bg-warning">
@@ -59,10 +65,11 @@ const Upload = () => {
                         className="form-control"
                         placeholder="Tối thiểu 20 kí tự"
                         minLength={20}
+                        onChange={handleFileChange}
                     />
                 </InputGroup>
                 <InputGroup title="Danh mục" info="">
-                    <select name="category" id="category" className="form-select">
+                    <select name="category" id="category" className="form-select" onChange={handleFileChange}>
                         <option hidden>--Chọn danh mục--</option>
                     </select>
                 </InputGroup>
@@ -73,20 +80,6 @@ const Upload = () => {
                         placeholder="Tối thiểu 70 kí tự"
                         minLength={70}
                         maxLength={200}
-                    />
-                </InputGroup>
-                <InputGroup title="File tài liệu" info="">
-                    <label htmlFor="file" className={cx('label-inp-img')}>
-                        <span className="material-icons">add_circle</span>
-                        Thêm file
-                    </label>
-                    <input
-                        name="file"
-                        id="file"
-                        type="file"
-                        accept="application/pdf, .pdf, application/msword, .doc, .docx, application/vnd.ms-powerpoint, .ppt, .pptx"
-                        multiple
-                        hidden
                         onChange={handleFileChange}
                     />
                 </InputGroup>
@@ -96,29 +89,36 @@ const Upload = () => {
                         name="author"
                         className="form-control"
                         placeholder="Tên tác giả gốc của tài liệu"
+                        onChange={handleFileChange}
+                    />
+                </InputGroup>
+                <InputGroup title="Từ khóa" info="Tối đa 6 từ khóa">
+                    <input
+                        type="text"
+                        name="keywords"
+                        className="form-control"
+                        placeholder="Tối thiểu 3 từ khóa"
+                        onChange={handleFileChange}
+                    />
+                </InputGroup>
+                <InputGroup title="File tài liệu" info="">
+                    <input
+                        name="file"
+                        id="file"
+                        type="file"
+                        accept="application/pdf, .pdf, application/msword, .doc, .docx, application/vnd.ms-powerpoint, .ppt, .pptx"
+                        onChange={handleFileChange}
                     />
                 </InputGroup>
                 <InputGroup
                     title="Hình ảnh về tài liệu"
                     info="Hoàn thành đầy đủ thông tin giúp code của bạn được nhiều người biết đến và có thứ hạng cao trên kết quả tìm kiếm"
                 >
-                    <label htmlFor="images" className={cx('label-inp-img')}>
+                    <label htmlFor="image" className={cx('label-inp-img')}>
                         <span className="material-icons">add_circle</span>
                         Thêm ảnh...
                     </label>
-                    <input
-                        name="images"
-                        id="images"
-                        type="file"
-                        accept="image/*"
-                        hidden
-                        onChange={(e) => {
-                            console.log(e.target.files[0]);
-                        }}
-                    />
-                </InputGroup>
-                <InputGroup title="Từ khóa" info="Tối đa 6 từ khóa">
-                    <input type="text" name="author" className="form-control" placeholder="Tối thiểu 3 từ khóa" />
+                    <input name="image" id="image" type="file" accept="image/*" hidden onChange={handleFileChange} />
                 </InputGroup>
             </section>
             <section className="border border-primary-subtle bg-info">

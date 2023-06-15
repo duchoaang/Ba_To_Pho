@@ -20,6 +20,15 @@ ul {
     list-style: none;
 }
 
+input[type='file']::-webkit-file-upload-button {
+    border: 1px solid #84c52c;
+    border-radius: 5px;
+    color: #84c52c;
+    cursor: pointer;
+    padding: 5px 10px;
+    background-color: transparent;
+}
+
 @for $i from 1 through 8 {
     .g-#{$i} {
         gap: calc(0.25rem * $i);
