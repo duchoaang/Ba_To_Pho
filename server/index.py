@@ -11,16 +11,15 @@ from flask import Blueprint
 def user_load(user_id):
     return dao.get_user_by_id(user_id=user_id)
 
-@app.route('/')
-def test():
-    pdf_url = input("Path_cloudinay: ").strip()
-
-    with open("temp.pdf", "wb") as f:
-        response = requests.get(pdf_url)
-        f.write(response.content)
-    with open("temp.pdf", "rb") as f:
-        print(f.read())
-    return "ha"
+# @app.route('/')
+# def test():
+#     pdf_url = input("Path_cloudinary: ").strip()
+#     with open("temp.pdf", "wb") as f:
+#         response = requests.get(pdf_url)
+#         f.write(response.content)
+#     with open("temp.pdf", "rb") as f:
+#         print(f.read())
+#     return "ha"
 
 
 app.register_blueprint(user_bp, url_prefix='/users')
