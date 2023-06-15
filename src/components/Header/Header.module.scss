@@ -16,7 +16,9 @@
 .menu {
     height: 25px;
 }
-
+.icon{
+    color:red;
+}
 .sub-menu {
     position: relative;
     cursor: pointer;
@@ -67,4 +69,18 @@
     backdrop-filter: blur(5px);
     text-align: center;
     padding: 20px 40px;
+}
+.loading{
+    color:red;
+    animation: spinner 1s linear infinite;
+    
+}
+@keyframes spinner {
+    from {
+        transform: translateY(-50%) rotate(0);
+    }
+    to{
+        transform: translateY(-50%) rotate(360deg);
+    }
+    
 }
