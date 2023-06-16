@@ -217,10 +217,10 @@ const Header = () => {
                     if (data.status === 200) {
                         setShowRegister(false);
 
-                        console.log('thanh cong');
+                        console.log('dang ki thanh cong');
                         setConfirmEmail(true);
                     } else if (data.status === 404) {
-                        console.log('That bai');
+                        console.log('dang ki That bai');
                         setShowLoading(false);
                         setErrorUserNameEmail(true);
                         setConfirmEmail(false);
@@ -228,12 +228,41 @@ const Header = () => {
                 })
                 .catch((error) => {});
 
-            console.log('1212dasd');
+           
         } else setErrorMessage(true);
     };
     // dang nhap
-    const handleSubmitLogin = () => {
+    const handleSubmitLogin = (e) => {
+        console.log(formDataLogin)
         e.preventDefault();
+        axios.post('http://127.0.0.1:5000/users/login', formDataLogin)
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(123);
+        });
+        // fetch('http://127.0.0.1:5000/users/login', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     credentials: 'include',
+        //     body: JSON.stringify(formDataLogin),
+        // })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //         console.log(data);
+        //         if (data.status === 200) {
+                    
+        //             console.log(' login thanh cong');
+                    
+        //         } else if (data.status === 404) {
+        //             console.log('login That bai');
+                   
+        //         }
+        //     })
+        //     .catch((error) => {});
     };
     const handleRegister = () => {
         setShowModal(false);
@@ -245,7 +274,7 @@ const Header = () => {
     };
     return (
         <>
-            {true && <AlertConfirmEmailSucess/>}
+            {/* {true && <AlertConfirmEmailSucess/>} */}
             <ModalWrapper show={showModal}>
                 <div className={cx('modal-inner')}>
                     <h2>Đăng nhập với...</h2>
@@ -257,14 +286,14 @@ const Header = () => {
                         <Button>Facebook</Button>
                     </div>
                     <p className="mt-3">hoặc</p>
-                    <form>
+                    <form onSubmit={handleSubmitLogin}>
                         <div className="mb-3 text-start">
                             <label for="login-email" class="form-label">
                                 Tên người dùng hoặc email
                             </label>
                             <input
                                 onChange={(e) => setUserName(e.target.value)}
-                                type="email"
+                                type="text"
                                 class="form-control"
                                 id="login-email"
                                 placeholder="name@example.com"
@@ -288,7 +317,7 @@ const Header = () => {
                             </div>
                             <Link to="/">Quên mật khẩu</Link>
                         </div>
-                        <Button className="w-100 mt-3">ĐĂNG NHẬP</Button>
+                        <Button  className="w-100 mt-3">ĐĂNG NHẬP</Button>
                     </form>
                     <p className="text-center mt-3">
                         đây là lần đầu tiên của bạn?{' '}
