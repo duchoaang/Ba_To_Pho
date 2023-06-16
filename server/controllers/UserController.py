@@ -16,7 +16,7 @@ from server.my_token import generate_confirmation_token
 # "/register" ['POST']
 def user_register():
     email = request.json.get('email')
-    username = request.json.get('name')
+    username = request.json.get('username')
     u = get_existed_user(username, email)
     if u:
         if u.email == email:
