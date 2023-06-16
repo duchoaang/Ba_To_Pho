@@ -1,11 +1,12 @@
 import hashlib
 
-from flask import request, url_for, render_template, jsonify, session
+from flask import request, url_for, render_template, jsonify, session, flash
 from flask_login import login_user, current_user
 from sqlalchemy.exc import IntegrityError
 
 from server import my_token, app
 from server.dao import get_existed_user, add_user, get_user_by_email, confirm_user, check_login
+from server.models import UserRole
 from server.sendmail import send_email
 from server.my_token import generate_confirmation_token
 
@@ -191,3 +192,6 @@ def user_login():
                 'status': 404
             }
             return jsonify(response_data), 404
+
+
+

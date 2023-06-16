@@ -38,8 +38,8 @@ def get_user_by_email(email):
     return None
 
 
-def get_existed_user(username, email, user_role=UserRole.USER):
-    u = User.query.filter(User.user_role.__eq__(user_role))
+def get_existed_user(username, email):
+    u = User.query
     u = u.filter(or_(User.email.__eq__(email), User.username.__eq__(username))).first()
     if u:
         return u
@@ -64,14 +64,13 @@ def get_user_by_id(user_id):
     return u
 
 
-def check_login(username, password):
+def check_login(username, password, user_role=UserRole.USER):
     if username and password:
         password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
 
         return User.query.filter(User.username.__eq__(username),
                                  User.password.__eq__(password),
-                                 User.user_role.__eq__(UserRole.USER)).first()
-
+                                 User.user_role.__eq__(user_role)).first()
 
 
 def get_categories(name=None, category_parent_id=None):
@@ -94,9 +93,11 @@ def add_keyword(name):
     db.session.commit()
 
 
-def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, cloudinary_secure_url, cloudinary_image_public_id, cloudinary_image_secure_url):
+def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, cloudinary_secure_url,
+                           cloudinary_image_public_id, cloudinary_image_secure_url):
     with db.session.no_autoflush:
-        doc = Document(title=fields['title'], owner=fields['owner'], content=fields['description'], user_id=fields['user_id'], document_type_id=fields['document_type_id'])
+        doc = Document(title=fields['title'], owner=fields['owner'], content=fields['description'],
+                       user_id=fields['user_id'], document_type_id=fields['document_type_id'])
 
         for cate in categories.values():
             c = Category.query.get(cate)
@@ -138,8 +139,8 @@ if __name__ == '__main__':
             "title": "heheheheheheheh",
             "owner": "Phtas",
             "description": "1234567890",
-            "user_id" : u_id,
-            "document_type_id" : dt_id
+            "user_id": u_id,
+            "document_type_id": dt_id
         }
         categories = {
             "cate-1": "34a2fb94-fec1-4b97-a5a1-b85f3efa4416",
@@ -152,5 +153,3 @@ if __name__ == '__main__':
         }
 
         add_no_accept_document(fields, categories, keywords, "download_path", "path", "download_path_img", "path_img")
-
-

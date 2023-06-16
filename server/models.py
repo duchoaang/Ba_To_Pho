@@ -8,6 +8,8 @@ from enum import Enum as MyEnum
 from flask_login import UserMixin
 import uuid
 
+from server.utils import hash_text
+
 
 def generate_uuid():
     return str(uuid.uuid4())
@@ -223,9 +225,16 @@ if __name__ == '__main__':
     with app.app_context():
         db.drop_all()
         db.create_all()
-        u1 = User(username='u1', password='123', password2='234', name='user', phone_number='0987654321', gender=1,
-                  dob=datetime(2002, 2, 2), email="user1@gmail.com", gem=500000)
-        db.session.add(u1)
+
+        p = '123'
+        p2 = '234'
+        admin = User(username='admin', password=hash_text(p), password2=hash_text(p2), name='admin',
+                     phone_number='0987654321', gender=1,
+                     dob=datetime(2002, 2, 2), email="admin@gmail.com", gem=500000, user_role=UserRole.ADMIN)
+        u1 = User(username='u1', password=hash_text(p), password2=hash_text(p2), name='user',
+                     phone_number='0987654321', gender=1,
+                     dob=datetime(2002, 2, 2), email="user1@gmail.com", gem=500000)
+        db.session.add_all([admin, u1])
 
         dt1 = DocumentType(name='PDF')
         dt2 = DocumentType(name='Word')
