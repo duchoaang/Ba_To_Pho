@@ -127,6 +127,20 @@ class Document(BaseModel):
     def __str__(self):
         return self.title
 
+    def to_dict(self, fields=None):
+        result = super().to_dict(fields)
+        if 'categories' in fields:
+            result['categories'] = [{'id': category.id, 'name': category.name} for category in self.categories]
+        if 'keywords' in fields:
+            result['keywords'] = [{'id': keyword.id, 'name': keyword.name} for keyword in self.keywords]
+        if 'document_type' in fields:
+            result['document_type'] = self.document_type.name
+        if 'average_rate' in fields:
+            result['average_rate'] = sum(rate.number_star for rate in self.rates) / len(self.rates) if self.rates else 0
+        if 'num_rate' in fields:
+            result['num_rate'] = len(self.rates)
+        return result
+
 
 class FavourList(BaseModel):
     user_id = Column(String(36), ForeignKey(User.id), nullable=False)
@@ -274,15 +288,34 @@ if __name__ == '__main__':
 
         db.session.add_all([d1, d2, d3])
 
-        c1 = Category(name='Lập trình')
-        c2 = Category(name='Toán')
-        c3 = Category(name='Lập trình hướng đối tượng', category_parent=c1)
-        db.session.add_all([c1, c2, c3])
+        chuoi = """Tiểu thuyết, Tiểu thuyết tình cảm, Lãng mạn, Hình sự, Khoa học viễn tưởng,
+        Lịch sử hư cấu, Phi hư cấu, Hồi ký, Tự truyện, Tiểu sử,
+        Lịch sử, Tự giúp đỡ, Tâm lý học, Triết học, Khoa học,
+        Khoa học xã hội, Khoa học tự nhiên, Công nghệ, Kinh doanh,
+        Đầu tư, Tiếp thị, Luật pháp, Tôn giáo, Tinh thần,
+        Kitô giáo, Phật giáo, Hồi giáo, Thi ca, Văn học,
+        Nấu ăn, Du lịch, Nhật ký, Sổ tay, Hướng dẫn, Kỹ thuật,
+        Y học, Thể thao, Thiếu nhi, Sách tranh, Thú cưng,
+        Nông nghiệp, Sức khỏe, Thú y, Động vật, Hoa,
+        Địa lý, Lịch sử văn hoá, Nhân chủng học, Chính trị, Ngôn ngữ,
+        Kinh tế học, Môi trường, Thủ công, Chế tạo, Giáo dục, Gia đình,
+        Sân khấu, Âm nhạc, Nghệ thuật biểu diễn, Văn học Mỹ,
+        Văn học Anh, Văn học Pháp, Ma quái, Huyền bí, Huyền thoại,
+        Thiếu niên, Thanh thiếu niên, Hội hoạ, Kiến trúc, Truyện tranh, Manga"""
 
-        d1.categories.append(c1)
-        d2.categories.append(c2)
-        d3.categories.append(c1)
-        d3.categories.append(c3)
+        ket_qua = [x.strip() for x in chuoi.split(",")]
+
+        cate_list = []
+        for c in ket_qua:
+            category = Category(name=c)
+            cate_list.append(category)
+
+        d1.categories.append(cate_list[17])
+        d2.categories.append(cate_list[13])
+        d3.categories.append(cate_list[17])
+        d3.categories.append(cate_list[20])
+
+        db.session.add_all(cate_list)
 
         r = Rule(name='waiting_time_confirm', value=30)
         db.session.add(r)
