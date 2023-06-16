@@ -5,10 +5,10 @@ venv
 env
 
 # python cache file
-**/*/__pycache__
+/**/*/__pycache__
 
 # other environment files
-.idea
+/**/*/.idea
 .vscode
 
 # session
