@@ -180,6 +180,8 @@ def user_login():
             login_user(user=user)
             response_data = {
                 'message': "Success",
+                'username': current_user.username,
+                'avatar': current_user.avatar,
                 'status': 200
             }
             return jsonify(response_data), 200
