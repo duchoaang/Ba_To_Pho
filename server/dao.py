@@ -88,48 +88,58 @@ def get_keyword_by_name(name):
     return kw.first()
 
 
-
-def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, cloudinary_secure_url, cloudinary_image_public_id, cloudinary_image_secure_url):
-    doc = Document(title=fields['title'], owner=fields['owner'], content=fields['description'])
-    dc_list = []
-    dk_list = []
-    for cate in categories.values():
-        dc = Document_Category(document=doc, category_id=cate)
-        dc_list.append(dc)
-    for key in keywords.values():
-        kw = get_keyword_by_name(key)
-        if kw:
-            dk = Document_Keyword(document=doc, keyword=kw)
-            dk_list.append(dk)
-        else:
-            k = Keyword(name=key)
-            dk = Document_Keyword(document=doc, keyword=k)
-            dk_list.append(k)
-            dk_list.append(dk)
-
-    doc.user_id = "a59d44ae-df16-44af-bcc8-0a1e283d2628"
-    doc.gem_cost = 100
-    doc.captcha = "AFB2QD1"
-    doc.document_type_id = "1c6a2982-55df-4996-819b-bdbe983b0170"
-    doc.cloud_link = "https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2"
-    doc.cloud_link_download = "https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2"
-    doc.cloudinary_secure_url = cloudinary_secure_url
-    doc.cloudinary_public_id = cloudinary_public_id
-    doc.cloudinary_image_public_id = cloudinary_image_public_id
-    doc.cloudinary_image_secure_url = cloudinary_image_secure_url
-    db.session.add(doc)
-    db.session.add_all(dc_list)
-    db.session.add_all(dk_list)
+def add_keyword(name):
+    kw = Keyword(name=name)
+    db.session.add(kw)
     db.session.commit()
 
+
+def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, cloudinary_secure_url, cloudinary_image_public_id, cloudinary_image_secure_url):
+    with db.session.no_autoflush:
+        doc = Document(title=fields['title'], owner=fields['owner'], content=fields['description'], user_id=fields['user_id'], document_type_id=fields['document_type_id'])
+
+        for cate in categories.values():
+            c = Category.query.get(cate)
+            if c:
+                doc.categories.append(c)
+        for key in keywords.values():
+            kw = get_keyword_by_name(key)
+            if kw:
+                doc.keywords.append(kw)
+            else:
+                add_keyword(key)
+                kw = get_keyword_by_name(key)
+                doc.keywords.append(kw)
+
+        doc.captcha = "AFB2QD1"
+        doc.gem_cost = 100
+
+        doc.cloud_link = "a"
+        doc.img_cloud_link = "b"
+
+        doc.file_link_download = "c"
+        doc.img_link_download = "d"
+
+        doc.cloudinary_secure_url = cloudinary_secure_url
+        doc.cloudinary_public_id = cloudinary_public_id
+
+        doc.cloudinary_image_public_id = cloudinary_image_public_id
+        doc.cloudinary_image_secure_url = cloudinary_image_secure_url
+
+        db.session.add(doc)
+        db.session.commit()
 
 
 if __name__ == '__main__':
     with app.app_context():
+        u_id = User.query.first().id
+        dt_id = DocumentType.query.first().id
         fields = {
             "title": "heheheheheheheh",
             "owner": "Phtas",
             "description": "1234567890",
+            "user_id" : u_id,
+            "document_type_id" : dt_id
         }
         categories = {
             "cate-1": "34a2fb94-fec1-4b97-a5a1-b85f3efa4416",
@@ -140,5 +150,7 @@ if __name__ == '__main__':
             "kw-2": "Phú",
             "kw-3": "Phát",
         }
+
+        add_no_accept_document(fields, categories, keywords, "download_path", "path", "download_path_img", "path_img")
 
 

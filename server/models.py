@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text, Enum
+import hashlib
+
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text, Enum, event
 from sqlalchemy.orm import relationship, backref
 from server import db, app
 from datetime import datetime
@@ -76,7 +78,7 @@ class DocumentType(BaseModel):
     documents = relationship("Document", backref='document_type', lazy=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Document(BaseModel):
@@ -103,6 +105,7 @@ class Document(BaseModel):
     # link de duyet cloudinary
     cloudinary_public_id = Column(Text, nullable=False)
     cloudinary_secure_url = Column(Text, nullable=False)
+
     cloudinary_image_public_id = Column(Text, nullable=False)
     cloudinary_image_secure_url = Column(Text, nullable=False)
 
@@ -112,12 +115,12 @@ class Document(BaseModel):
     document_type_id = Column(String(36), ForeignKey(DocumentType.id), nullable=False)
 
     favour_lists = relationship('FavourList', backref='document', lazy=True)
-    document_categories = relationship("Document_Category", backref='document', lazy=False)
-    document_keywords = relationship("Document_Keyword", backref="document", lazy=False)
 
     comments = relationship("Comment", backref="document", lazy=True)
     rates = relationship("Rate", backref="document", lazy=True)
     downloads = relationship("UserDownloadDoc", backref="document", lazy=True)
+    categories = relationship('Category', secondary='document__category', back_populates='documents')
+    keywords = relationship('Keyword', secondary='document__keyword', back_populates='documents')
 
     def __str__(self):
         return self.title
@@ -137,7 +140,7 @@ class Category(BaseModel):
     name = Column(String(50), unique=True, nullable=False)
     category_parent_id = Column(String(36), ForeignKey('category.id'), nullable=True)
     category_children = relationship("Category", backref=backref('category_parent', remote_side=[id]), lazy=True)
-    category_documents = relationship("Document_Category", backref='category', lazy=True)
+    documents = relationship('Document', secondary='document__category', back_populates='categories')
 
     def __str__(self):
         return self.name
@@ -162,7 +165,7 @@ class Document_Keyword(BaseModel):
 
 class Keyword(BaseModel):
     name = Column(String(50), unique=True, nullable=False)
-    keyword_documents = relationship("Document_Keyword", backref="keyword", lazy=True)
+    documents = relationship('Document', secondary='document__keyword', back_populates='keywords')
 
     def __str__(self):
         return self.name
@@ -206,6 +209,14 @@ class Notification(BaseModel):
 
     def __str__(self):
         return self.content
+
+
+class Rule(BaseModel):
+    name = Column(String(100), nullable=False)
+    value = Column(Integer, nullable=False)
+
+    def __str__(self):
+        return self.name
 
 
 if __name__ == '__main__':
@@ -259,11 +270,11 @@ if __name__ == '__main__':
         c3 = Category(name='Lập trình hướng đối tượng', category_parent=c1)
         db.session.add_all([c1, c2, c3])
 
-        d_c1 = Document_Category(document=d1, category=c1)
-        d_c2 = Document_Category(document=d2, category=c2)
-        d_c3 = Document_Category(document=d3, category=c1)
-        d_c4 = Document_Category(document=d3, category=c3)
+        d1.categories.append(c1)
+        d2.categories.append(c2)
+        d3.categories.append(c1)
+        d3.categories.append(c3)
 
-        db.session.add_all([d_c1, d_c2, d_c3, d_c4])
-
+        r = Rule(name='waiting_time_confirm', value=30)
+        db.session.add(r)
         db.session.commit()

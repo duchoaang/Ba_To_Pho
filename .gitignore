@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-venv 
-=======
 # Virtual environment
 .venv
 .env
@@ -13,4 +10,6 @@ env
 # other environment files
 .idea
 .vscode
->>>>>>> origin/backend-phat
+
+# session
+flask_session

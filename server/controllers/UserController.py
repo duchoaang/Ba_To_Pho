@@ -33,9 +33,6 @@ def user_register():
     password = hashlib.md5(password.encode()).hexdigest()
     fields['password'] = password
 
-    user = add_user(fields)
-    login_user(user=user)
-
     token = generate_confirmation_token(email)
     confirm_url = url_for('user_bp.confirm_email', token=token, _external=True)
     html = render_template('confirm.html', confirm_url=confirm_url)

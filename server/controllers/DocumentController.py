@@ -3,43 +3,39 @@ from server.dao import *
 import cloudinary.uploader
 
 
-
 # -------------- "/api" ------------------
 
 
 def upload_cloudinary():
     print(request.files)
-    file = request.files['file-0']
-    res = cloudinary.uploader.upload(file, resource_type="auto")  # luu anh tren clundinary
+    file = request.files.get('file')
+    image = request.files.get('image')
+    res = cloudinary.uploader.upload(file, resource_type="auto")  # luu file tren clundinary
     path = res['secure_url']  # link dowload
-    dowload_path = res['public_id']
-    print(path, dowload_path)
-    print(file.filename)
+    download_path = res['public_id']
 
+    res_img = cloudinary.uploader.upload(image, resource_type="auto")  # luu file tren clundinary
+    path_img = res_img['secure_url']  # link dowload
+    download_path_img = res_img['public_id']
+
+    print(path, download_path)
+    print(file.filename)
+    print(path_img, download_path_img)
+    print(image.filename)
+    u_id = User.query.first().id
+    dt_id = DocumentType.query.first().id
     fields = {
         "title": "heheheheheheheh",
         "owner": "Phtas",
         "description": "1234567890",
+        "user_id": u_id,
+        "document_type_id": dt_id
     }
     categories = {
-        "cate-1": "34a2fb94-fec1-4b97-a5a1-b85f3efa4416",
-        "cate-2": "a77ee434-2efe-44f6-91b5-32d4466cb636",
     }
+
     keywords = {
-        "kw-1": "Võ",
-        "kw-2": "Phú",
-        "kw-3": "Phát",
     }
 
-    add_no_accept_document(fields, categories, keywords, dowload_path, path)
+    add_no_accept_document(fields, categories, keywords, download_path, path, download_path_img, path_img)
     return "success"
-
-
-def add_document():
-    data = request.json
-    fields = {}
-    fields["title"] = data.get('title')
-    fields["owner"] = data.get('owner')
-    fields['description'] = data.get('description')
-    categories = data.get('categories')
-    keywords = data.get('keywords')
