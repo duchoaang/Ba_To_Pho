@@ -82,6 +82,18 @@ def get_categories(name=None, category_parent_id=None):
     return c.all()
 
 
+def get_document_types():
+    return DocumentType.query.all()
+
+
+def get_keywords(size=None):
+    keywords = Keyword.query.join(Keyword.documents).group_by(Keyword.id).order_by(
+        func.count(Document.id).desc())
+    if size:
+        keywords = keywords.limit(size)
+    return keywords.all()
+
+
 def get_keyword_by_name(name):
     kw = Keyword.query.filter(Keyword.name.__eq__(name))
     return kw.first()
