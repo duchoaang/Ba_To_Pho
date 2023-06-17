@@ -102,3 +102,10 @@
         margin-left:10px;
     }
 }
+.user_avatar{
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 50%;
+    cursor: pointer;
+}
