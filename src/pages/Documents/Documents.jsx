@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
 import ReactPaginate from 'react-paginate';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 
 const lists = [
     {
@@ -101,10 +102,54 @@ const documents = [
 const rates = [];
 
 const Documents = () => {
-    const [listID, setListID] = useState(3);
-    const [typeID, setTypeID] = useState(3);
+    const [listID, setListID] = useState('');
+    const [typeID, setTypeID] = useState('');
     const [showList, setList] = useState(false);
-    useEffect(() => {}, []);
+    const [listDocs, setListDocs] = useState([]);
+    const [listCategories, setListCategories] = useState([]);
+    const [listTypes, setListTypes] = useState([]);
+    const [userChoice, setUserChoice] = useState([]);
+    console.log(listID)
+    useEffect(() => {
+        setUserChoice(...userChoice, listID);
+    }, [listID]);
+    console.log(userChoice.length);
+
+    useEffect(() => {
+        axios
+            .get('http://127.0.0.1:5000/api/categories')
+            .then((response) => {
+                setListCategories(response.data);
+                // console.log(response.data)
+            })
+            .catch((error) => {
+                console.log(123);
+            });
+        axios
+            .get('http://127.0.0.1:5000/api/types')
+            .then((response) => {
+                setListTypes(response.data);
+                // console.log(response.data);
+            })
+            .catch((error) => {
+                console.log('that bai');
+            });
+    }, []);
+    useEffect(() => {
+        axios
+            .get('http://127.0.0.1:5000/api/documents')
+            .then((response) => {
+                setListDocs(response.data);
+                // console.log(response.data);
+            })
+            .catch((error) => {
+                console.log('that bai');
+            });
+    }, []);
+
+    // const showDocss = () => {
+    //     listDocs.map((doc, index) => console.log(doc.id))
+    // }
     const handlePageClick = () => {};
     return (
         <>
@@ -120,14 +165,14 @@ const Documents = () => {
                         <h1>Theo danh mục</h1>
                         <div className={cx('check__list')}>
                             <ul>
-                                {lists.map((list) => (
+                                {listCategories.map((list) => (
                                     <li key={list.id}>
                                         <input
                                             type="checkbox"
                                             // checked={listID === list.id}
-                                            onChange={() => setListID(list.id)}
+                                            onClick={() => setListID(list.id)}
                                         />{' '}
-                                        {list.context}{' '}
+                                        {list.name}{' '}
                                     </li>
                                 ))}
                                 {showList &&
@@ -136,7 +181,7 @@ const Documents = () => {
                                             <input
                                                 type="checkbox"
                                                 checked={listID === list.id}
-                                                onChange={() => setListID(list.id)}
+                                                onClick={() => setListID(list.id)}
                                             />{' '}
                                             {list.context}{' '}
                                         </li>
@@ -154,14 +199,14 @@ const Documents = () => {
                         <h1>Loại tài liệu</h1>
                         <div className={cx('check__type')}>
                             <ul>
-                                {types.map((type) => (
+                                {listTypes.map((type) => (
                                     <li key={type.id}>
                                         <input
                                             type="checkbox"
                                             checked={typeID === type.id}
                                             onChange={() => setTypeID(type.id)}
                                         />{' '}
-                                        {type.context}{' '}
+                                        {type.name}{' '}
                                     </li>
                                 ))}
                             </ul>
@@ -188,21 +233,21 @@ const Documents = () => {
                 </div>
                 <div className={cx('main__mid')}>
                     <div className={cx('content__mid')}>
-                        {documents.map(
-                            (document) =>
-                                listID === document.listID &&
-                                typeID === document.typeID && (
+                        {listDocs.map(
+                            (document, index) =>
+                                document.categories[0].id === listID &&
+                                typeID === document.document_type_id && (
                                     <>
-                                        <div className={cx('item')} key={document.id}>
+                                        <div className={cx('item')} key={index}>
                                             <div className={cx('content__left')}>
-                                                <img src={document.image} alt="preview" width={170} />
+                                                <img src={document.img} alt="preview" width={170} />
                                             </div>
                                             <div className={cx('content__right')}>
                                                 <div className={cx('content__right--title')}>
-                                                    <h1 style={{ color: '#3379b5' }}>Tieu luan</h1>
+                                                    <h1 style={{ color: '#3379b5' }}>{document.content}</h1>
                                                 </div>
                                                 <div className={cx('content__right--main')}>
-                                                    <h1> {document.context}</h1>
+                                                    <h1> {document.title}</h1>
                                                 </div>
                                                 <div className={cx('content__right--option')}>
                                                     <button>

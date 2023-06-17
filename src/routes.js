@@ -5,6 +5,7 @@ import Upload from '@pages/Upload';
 import Documents from '@pages/Documents';
 import Detail from '@pages/Detail';
 import Admin from '@pages/Admin';
+import Profile from '@pages/Profile';
 
 const routes = [
     {
@@ -27,6 +28,10 @@ const routes = [
         path: '/admin',
         component: Admin,
         layout: Empty,
+    },
+    {
+        path: '/profile',
+        component: Profile,
     },
 ];
 

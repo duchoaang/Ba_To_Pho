@@ -126,7 +126,7 @@ const Home = () => {
                                         </span>
                                         <h1>
                                             <Link style={{ textDecoration: 'none', color: 'black' }} to="/Documents">
-                                                {doc.context}
+                                                {doc.title}
                                             </Link>
                                         </h1>
                                     </div>

@@ -6,7 +6,10 @@ import axios from 'axios';
 import Button from '@/Button';
 import Swal, { swal } from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
-// import Button as btn from '@mui/material/Button'
+import Btn from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
+import Stack from '@mui/material/Stack';
 
 const cx = classNames.bind(styles);
 
@@ -84,10 +87,10 @@ const AlertConfirmEmail = () => {
         didOpen: () => {
             Swal.showLoading();
             const b = Swal.getHtmlContainer().querySelector('b');
-            let remainingTime
+            let remainingTime;
             timerInterval = setInterval(() => {
                 remainingTime = Math.floor(Swal.getTimerLeft() / 1000);
-                b.textContent = remainingTime
+                b.textContent = remainingTime;
             }, 1000);
         },
         willClose: () => {
@@ -100,15 +103,11 @@ const AlertConfirmEmail = () => {
         }
     });
 };
-const AlertConfirmEmailSucess = () => {
-    Swal.fire(
-        'Đăng ký thành công',
-        'Ba Tô Phở chúc bạn có một trải nghiệm tốt lành !',
-        'success'
-      )
-}
+
 const Header = () => {
     const [user, setUser] = useState(false);
+    const [infoUser, setInfoUser] = useState([]);
+
     const [showModal, setShowModal] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [userName, setUserName] = useState('');
@@ -120,10 +119,21 @@ const Header = () => {
     const [errorMessage, setErrorMessage] = useState(false);
     const [confirmEmail, setConfirmEmail] = useState(false);
     const [countdown, setCountdown] = useState(5);
-    const [showAlert, setShowAlert] = useState(false);
+    const [showAlertConfirmEmail, setShowAlertConfirmEmail] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [ErrorUserNameEmail, setErrorUserNameEmail] = useState(false);
 
+    const AlertConfirmEmailSucess = () => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Đăng kí thành công',
+            text: 'Chúc bạn có một trải nghiệm tốt lành!',
+
+            willClose: setShowAlertConfirmEmail(false),
+        });
+    };
+
+    console.log(infoUser);
     useEffect(() => {
         setIsFormValid(
             userName !== '' && userPassword !== '' && userEmail !== '' && confirmPassword !== '' && checkButton,
@@ -138,10 +148,10 @@ const Header = () => {
     });
     // form data dang nhap
     const [formDataLogin, setFormDataLogin] = useState({
-        name: userName,
+        username: userName,
         password: userPassword,
     });
-    console.log(formData);
+    // console.log(formData);
     console.log(formDataLogin);
     const handleLogin = () => {
         setShowModal(true);
@@ -156,12 +166,11 @@ const Header = () => {
             });
         } else
             setFormDataLogin({
-                name: userName,
+                username: userName,
                 password: userPassword,
             });
     }, [userName, userEmail, userPassword]);
 
-    
     useEffect(() => {
         let prevConfirmEmail = confirmEmail;
         if (confirmEmail === true && prevConfirmEmail === true) {
@@ -181,7 +190,8 @@ const Header = () => {
                         if (data.status === 200) {
                             clearInterval(timer);
                             setConfirmEmail(false);
-
+                            setShowLoading(false);
+                            setShowAlertConfirmEmail(true);
                             console.log(' xac thuc email thanh cong');
                         } else if (data.status === 404) {
                             console.log('That bai');
@@ -190,7 +200,7 @@ const Header = () => {
             }, 3000);
             setTimeout(() => {
                 clearInterval(timer); // Dừng hàm setInterval sau 30 giây
-            }, 6000);
+            }, 30000);
         }
     }, [confirmEmail]);
     //dang ki
@@ -213,11 +223,10 @@ const Header = () => {
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data);
                     if (data.status === 200) {
                         setShowRegister(false);
-
                         console.log('dang ki thanh cong');
+
                         setConfirmEmail(true);
                     } else if (data.status === 404) {
                         console.log('dang ki That bai');
@@ -227,21 +236,25 @@ const Header = () => {
                     }
                 })
                 .catch((error) => {});
-
-           
         } else setErrorMessage(true);
     };
     // dang nhap
     const handleSubmitLogin = (e) => {
-        console.log(formDataLogin)
+        console.log(formDataLogin);
         e.preventDefault();
-        axios.post('http://127.0.0.1:5000/users/login', formDataLogin)
-        .then(response => {
-          console.log(response);
-        })
-        .catch(error => {
-          console.log(123);
-        });
+        axios
+            .post('http://127.0.0.1:5000/users/login', formDataLogin)
+            .then((response) => {
+                setUser(true);
+                setInfoUser({
+                    username: response.data.username,
+                    avatar: response.data.avatar,
+                });
+                setShowModal(false);
+            })
+            .catch((error) => {
+                console.log(123);
+            });
         // fetch('http://127.0.0.1:5000/users/login', {
         //     method: 'POST',
         //     headers: {
@@ -254,12 +267,12 @@ const Header = () => {
         //     .then((data) => {
         //         console.log(data);
         //         if (data.status === 200) {
-                    
+
         //             console.log(' login thanh cong');
-                    
+
         //         } else if (data.status === 404) {
         //             console.log('login That bai');
-                   
+
         //         }
         //     })
         //     .catch((error) => {});
@@ -272,9 +285,20 @@ const Header = () => {
         setShowRegister(false);
         setShowModal(false);
     };
+    const handleAlertClose = () => {
+        setShowAlertConfirmEmail(false);
+    };
     return (
         <>
-            {/* {true && <AlertConfirmEmailSucess/>} */}
+            {showAlertConfirmEmail && <AlertConfirmEmailSucess onClose={handleAlertClose} />}
+            <Stack direction="row" spacing={2}>
+                <Btn variant="outlined" startIcon={<DeleteIcon />}>
+                    Delete
+                </Btn>
+                <Btn variant="contained" endIcon={<SendIcon />}>
+                    Send
+                </Btn>
+            </Stack>
             <ModalWrapper show={showModal}>
                 <div className={cx('modal-inner')}>
                     <h2>Đăng nhập với...</h2>
@@ -296,7 +320,7 @@ const Header = () => {
                                 type="text"
                                 class="form-control"
                                 id="login-email"
-                                placeholder="name@example.com"
+                                placeholder="Tên tài khoản..."
                             />
                         </div>
                         <div className="text-start">
@@ -308,6 +332,7 @@ const Header = () => {
                                 type="password"
                                 class="form-control"
                                 id="login-password"
+                                placeholder="Mật khẩu..."
                             />
                         </div>
                         <div className="d-flex justify-content-between mt-3">
@@ -317,7 +342,7 @@ const Header = () => {
                             </div>
                             <Link to="/">Quên mật khẩu</Link>
                         </div>
-                        <Button  className="w-100 mt-3">ĐĂNG NHẬP</Button>
+                        <Button className="w-100 mt-3">ĐĂNG NHẬP</Button>
                     </form>
                     <p className="text-center mt-3">
                         đây là lần đầu tiên của bạn?{' '}
@@ -431,7 +456,7 @@ const Header = () => {
                     </span>
                 </div>
             </ModalWrapper>} */}
-            {confirmEmail && <AlertConfirmEmail/>}
+            {confirmEmail && <AlertConfirmEmail />}
 
             <header className={cx('wrapper')}>
                 <div className={cx('logo')}>
@@ -447,7 +472,9 @@ const Header = () => {
                     </select>
                     <input type="text" placeholder="Tìm kiếm trên tài liệu" className="form-control" />
                     <button className="btn">
-                        <span className="material-icons">search</span>
+                        <span className="material-icons" onClick={() => setShowAlertConfirmEmail(true)}>
+                            search
+                        </span>
                     </button>
                 </div>
                 <div className={cx('actions')}>
@@ -455,27 +482,29 @@ const Header = () => {
                         <Button className="me-5 btn btn-warning border">Tải lên</Button>
                     </Link>
                     {user ? (
-                        <Button
-                            onClick={() => {
-                                setUser(false);
-                            }}
-                        >
-                            User
-                        </Button>
+                        <img
+                            onClick={() => setUser(false)}
+                            className={cx('user_avatar')}
+                            src={infoUser.avatar}
+                            alt=""
+                        />
                     ) : (
                         <>
-                            <Button
+                            <Btn
+                            variant="outlined"
                                 className="me-2"
                                 onClick={() => {
                                     setShowModal(true);
                                 }}
                             >
                                 Đăng nhập
-                            </Button>
+                            </Btn>
 
-                            <Button className="me" onClick={handleRegister}>
+                            <Btn
+                                variant="contained"
+                            className="me" onClick={handleRegister}>
                                 Đăng ký
-                            </Button>
+                            </Btn>
                         </>
                     )}
                 </div>
