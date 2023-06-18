@@ -1,0 +1,23 @@
+{% extends 'admin/base.html' %}
+
+
+{% block body %}
+{% if current_user.is_authenticated and current_user.user_role.value == 1 %}
+{% else %}
+<div class="p-3 justify-content-center d-flex">
+    <form action="/admin/login" method="post" class="row g-3 bg-dark text-white m-3 p-4 shadow-sm w-75">
+        <div class="col-md-12">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="username">
+        </div>
+        <div class="col-md-12">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password">
+        </div>
+        <div class="col-12 mt-4 d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary w-100">Sign in</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+{% endblock %}
