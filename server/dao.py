@@ -64,6 +64,23 @@ def get_user_by_id(user_id):
     return u
 
 
+def send_notification(user_id, content):
+    noti = Notification(content=content, user_id=user_id)
+    db.session.add(noti)
+    db.session.commit()
+
+
+def warn_user(user_id):
+    u = User.query.get(user_id)
+    if u:
+        u.warn_time += 1
+        if u.warn_time >= 3:
+            u.is_active = False
+            send_notification(user_id, "Bạn đã bị khóa tài khoản vì đã vi phạm 3 lần")
+        db.session.add(u)
+        db.session.commit()
+
+
 def check_login(username, password, user_role=UserRole.USER):
     if username and password:
         password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())

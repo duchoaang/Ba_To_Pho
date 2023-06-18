@@ -34,7 +34,7 @@ def login():
 #     return "ha"
 
 
-@app.route('/')
+@app.route('/test')
 def test():
     pdf_url = input("Path_cloudinary: ").strip()
     with open("temp.pdf", "wb") as f:

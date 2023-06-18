@@ -1,0 +1,32 @@
+{% extends 'admin/master.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% import 'admin/static.html' as admin_static with context%}
+{% import 'admin/model/layout.html' as model_layout with context %}
+{% import 'admin/actions.html' as actionlib with context %}
+{% import 'admin/model/row_actions.html' as row_actions with context %}
+
+{% block body %}
+<div class="table-responsive">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link active">{{ _gettext('List') }}{% if count %} ({{ count }}){% endif %}</a>
+        </li>
+    </ul>
+    {% for filter in list_filters %} {{ filter }} {% endfor %}
+    <table class="table table-striped table-bordered table-hover model-list">
+        <thead>
+        <tr>
+            <th class="column-header col-username">
+                <a href="" title="Sort by Username">Username</a>
+            </th>
+            <th class="column-header col-name">
+                <a href="" title="Sort by Name">Name</a>
+            </th>
+            <th class="column-header col-name">
+                <a href="" title="Sort by Name">Name</a>
+            </th>
+        </tr>
+        </thead>
+    </table>
+</div>
+{% endblock %}

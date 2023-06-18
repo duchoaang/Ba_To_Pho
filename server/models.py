@@ -63,6 +63,7 @@ class User(BaseModel, UserMixin):
     gem = Column(Float, default=300000, nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
     is_confirm = Column(Boolean, nullable=False, default=False)
+    warn_time = Column(Integer, nullable=False, default=0)
 
     documents = relationship('Document', backref='user', lazy=True)
     favour_lists = relationship('FavourList', backref='user', lazy=True)
@@ -219,7 +220,7 @@ class UserDownloadDoc(BaseModel):
 
 class Notification(BaseModel):
     content = Column(String(255), nullable=False)
-    created_date = Column(DateTime, nullable=False)
+    created_date = Column(DateTime, nullable=False, default=datetime.now())
     is_seen = Column(Boolean, default=False)
     user_id = Column(String(36), ForeignKey(User.id), nullable=False)
 
