@@ -26,9 +26,9 @@ mail = Mail()
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'tailieubatopho@gmail.com'
-app.config['MAIL_PASSWORD'] = 'pebpevcdzfwlzmws'
-app.config['MAIL_DEFAULT_SENDER'] = 'tailieubatopho@gmail.com'
+app.config['MAIL_USERNAME'] = 'affordaairlines@gmail.com'
+app.config['MAIL_PASSWORD'] = 'xmakpcqzeowbcpsa'
+app.config['MAIL_DEFAULT_SENDER'] = 'affordaairlines@gmail.com'
 
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_COOKIE_SECURE'] = True
@@ -48,5 +48,6 @@ cloudinary.config(
     api_key = "215425482852391",
     api_secret = "a9xaGBMJr7KgKhJa-1RpSpx_AmU"
 )
+
 APP_KEY = 'youh9irihpuik2f'
 APP_SECRET = 'ymejn6mc6q60hvs'

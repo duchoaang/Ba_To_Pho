@@ -30,6 +30,11 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/style')
+def style():
+    return render_template('confirm.html', confirm_url="https")
+
+
 @app.route('/')
 def test():
     pdf_url = input("Path_cloudinary: ").strip()
