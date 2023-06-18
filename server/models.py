@@ -221,6 +221,7 @@ class UserDownloadDoc(BaseModel):
 class Notification(BaseModel):
     content = Column(String(255), nullable=False)
     created_date = Column(DateTime, nullable=False, default=datetime.now())
+    created_date = Column(DateTime, nullable=False)
     is_seen = Column(Boolean, default=False)
     user_id = Column(String(36), ForeignKey(User.id), nullable=False)
 

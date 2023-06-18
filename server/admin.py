@@ -56,7 +56,6 @@ class NotificationView(AdminModelView):
     }
 
 
-
 class UserModelView(AdminModelView):
     column_list = ['username', 'name', 'phone_number', 'gender', 'dob', 'gem', 'is_active', 'is_confirm']
     column_formatters = dict(gender=lambda v, c, m, p: 'Nữ' if v else 'Nam')
@@ -74,6 +73,7 @@ class UserModelView(AdminModelView):
     can_export = True
     can_view_details = True
     column_filters = ['id', 'username', 'name']
+
     form_extra_fields = {
         'old_password': HiddenField(),
         'old_password2': HiddenField()
@@ -98,7 +98,6 @@ class DocumentModelView(AdminModelView):
     can_view_details = True
     column_list = ['title', 'owner', 'content', 'view_count', 'gem_cost', 'discount', 'status', 'user', 'categories',
                    'keywords']
-
 
 class RuleModelView(AdminModelView):
     can_create = True
