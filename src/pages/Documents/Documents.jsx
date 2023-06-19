@@ -3,9 +3,13 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 import { useState, useEffect } from 'react';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
-import ReactPaginate from 'react-paginate';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import axios from 'axios';
+
+
 
 const lists = [
     {
@@ -99,21 +103,34 @@ const documents = [
         typeID: 3,
     },
 ];
-const rates = [];
 
+const PAGE_SIZE = 1;
+
+const handlePageClick = () => {};
 const Documents = () => {
     const [listID, setListID] = useState('');
-    const [typeID, setTypeID] = useState('');
-    const [showList, setList] = useState(false);
+    const [typeID, setTypeID] = useState('8586a786-2c1d-41e1-b278-13653c29ba4b');
+    const [showList, setShowList] = useState(false);
     const [listDocs, setListDocs] = useState([]);
     const [listCategories, setListCategories] = useState([]);
     const [listTypes, setListTypes] = useState([]);
     const [userChoice, setUserChoice] = useState([]);
-    console.log(listID)
+    const [numberPage, setNumberPage] = useState(1);
+    const [start, setStart] = useState('');
+
     useEffect(() => {
-        setUserChoice(...userChoice, listID);
-    }, [listID]);
-    console.log(userChoice.length);
+        setStart((numberPage - 1) * PAGE_SIZE);
+    }, [numberPage]);
+    console.log((numberPage-1) * PAGE_SIZE)
+    // console.log(start);
+    // // console.log(listID);
+    const handleChecklist = (checked, id) => {
+        if (checked) {
+            setUserChoice([...userChoice, id]);
+        } else {
+            setUserChoice(userChoice.filter((item) => item !== id));
+        }
+    };
 
     useEffect(() => {
         axios
@@ -134,8 +151,6 @@ const Documents = () => {
             .catch((error) => {
                 console.log('that bai');
             });
-    }, []);
-    useEffect(() => {
         axios
             .get('http://127.0.0.1:5000/api/documents')
             .then((response) => {
@@ -146,11 +161,12 @@ const Documents = () => {
                 console.log('that bai');
             });
     }, []);
+    
+    console.log(typeID)
 
-    // const showDocss = () => {
-    //     listDocs.map((doc, index) => console.log(doc.id))
-    // }
-    const handlePageClick = () => {};
+    const handleShowList = () => {
+        setShowList(!showList);
+    };
     return (
         <>
             <div className={cx('main')}>
@@ -163,35 +179,31 @@ const Documents = () => {
                     </div>
                     <div className={cx('list__left')}>
                         <h1>Theo danh mục</h1>
-                        <div className={cx('check__list')}>
+                        <div className={cx('check__list', { active: showList })}>
                             <ul>
-                                {listCategories.map((list) => (
+                                {listCategories.slice(1, 4).map((list) => (
                                     <li key={list.id}>
                                         <input
                                             type="checkbox"
                                             // checked={listID === list.id}
-                                            onClick={() => setListID(list.id)}
+                                            onClick={(e) => handleChecklist(e.target.checked, list.id)}
                                         />{' '}
                                         {list.name}{' '}
                                     </li>
                                 ))}
                                 {showList &&
-                                    moreList.map((list) => (
-                                        <li key={list.id}>
+                                    listCategories.slice(4, listCategories.length - 1).map((list) => (
+                                        <li key={list.id} className={cx('show__list')}>
                                             <input
                                                 type="checkbox"
-                                                checked={listID === list.id}
+                                                // checked={listID === list.id}
                                                 onClick={() => setListID(list.id)}
                                             />{' '}
-                                            {list.context}{' '}
+                                            {list.name}{' '}
                                         </li>
                                     ))}
                             </ul>
-                            <h2
-                                onClick={() => setList(!showList)}
-                                className={cx('showMore')}
-                                style={{ marginBottom: '20px' }}
-                            >
+                            <h2 onClick={handleShowList} className={cx('showMore')} style={{ marginBottom: '20px' }}>
                                 <span class="material-icons">arrow_drop_down</span>
                                 Thêm
                             </h2>
@@ -233,11 +245,16 @@ const Documents = () => {
                 </div>
                 <div className={cx('main__mid')}>
                     <div className={cx('content__mid')}>
-                        {listDocs.map(
+                        {listDocs.slice(start, (start + PAGE_SIZE)).map(
                             (document, index) =>
-                                document.categories[0].id === listID &&
-                                typeID === document.document_type_id && (
+                                userChoice.every((v) => document.categories.map((cate) => cate.id).includes(v)) &&
+                                typeID === document.document_type_id &&
+                                 (
+                                    
                                     <>
+                                    {
+                                        console.log(document.document_type_id)
+                                    }
                                         <div className={cx('item')} key={index}>
                                             <div className={cx('content__left')}>
                                                 <img src={document.img} alt="preview" width={170} />
@@ -289,26 +306,14 @@ const Documents = () => {
                         )}
                     </div>
                     <div className={cx('paginate')}>
-                        <ReactPaginate
-                            nextLabel="Sau >"
-                            onPageChange={handlePageClick}
-                            pageRangeDisplayed={3}
-                            marginPagesDisplayed={2}
-                            pageCount={7}
-                            previousLabel="< Trước"
-                            pageClassName="page-item"
-                            pageLinkClassName="page-link"
-                            previousClassName="page-item"
-                            previousLinkClassName="page-link"
-                            nextClassName="page-item"
-                            nextLinkClassName="page-link"
-                            breakLabel="..."
-                            breakClassName="page-item"
-                            breakLinkClassName="page-link"
-                            containerClassName="pagination"
-                            activeClassName="active"
-                            renderOnZeroPageCount={null}
-                        />
+                        <Stack spacing={2}>
+                            <Pagination
+                                count={Math.ceil(listDocs.length / PAGE_SIZE)}
+                                showFirstButton
+                                showLastButton
+                                onChange={(e, p) => setNumberPage(p)}
+                            />
+                        </Stack>
                     </div>
                 </div>
 

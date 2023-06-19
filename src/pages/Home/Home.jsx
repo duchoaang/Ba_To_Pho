@@ -5,21 +5,10 @@ const cx = classNames.bind(styles);
 import { useState, useEffect } from 'react';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
 import { Link } from 'react-router-dom';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
 
-const popularDocs = [
-    {
-        id: 1,
-        context: 'Tai lieu 1',
-    },
-    {
-        id: 2,
-        context: 'Tai lieu 2',
-    },
-    {
-        id: 3,
-        context: 'Tai lieu 3',
-    },
-];
 const newDocs = [
     {
         id: 1,
@@ -54,7 +43,7 @@ const Home = () => {
     const [showCourse, setCourse] = useState(false);
     const [popularCousre, setPopularCourse] = useState(true);
     const [newCourse, setNewCourse] = useState(false);
-
+    
     const [popularDocs, setPopularDocs] = useState([])
     useEffect(() => {
         fetch("http://localhost:5000/api/documents").then(
@@ -70,6 +59,7 @@ const Home = () => {
         ).catch(
             error => console.log(error)
         )
+        
     }, [])
     const handleSetPopularCourse = () => {
         setPopularCourse(!popularCousre);
@@ -81,8 +71,15 @@ const Home = () => {
         setPopularCourse(newCourse);
     };
 
+    const [value, setValue] = useState('one');
+
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+    }
+
     return (
         <div className={cx('mainHome')}>
+             
             <div className={cx('banner')}>
                 <img src="src/assets/banner.png" alt="w-100" width={'75%'} />
             </div>
@@ -192,6 +189,19 @@ const Home = () => {
                     )}
                 </div>
             </ul>
+             <Box sx={{ width: '100%' }}>
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        textColor="secondary"
+        indicatorColor="secondary"
+        aria-label="secondary tabs example"
+      >
+        <Tab value="one" label="Item One" />
+        <Tab value="two" label="Item Two" />
+        <Tab value="three" label="Item Three" />
+      </Tabs>
+    </Box>
         </div>
     );
 };

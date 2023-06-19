@@ -65,6 +65,7 @@ $padding-main-left__left: 10px;
 .check__list {
     margin-bottom: 20px;
     border-bottom: solid 1px #e5e5e5;
+     
 
     ul {
         padding-left: $padding-main-left__left;
@@ -72,6 +73,10 @@ $padding-main-left__left: 10px;
     li {
         margin-bottom: 5px;
     }
+}
+.active{
+    height: 300px;
+    overflow-y:scroll;
 }
 .check__type {
     ul {

@@ -10,7 +10,8 @@ import Btn from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
-
+import Input from '@/Input';
+// import Results from '@/Results';
 const cx = classNames.bind(styles);
 
 const MENU_ITEM = [
@@ -122,7 +123,7 @@ const Header = () => {
     const [showAlertConfirmEmail, setShowAlertConfirmEmail] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [ErrorUserNameEmail, setErrorUserNameEmail] = useState(false);
-
+    const [results, setResults] = useState([])
     const AlertConfirmEmailSucess = () => {
         Swal.fire({
             icon: 'success',
@@ -238,6 +239,10 @@ const Header = () => {
                 .catch((error) => {});
         } else setErrorMessage(true);
     };
+    //search
+    
+
+
     // dang nhap
     const handleSubmitLogin = (e) => {
         console.log(formDataLogin);
@@ -255,27 +260,7 @@ const Header = () => {
             .catch((error) => {
                 console.log(123);
             });
-        // fetch('http://127.0.0.1:5000/users/login', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     credentials: 'include',
-        //     body: JSON.stringify(formDataLogin),
-        // })
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //         console.log(data);
-        //         if (data.status === 200) {
-
-        //             console.log(' login thanh cong');
-
-        //         } else if (data.status === 404) {
-        //             console.log('login That bai');
-
-        //         }
-        //     })
-        //     .catch((error) => {});
+       
     };
     const handleRegister = () => {
         setShowModal(false);
@@ -291,14 +276,7 @@ const Header = () => {
     return (
         <>
             {showAlertConfirmEmail && <AlertConfirmEmailSucess onClose={handleAlertClose} />}
-            <Stack direction="row" spacing={2}>
-                <Btn variant="outlined" startIcon={<DeleteIcon />}>
-                    Delete
-                </Btn>
-                <Btn variant="contained" endIcon={<SendIcon />}>
-                    Send
-                </Btn>
-            </Stack>
+           
             <ModalWrapper show={showModal}>
                 <div className={cx('modal-inner')}>
                     <h2>Đăng nhập với...</h2>
@@ -464,12 +442,17 @@ const Header = () => {
                         <img src="/src/assets/logo.png" alt="Logo" className="w-100 h-100" />
                     </Link>
                 </div>
-                <div className={cx('input', 'd-flex align-items-center')}>
+                <div className={cx('input', 'd-flex align-items-center')} style={{height: '40%'}}>
                     <select className="form-select">
                         <option value="1">Các tài liệu</option>
                         <option value="2">Câu hỏi</option>
                         <option value="3">Giáo sư</option>
                     </select>
+                    <div className={cx('search')}>
+                    <Input placeholder="12123123" />
+                 
+                    </div>
+                    
                     <input type="text" placeholder="Tìm kiếm trên tài liệu" className="form-control" />
                     <button className="btn">
                         <span className="material-icons" onClick={() => setShowAlertConfirmEmail(true)}>
