@@ -96,13 +96,17 @@ class DocumentModelView(AdminModelView):
     can_edit = True
     can_export = True
     can_view_details = True
+    column_filters = ['title', 'owner', 'content', 'view_count', 'gem_cost', 'discount', 'status', 'user.username', 'categories',
+                      'keywords']
     column_list = ['title', 'owner', 'content', 'view_count', 'gem_cost', 'discount', 'status', 'user', 'categories',
                    'keywords']
+
 
 class RuleModelView(AdminModelView):
     can_create = True
     can_edit = True
     can_view_details = True
+    column_filters = ['name']
 
 
 class CategoryModelView(AdminModelView):
@@ -110,6 +114,7 @@ class CategoryModelView(AdminModelView):
     can_edit = True
     can_export = True
     can_view_details = True
+    column_filters = ["name", "category_parent", "category_children"]
     form_columns = ["name", "category_parent", "category_children"]
 
 
