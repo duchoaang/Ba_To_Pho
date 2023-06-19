@@ -30,7 +30,7 @@ const Input = () => {
     return (
         <>
             <div className={cx('search')}>
-                <input type="text" style={{height: '100%'}} value={inputValue} onChange={(e) => handleChangeInput(e.target.value)} />
+                <input type="text" placeholder='Tìm kiếm....' style={{height: '100%'}} value={inputValue} onChange={(e) => handleChangeInput(e.target.value)} />
                 <div className={cx('results_list')}>
                {    
                 resultsList.map((result, id) =>{

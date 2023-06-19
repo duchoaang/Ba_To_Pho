@@ -123,7 +123,7 @@ const Header = () => {
     const [showAlertConfirmEmail, setShowAlertConfirmEmail] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [ErrorUserNameEmail, setErrorUserNameEmail] = useState(false);
-    const [results, setResults] = useState([])
+    const [results, setResults] = useState([]);
     const AlertConfirmEmailSucess = () => {
         Swal.fire({
             icon: 'success',
@@ -240,8 +240,6 @@ const Header = () => {
         } else setErrorMessage(true);
     };
     //search
-    
-
 
     // dang nhap
     const handleSubmitLogin = (e) => {
@@ -260,7 +258,6 @@ const Header = () => {
             .catch((error) => {
                 console.log(123);
             });
-       
     };
     const handleRegister = () => {
         setShowModal(false);
@@ -276,7 +273,7 @@ const Header = () => {
     return (
         <>
             {showAlertConfirmEmail && <AlertConfirmEmailSucess onClose={handleAlertClose} />}
-           
+
             <ModalWrapper show={showModal}>
                 <div className={cx('modal-inner')}>
                     <h2>Đăng nhập với...</h2>
@@ -442,23 +439,20 @@ const Header = () => {
                         <img src="/src/assets/logo.png" alt="Logo" className="w-100 h-100" />
                     </Link>
                 </div>
-                <div className={cx('input', 'd-flex align-items-center')} style={{height: '40%'}}>
+                <div className={cx('input', 'd-flex align-items-center')} style={{ height: '40%' }}>
                     <select className="form-select">
                         <option value="1">Các tài liệu</option>
                         <option value="2">Câu hỏi</option>
                         <option value="3">Giáo sư</option>
                     </select>
                     <div className={cx('search')}>
-                    <Input placeholder="12123123" />
-                 
-                    </div>
-                    
-                    <input type="text" placeholder="Tìm kiếm trên tài liệu" className="form-control" />
-                    <button className="btn">
+                        <Input placeholder="12123123" />
                         <span className="material-icons" onClick={() => setShowAlertConfirmEmail(true)}>
                             search
                         </span>
-                    </button>
+                    </div>
+                
+                    <button className="btn"></button>
                 </div>
                 <div className={cx('actions')}>
                     <Link to="/upload">
@@ -474,7 +468,7 @@ const Header = () => {
                     ) : (
                         <>
                             <Btn
-                            variant="outlined"
+                                variant="outlined"
                                 className="me-2"
                                 onClick={() => {
                                     setShowModal(true);
@@ -483,9 +477,7 @@ const Header = () => {
                                 Đăng nhập
                             </Btn>
 
-                            <Btn
-                                variant="contained"
-                            className="me" onClick={handleRegister}>
+                            <Btn variant="contained" className="me" onClick={handleRegister}>
                                 Đăng ký
                             </Btn>
                         </>
