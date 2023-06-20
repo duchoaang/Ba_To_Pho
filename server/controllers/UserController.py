@@ -57,6 +57,7 @@ def user_register():
             "is_confirm": False,
             "elapsed_time": elapsed_time,
         }
+        return jsonify(response_data), 200
     except Exception as e:
         response_data = {
             'message': "Lỗi server",
