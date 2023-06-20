@@ -5,29 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2f3ac1d-edcf-465b-b515-bfec3191249a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Ba_To_Pho.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Ba_To_Pho.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/APIControlller.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/APIControlller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/AdminController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/AdminController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/controllers/DocumentController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/DocumentController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/UserController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/UserController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/dao.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/my_token.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/my_token.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/routes/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/routes/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routes/document.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/document.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/templates/confirm.html" beforeDir="false" afterPath="$PROJECT_DIR$/server/templates/confirm.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +51,7 @@
       <recent name="D:\PersonalFolder\Documents\New folder\Ba_To_Pho\server" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.dao">
+  <component name="RunManager" selected="Python.index">
     <configuration name="APIControlller" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Ba_To_Pho" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -155,9 +138,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.index" />
         <item itemvalue="Python.dao" />
         <item itemvalue="Python.APIControlller" />
-        <item itemvalue="Python.index" />
         <item itemvalue="Python.models" />
       </list>
     </recent_temporary>

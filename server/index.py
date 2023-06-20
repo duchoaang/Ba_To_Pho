@@ -112,6 +112,7 @@ def login():
 #     return "success"
 
 
+
 app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(admin_bp, url_prefix='/admin')
 app.register_blueprint(api_bp, url_prefix='/api')
