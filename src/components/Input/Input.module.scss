@@ -1,0 +1,21 @@
+
+
+.search{
+    height: 100%;
+    position: relative;
+    // background-color: blue;
+}
+.results_list{ 
+    width: 100%;
+    background-color: black;
+    max-height: 200px;
+    overflow-y: scroll !important;
+    position: absolute;
+    z-index: 1;
+    div{
+        margin-top:10px;
+        font-weight: 600;
+        color:white;
+        font-size:13px;
+    }
+}
