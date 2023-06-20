@@ -8,10 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/controllers/APIControlller.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/APIControlller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/controllers/UserController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/UserController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/dao.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/my_token.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/my_token.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routes/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

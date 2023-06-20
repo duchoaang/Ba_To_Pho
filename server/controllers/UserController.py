@@ -43,6 +43,7 @@ def user_register():
         send_email(email, subject, html)
         end_time = time.time()
         elapsed_time = end_time - start_time
+
         msg = f"Đã gửi link xác nhận đến {email}."
         response_data = {
             'message': msg,
@@ -63,44 +64,6 @@ def user_register():
         }
         print(e)
         return jsonify(response_data), 505
-    email = request.json.get('email')
-    username = request.json.get('name')
-    u = get_existed_user(username, email)
-    if u:
-        if u.email == email:
-            msg = f"Email {email} đã được sử dụng. Vui lòng chọn email khác."
-        else:
-            msg = f'Username {username} đã được sử dụng. Vui lòng chọn username khác.'
-        response_data = {
-            'message': msg,
-            'status': 404
-        }
-        return jsonify(response_data), 404
-
-    fields = {'email': email, 'username': username}
-    password = request.json.get('password')
-    password = hashlib.md5(password.encode()).hexdigest()
-    fields['password'] = password
-
-    token = generate_confirmation_token(email)
-    confirm_url = url_for('user_bp.confirm_email', token=token, _external=True)
-    html = render_template('confirm.html', confirm_url=confirm_url)
-    subject = "Vui lòng xác thực email"
-    send_email(email, subject, html)
-
-    msg = f"Đã gửi link xác nhận đến {email}."
-    response_data = {
-        'message': msg,
-        'status': 200
-    }
-    key = app.config['USER_TEMP_KEY']
-    session[key] = {
-        "username": username,
-        "password": password,
-        "email": email,
-        "is_confirm": False
-    }
-    return jsonify(response_data), 200
 
 
 # "/confirm/<token>" ['GET']

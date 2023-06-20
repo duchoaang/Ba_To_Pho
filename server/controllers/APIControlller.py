@@ -16,7 +16,7 @@ def api_documents():
         title = request.json("title")
         documents = get_documents(title=title, category_ids=category_ids.values(), type_ids=type_ids.values())
         documents_list = [doc.to_dict(
-            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount", "username"
+            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount", "name"
                     "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc
             in
             documents]
@@ -26,7 +26,7 @@ def api_documents():
         status = request.args.get('status')
         documents = get_documents(status=status)
         documents_list = [doc.to_dict(
-            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount", "username"
+            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount", "name"
                     "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc in
             documents]
 
