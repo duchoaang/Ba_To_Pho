@@ -164,6 +164,10 @@ def get_doc_by_cloudinary_url(cloudinary_secure_url):
     return doc.first()
 
 
+def get_comment_by_doc(doc_id):
+    return Comment.query.filter(Comment.document_id.__eq__(doc_id)).all()
+
+
 def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_link_download):
     doc = Document.query.get(doc_id)
     if doc:
@@ -171,6 +175,19 @@ def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_
         doc.img_cloud_link = img_cloud_link
         doc.file_link_download = file_link_download
         doc.img_link_download = img_link_download
+        db.session.commit()
+
+
+def add_comment(content, user_id, document_id):
+    comment = Comment(content=content, user_id=user_id, document_id=document_id)
+    db.session.add(comment)
+    db.session.commit()
+
+
+def remove_comment(comment_id):
+    comment = Comment.query.get(comment_id)
+    if comment:
+        db.session.delete(comment)
         db.session.commit()
 
 

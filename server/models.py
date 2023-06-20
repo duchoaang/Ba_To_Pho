@@ -197,6 +197,12 @@ class Comment(BaseModel):
     def __str__(self):
         return self.content
 
+    def to_dict(self, fields=None):
+        result = super().to_dict(fields)
+        if 'user.username' in fields:
+            result['username'] = self.user.username
+        return result
+
 
 class Rate(BaseModel):
     number_star = Column(Integer, nullable=False)
