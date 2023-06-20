@@ -99,19 +99,6 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
         doc = Document(title=fields['title'], owner=fields['owner'], content=fields['description'],
                        user_id=fields['user_id'], document_type_id=fields['document_type_id'])
 
-        for cate in categories.values():
-            c = Category.query.get(cate)
-            if c:
-                doc.categories.append(c)
-        for key in keywords.values():
-            kw = get_keyword_by_name(key)
-            if kw:
-                doc.keywords.append(kw)
-            else:
-                add_keyword(key)
-                kw = get_keyword_by_name(key)
-                doc.keywords.append(kw)
-
         doc.captcha = "AFB2QD1"
         doc.gem_cost = 100
 
@@ -127,9 +114,37 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
         doc.cloudinary_image_public_id = cloudinary_image_public_id
         doc.cloudinary_image_secure_url = cloudinary_image_secure_url
 
+        for cate in categories.values():
+            c = Category.query.get(cate)
+            if c:
+                doc.categories.append(c)
+        for key in keywords.values():
+            kw = get_keyword_by_name(key)
+            if kw:
+                doc.keywords.append(kw)
+            else:
+                add_keyword(key)
+                kw = get_keyword_by_name(key)
+                doc.keywords.append(kw)
+
         db.session.add(doc)
         db.session.commit()
 
+
+def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_link_download):
+    doc = Document.query.get(doc_id)
+    if doc:
+        doc.cloud_link = cloud_link
+        doc.img_cloud_link = img_cloud_link
+        doc.file_link_download = file_link_download
+        doc.img_link_download = img_link_download
+        doc.updated_date = datetime.now()
+        db.session.commit()
+
+
+def get_document_by_id(doc_id):
+    doc = Document.query.get(doc_id)
+    return doc
 
 if __name__ == '__main__':
     with app.app_context():
@@ -137,7 +152,7 @@ if __name__ == '__main__':
         dt_id = DocumentType.query.first().id
         fields = {
             "title": "heheheheheheheh",
-            "owner": "Phtas",
+            "owner": "Phat",
             "description": "1234567890",
             "user_id": u_id,
             "document_type_id": dt_id

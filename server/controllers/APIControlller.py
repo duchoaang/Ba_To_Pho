@@ -1,3 +1,5 @@
+from urllib import request
+
 from flask import jsonify
 from server.dao import get_documents, get_categories
 from server.models import Status
@@ -8,10 +10,31 @@ from server.models import Status
 
 # "/documents" ['GET']
 def api_documents():
-    documents = get_documents(status=Status.WAITING)
-    documents_list = [doc.to_dict(fields=["id", "title", "owner", "img", "view_count", "captcha", "status"]) for doc in
-                      documents]
-    return jsonify(documents_list)
+    if request.method == 'POST':
+        category_ids = request.json("categories")
+        type_ids = request.json("type_ids")
+        title = request.json("title")
+        documents = get_documents(title=title, category_ids=category_ids.values(), type_ids=type_ids.values())
+        documents_list = [doc.to_dict(
+            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
+                    "username"
+                    "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc
+            in
+            documents]
+
+        return jsonify(documents_list)
+    else:
+        status = request.args.get('status')
+        documents = get_documents(status=status)
+        documents_list = [doc.to_dict(
+            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
+                    "username"
+                    "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc
+            in
+            documents]
+
+        return jsonify(documents_list)
+
 
 # "/categories" ['GET']
 def api_categories():
