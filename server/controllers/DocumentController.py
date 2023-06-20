@@ -137,5 +137,8 @@ def upload_dropbox():
 
 
 def test_duyet_bai():
+    print("\n===========")
     print(request.json)
+    print("===========\n")
     return jsonify({"ok": '200'})
+
