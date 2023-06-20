@@ -142,6 +142,7 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
 
         doc.cloudinary_image_public_id = cloudinary_image_public_id
         doc.cloudinary_image_secure_url = cloudinary_image_secure_url
+
         for cate in categories.values():
             c = Category.query.get(cate)
             if c:
@@ -157,11 +158,6 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
 
         db.session.add(doc)
         db.session.commit()
-
-
-def get_doc_by_cloudinary_url(cloudinary_secure_url):
-    doc = Document.query.filter(Document.cloudinary_secure_url.__eq__(cloudinary_secure_url))
-    return doc.first()
 
 
 def get_comment_by_doc(doc_id):
@@ -190,6 +186,13 @@ def remove_comment(comment_id):
         db.session.delete(comment)
         db.session.commit()
 
+        doc.updated_date = datetime.now()
+        db.session.commit()
+
+
+def get_document_by_id(doc_id):
+    doc = Document.query.get(doc_id)
+    return doc
 
 if __name__ == '__main__':
     with app.app_context():

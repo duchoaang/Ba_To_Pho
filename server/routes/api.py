@@ -10,3 +10,4 @@ api_bp.route('/types', methods=['GET'])(api_document_types)
 api_bp.route('/keywords', methods=['GET'])(api_keywords)
 
 api_bp.route('/comments/<document_id>', methods=['GET'])()
+

@@ -12,4 +12,11 @@ env
 .vscode
 
 # session
+server/flask_session
+
+# other environment files
+.idea
+.vscode
+
+# session
 flask_session
