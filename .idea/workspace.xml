@@ -7,7 +7,10 @@
     <list default="true" id="c2f3ac1d-edcf-465b-b515-bfec3191249a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/controllers/APIControlller.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/APIControlller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/UserController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/UserController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/dao.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/my_token.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/my_token.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/routes/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -153,16 +156,5 @@
       <updated>1686830607640</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/server/dao.py</url>
-          <line>19</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

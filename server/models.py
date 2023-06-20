@@ -130,6 +130,8 @@ class Document(BaseModel):
 
     def to_dict(self, fields=None):
         result = super().to_dict(fields)
+        if 'username' in fields:
+            result['username'] = self.user.name
         if 'categories' in fields:
             result['categories'] = [{'id': category.id, 'name': category.name} for category in self.categories]
         if 'keywords' in fields:

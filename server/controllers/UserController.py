@@ -117,7 +117,7 @@ def confirm_email(token):
 
     elapsed_time = data['elapsed_time']
     try:
-        email = my_token.confirm_token(token, expiration=elapsed_time+30)
+        email = my_token.confirm_token(token, expiration=elapsed_time+90)
     except:
         email = False
     if email is False:
