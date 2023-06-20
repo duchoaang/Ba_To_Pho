@@ -16,6 +16,13 @@ def add_user(fields):
     return user
 
 
+def add_user(fields):
+    user = User(username=fields['username'], password=fields['password'], email=fields['email'])
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+
 def get_documents(title=None, category_ids=None, type_ids=None, created_date=None, username=None, status=None):
     d = Document.query
     if status:
@@ -172,6 +179,7 @@ def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_
         doc.cloud_link = cloud_link
         doc.img_cloud_link = img_cloud_link
         doc.file_link_download = file_link_download
+        doc.updated_date
         doc.img_link_download = img_link_download
         db.session.commit()
 
@@ -188,13 +196,17 @@ def remove_comment(comment_id):
         db.session.delete(comment)
         db.session.commit()
 
-        doc.updated_date = datetime.now()
-        db.session.commit()
-
 
 def get_document_by_id(doc_id):
     doc = Document.query.get(doc_id)
     return doc
+
+
+def get_users():
+    users = User.query.filter(User.user_role.__eq__(UserRole.USER))
+    users = users.filter(User.is_active.__eq__(1))
+    return users.all()
+
 
 if __name__ == '__main__':
     with app.app_context():

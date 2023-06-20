@@ -130,6 +130,8 @@ class Document(BaseModel):
 
     def to_dict(self, fields=None):
         result = super().to_dict(fields)
+        if 'name' in fields:
+            result['name'] = self.user.name
         if 'categories' in fields:
             result['categories'] = [{'id': category.id, 'name': category.name} for category in self.categories]
         if 'keywords' in fields:
@@ -193,6 +195,7 @@ class Comment(BaseModel):
     created_date = Column(DateTime, default=datetime.now())
     user_id = Column(String(36), ForeignKey(User.id), nullable=False)
     document_id = Column(String(36), ForeignKey(Document.id), nullable=False)
+    is_active = Column(Boolean, default=True)
 
     def __str__(self):
         return self.content
