@@ -1,9 +1,8 @@
-
 import os
 
 import dropbox
 import requests
-from flask import request
+from flask import request, jsonify
 
 from server import dao, utils
 from server.dao import *
@@ -135,3 +134,8 @@ def upload_dropbox():
         print("Lỗi: " + str(e))
         return "fail"
     return "success"
+
+
+def test_duyet_bai():
+    print(request.json)
+    return jsonify({"ok": '200'})
