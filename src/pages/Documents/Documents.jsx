@@ -109,11 +109,12 @@ const Documents = () => {
     const [listCategories, setListCategories] = useState([]);
     const [listTypes, setListTypes] = useState([]);
     const [userChoice, setUserChoice] = useState([]);
-    console.log(listID)
+    console.log(listID);
     useEffect(() => {
-        setUserChoice(...userChoice, listID);
+        if (listID === '') return;
+        setUserChoice([...userChoice, listID]);
     }, [listID]);
-    console.log(userChoice.length);
+    console.log(userChoice);
 
     useEffect(() => {
         axios
@@ -175,17 +176,17 @@ const Documents = () => {
                                         {list.name}{' '}
                                     </li>
                                 ))}
-                                {showList &&
-                                    moreList.map((list) => (
-                                        <li key={list.id}>
-                                            <input
-                                                type="checkbox"
-                                                checked={listID === list.id}
-                                                onClick={() => setListID(list.id)}
-                                            />{' '}
-                                            {list.context}{' '}
-                                        </li>
-                                    ))}
+                                {/* {showList && */}
+                                {/*     moreList.map((list) => ( */}
+                                {/*         <li key={list.id}> */}
+                                {/*             <input */}
+                                {/*                 type="checkbox" */}
+                                {/*                 checked={listID === list.id} */}
+                                {/*                 onClick={() => setListID(list.id)} */}
+                                {/*             />{' '} */}
+                                {/*             {list.context}{' '} */}
+                                {/*         </li> */}
+                                {/*     ))} */}
                             </ul>
                             <h2
                                 onClick={() => setList(!showList)}
@@ -235,8 +236,8 @@ const Documents = () => {
                     <div className={cx('content__mid')}>
                         {listDocs.map(
                             (document, index) =>
-                                document.categories[0].id === listID &&
-                                typeID === document.document_type_id && (
+                                userChoice.every((v) => document.categories.map((cate) => cate.id).includes(v)) && (
+                                    // typeID === document.document_type_id && (
                                     <>
                                         <div className={cx('item')} key={index}>
                                             <div className={cx('content__left')}>

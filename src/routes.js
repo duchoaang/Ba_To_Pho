@@ -25,7 +25,7 @@ const routes = [
         component: Detail,
     },
     {
-        path: '/admin',
+        path: '/admin/duyet-bai',
         component: Admin,
         layout: Empty,
     },
