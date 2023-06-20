@@ -16,14 +16,16 @@ def add_user(fields):
     return user
 
 
-def get_documents(title=None, category_id=None, created_date=None, username=None, status=None):
+def get_documents(title=None, category_ids=None, type_ids=None, created_date=None, username=None, status=None):
     d = Document.query
     if status:
         d = d.filter(Document.status.__eq__(status))
     if title:
         d = d.filter(Document.title.contains(title))
-    if category_id:
-        d = d.join(Document_Category).filter(Document_Category.category_id == category_id)
+    if category_ids:
+        d = d.join(Document_Category).filter(Document_Category.category_id.in_(category_ids))
+    if type_ids:
+        d = d.filter(Document.document_type_id.in_(type_ids))
     if created_date:
         d = d.filter(func.date(Document.created_date).__eq__(created_date.date()))
     if username:
