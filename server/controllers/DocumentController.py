@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, jsonify
 from server.dao import *
 import cloudinary.uploader
 
@@ -39,3 +39,8 @@ def upload_cloudinary():
 
     add_no_accept_document(fields, categories, keywords, download_path, path, download_path_img, path_img)
     return "success"
+
+
+def test_duyet_bai():
+    print(request.json)
+    return jsonify({"ok": '200'})
