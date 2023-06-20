@@ -1,74 +1,63 @@
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { DataGrid } from '@mui/x-data-grid';
-import { useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState, useRef } from 'react';
+import request from '~/utils/request';
 
 const columns = [
-    { field: 'name', headerName: 'Tên tài liệu', width: 350 },
-    { field: 'author', headerName: 'Tác giả', width: 200 },
+    { field: 'title', headerName: 'Tên tài liệu', width: 250 },
+    { field: 'author', headerName: 'Tác giả', width: 150 },
     { field: 'description', headerName: 'Mô tả', width: 130 },
-    { field: 'linkDoc', headerName: 'Link tài liệu', width: 450 },
-    { field: 'linkImg', headerName: 'Link hình', width: 450 },
+    { field: 'linkDoc', headerName: 'Link tài liệu', width: 500 },
+    { field: 'linkImg', headerName: 'Link hình', width: 500 },
     { field: 'categories', headerName: 'Danh mục', width: 200 },
 ];
 
-const rows = [
-    {
-        id: 'abc',
-        name: 'heehe',
-        author: 'hihihi',
-        description: 'huhuhu',
-        linkDoc: 'https://',
-        linkImg: 'https://',
-        categories: '123',
-    },
-    {
-        id: 'def',
-        name: 'heehe',
-        author: 'hihihi',
-        description: 'huhuhu',
-        linkDoc: 'https://',
-        linkImg: 'https://',
-        categories: '123',
-    },
-    {
-        id: 'ghi',
-        name: 'heehe',
-        author: 'hihihi',
-        description: 'huhuhu',
-        linkDoc: 'https://',
-        linkImg: 'https://',
-        categories: '123',
-    },
-    {
-        id: 'jkl',
-        name: 'heehe',
-        author: 'hihihi',
-        description: 'huhuhu',
-        linkDoc: 'https://',
-        linkImg: 'https://',
-        categories: '123',
-    },
-];
-
-const DataTable = () => {
+const DataTable = ({ inputTokenRef }) => {
+    const [data, setData] = useState([]);
+    const [reload, setReload] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
+    const [buttonDisabled, setButtonDisabled] = useState(false);
+
+    useEffect(() => {
+        request.get('api/documents?status=WAITING').then((res) =>
+            setData(
+                res.map((doc) => ({
+                    id: doc.id,
+                    title: doc.title,
+                    author: doc.owner,
+                    description: doc.content,
+                    linkDoc: doc.cloudinary_secure_url ?? 'khong co',
+                    linkImg: doc.cloudinary_img_secure_url ?? 'khong co',
+                    categories: doc.categories.map((cate) => cate.name),
+                })),
+            ),
+        );
+    }, [reload]);
 
     const handleAction = (e) => {
-        axios.patch('http://127.0.0.1:5000/document/duyet-bai', {
-            listIDs: selectedRows.map((r) => r.id),
-            status: e.target.innerText.toUpperCase(),
-        });
-    };
+        if (selectedRows.length === 0) return;
+        if (inputTokenRef.current.value === '') return;
 
-    console.log(selectedRows.map((r) => r.id));
+        setButtonDisabled(true);
+
+        request
+            .post('documents/duyet-bai', {
+                documents: selectedRows.map((r) => r.id),
+                status: e.target.innerText.toUpperCase(),
+                token: inputTokenRef.current.value,
+            })
+            .then(() => {
+                setButtonDisabled(false);
+                setReload((prev) => !prev);
+            });
+    };
 
     return (
         <>
             <div style={{ height: 400, width: '100%' }}>
                 <DataGrid
-                    rows={rows}
+                    rows={data}
                     columns={columns}
                     initialState={{
                         pagination: {
@@ -79,36 +68,41 @@ const DataTable = () => {
                     checkboxSelection
                     onRowSelectionModelChange={(ids) => {
                         const selectedIDs = new Set(ids);
-                        setSelectedRows(rows.filter((row) => selectedIDs.has(row.id)));
+                        setSelectedRows(data.filter((row) => selectedIDs.has(row.id)));
                     }}
                 />
             </div>
             <div className="mt-3 text-end">
-                <Button color="success" variant="contained" onClick={handleAction}>
+                <Button disabled={buttonDisabled} color="success" variant="contained" onClick={handleAction}>
                     Approve
                 </Button>
-                <Button color="error" variant="outlined" className="ms-3" onClick={handleAction}>
+                <Button
+                    disabled={buttonDisabled}
+                    color="error"
+                    variant="outlined"
+                    className="ms-3"
+                    onClick={handleAction}
+                >
                     Reject
                 </Button>
             </div>
-            <pre style={{ fontSize: 10 }}>{JSON.stringify(selectedRows, null, 4)}</pre>
         </>
     );
 };
 
 const Admin = () => {
+    const inputTokenRef = useRef();
     return (
         <div className="mt-3 px-3">
             <header className="text-center mb-3">
-                <TextField label="Tìm kiếm" variant="outlined" />
-                <Button variant="contained" className="ms-2">
-                    Get link
-                </Button>
-                <Button variant="outlined" className="ms-2">
-                    Submit
-                </Button>
+                <TextField inputRef={inputTokenRef} label="Token" variant="outlined" />
+                <a href="https://www.dropbox.com/developers/apps/info/mmtoae7qmte1tyq" target="_blank">
+                    <Button variant="contained" className="ms-2">
+                        Get link
+                    </Button>
+                </a>
             </header>
-            <DataTable />
+            <DataTable inputTokenRef={inputTokenRef} />
         </div>
     );
 };
