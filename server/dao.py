@@ -16,14 +16,16 @@ def add_user(fields):
     return user
 
 
-def get_documents(title=None, category_id=None, created_date=None, username=None, status=None):
+def get_documents(title=None, category_ids=None, type_ids=None, created_date=None, username=None, status=None):
     d = Document.query
     if status:
         d = d.filter(Document.status.__eq__(status))
     if title:
         d = d.filter(Document.title.contains(title))
-    if category_id:
-        d = d.join(Document_Category).filter(Document_Category.category_id == category_id)
+    if category_ids:
+        d = d.join(Document_Category).filter(Document_Category.category_id.in_(category_ids))
+    if type_ids:
+        d = d.filter(Document.document_type_id.in_(type_ids))
     if created_date:
         d = d.filter(func.date(Document.created_date).__eq__(created_date.date()))
     if username:
@@ -142,6 +144,7 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
 
         doc.cloudinary_image_public_id = cloudinary_image_public_id
         doc.cloudinary_image_secure_url = cloudinary_image_secure_url
+
         for cate in categories.values():
             c = Category.query.get(cate)
             if c:
@@ -159,9 +162,8 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
         db.session.commit()
 
 
-def get_doc_by_cloudinary_url(cloudinary_secure_url):
-    doc = Document.query.filter(Document.cloudinary_secure_url.__eq__(cloudinary_secure_url))
-    return doc.first()
+def get_comment_by_doc(doc_id):
+    return Comment.query.filter(Comment.document_id.__eq__(doc_id)).all()
 
 
 def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_link_download):
@@ -173,6 +175,26 @@ def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_
         doc.img_link_download = img_link_download
         db.session.commit()
 
+
+def add_comment(content, user_id, document_id):
+    comment = Comment(content=content, user_id=user_id, document_id=document_id)
+    db.session.add(comment)
+    db.session.commit()
+
+
+def remove_comment(comment_id):
+    comment = Comment.query.get(comment_id)
+    if comment:
+        db.session.delete(comment)
+        db.session.commit()
+
+        doc.updated_date = datetime.now()
+        db.session.commit()
+
+
+def get_document_by_id(doc_id):
+    doc = Document.query.get(doc_id)
+    return doc
 
 if __name__ == '__main__':
     with app.app_context():

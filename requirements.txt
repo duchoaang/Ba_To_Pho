@@ -32,8 +32,3 @@ urllib3==1.26.13
 Werkzeug==2.2.2
 WTForms==3.0.1
 zipp==3.11.0
-
-pip~=21.3.1
-wheel~=0.37.1
-setuptools~=60.2.0
-dropbox~=11.36.2

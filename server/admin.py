@@ -100,6 +100,7 @@ class DocumentModelView(AdminModelView):
                       'keywords']
     column_list = ['title', 'owner', 'content', 'view_count', 'gem_cost', 'discount', 'status', 'user', 'categories',
                    'keywords']
+    column_list = ['title', 'owner', 'content', 'view_count', 'gem_cost', 'discount', 'status', 'user', 'categories', 'keywords']
 
 
 class RuleModelView(AdminModelView):
