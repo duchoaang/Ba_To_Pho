@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Detail.module.scss';
 
 import Button from '@/Button';
+import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -123,6 +124,11 @@ const CommentHeader = () => {
 };
 
 const Detail = () => {
+    const [data, setData] = useState(null);
+    const location = useLocation();
+    useEffect(() => {
+        console.log(location.pathname.split('/')[2]);
+    }, [location]);
     return (
         <div className="container">
             <div className="row">
@@ -136,10 +142,7 @@ const Detail = () => {
                             <div className={cx('doc-details', 'col-md-8')}>
                                 <div className="doc-details-title">
                                     <h4>
-                                        <b>
-                                            Quản lý khách sạn giao diện đẹp full code C# Winform + Csdl Sqlserver{' '}
-                                            <span className="text-success text-opacity-75">[Mã code 8321]</span>
-                                        </b>
+                                        <b>Quản lý khách sạn giao diện đẹp full code C# Winform + Csdl Sqlserver</b>
                                     </h4>
                                     <div className="d-flex justify-content-between">
                                         <div></div>
