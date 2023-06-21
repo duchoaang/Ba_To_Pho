@@ -1,7 +1,7 @@
-from urllib import request
+from flask import jsonify, request
 
-from flask import jsonify
-from server.dao import get_documents, get_categories
+from server import app
+from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users
 from server.models import Status
 
 
@@ -17,11 +17,9 @@ def api_documents():
         documents = get_documents(title=title, category_ids=category_ids.values(), type_ids=type_ids.values())
         documents_list = [doc.to_dict(
             fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
-                    "username"
+                    "name"
                     "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc
-            in
-            documents]
-
+            in documents]
         return jsonify(documents_list)
     else:
         status = request.args.get('status')
@@ -29,7 +27,8 @@ def api_documents():
         documents_list = [doc.to_dict(
             fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
                     "username", "cloudinary_image_secure_url", "cloudinary_secure_url"
-                    "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc
+                                                               "document_type_id", "document_type", "keywords",
+                    "categories", "average_rate", "num_rate"]) for doc
             in
             documents]
 
@@ -39,5 +38,36 @@ def api_documents():
 # "/categories" ['GET']
 def api_categories():
     categories = get_categories()
-    categories_list = [cate.to_dict(fields=["name", "category_parent_id"]) for cate in categories]
+    categories_list = [cate.to_dict(fields=["id", "name", "category_parent_id"]) for cate in categories]
     return jsonify(categories_list)
+
+
+def api_document_types():
+    types = get_document_types()
+    type_list = [t.to_dict(fields=["id", "name"]) for t in types]
+    return jsonify(type_list)
+
+
+def api_keywords():
+    keywords = get_keywords()
+    kw_list = [k.to_dict(fields=["id", "name"]) for k in keywords]
+    return jsonify(kw_list)
+
+
+def api_comments(document_id):
+    comments = get_comment_by_doc(document_id)
+    comment_list = [c.to_dict(fields=["id", "content", "user.username"]) for c in comments]
+    print(comment_list)
+    return jsonify(comment_list)
+
+
+def api_users():
+    users = get_users()
+    user_list = [u.to_dict(
+        fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media",
+                "address", "gem", "warn_time"]) for u in users]
+    return jsonify(user_list)
+
+# if __name__ == '__main__':
+#     with app.app_context():
+#         api_comments("08cadefc-e544-46fe-92df-3eeb414ac7a1")

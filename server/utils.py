@@ -3,6 +3,7 @@ import dropbox
 from dropbox.exceptions import AuthError
 from dropbox.oauth import DropboxOAuth2FlowNoRedirect
 from server import app, db, APP_KEY, APP_SECRET
+import unicodedata
 
 
 def hash_text(plain_text):
@@ -29,9 +30,6 @@ def get_dropbox_client():
         print("Successfully set up client!")
 
     return dbx
-
-
-import unicodedata
 
 
 def strip_accents(s):

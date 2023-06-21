@@ -16,14 +16,23 @@ def add_user(fields):
     return user
 
 
-def get_documents(title=None, category_id=None, created_date=None, username=None, status=None):
+def add_user(fields):
+    user = User(username=fields['username'], password=fields['password'], email=fields['email'])
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+
+def get_documents(title=None, category_ids=None, type_ids=None, created_date=None, username=None, status=None):
     d = Document.query
     if status:
         d = d.filter(Document.status.__eq__(status))
     if title:
         d = d.filter(Document.title.contains(title))
-    if category_id:
-        d = d.join(Document_Category).filter(Document_Category.category_id == category_id)
+    if category_ids:
+        d = d.join(Document_Category).filter(Document_Category.category_id.in_(category_ids))
+    if type_ids:
+        d = d.filter(Document.document_type_id.in_(type_ids))
     if created_date:
         d = d.filter(func.date(Document.created_date).__eq__(created_date.date()))
     if username:
@@ -64,6 +73,23 @@ def get_user_by_id(user_id):
     return u
 
 
+def send_notification(user_id, content):
+    noti = Notification(content=content, user_id=user_id)
+    db.session.add(noti)
+    db.session.commit()
+
+
+def warn_user(user_id):
+    u = User.query.get(user_id)
+    if u:
+        u.warn_time += 1
+        if u.warn_time >= 3:
+            u.is_active = False
+            send_notification(user_id, "Bạn đã bị khóa tài khoản vì đã vi phạm 3 lần")
+        db.session.add(u)
+        db.session.commit()
+
+
 def check_login(username, password, user_role=UserRole.USER):
     if username and password:
         password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
@@ -80,6 +106,18 @@ def get_categories(name=None, category_parent_id=None):
     if category_parent_id:
         c = c.filter(Category.category_parent_id.__eq__(category_parent_id))
     return c.all()
+
+
+def get_document_types():
+    return DocumentType.query.all()
+
+
+def get_keywords(size=None):
+    keywords = Keyword.query.join(Keyword.documents).group_by(Keyword.id).order_by(
+        func.count(Document.id).desc())
+    if size:
+        keywords = keywords.limit(size)
+    return keywords.all()
 
 
 def get_keyword_by_name(name):
@@ -131,6 +169,10 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
         db.session.commit()
 
 
+def get_comment_by_doc(doc_id):
+    return Comment.query.filter(Comment.document_id.__eq__(doc_id)).all()
+
+
 def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_link_download):
     doc = Document.query.get(doc_id)
     if doc:
@@ -142,9 +184,28 @@ def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_
         db.session.commit()
 
 
+def add_comment(content, user_id, document_id):
+    comment = Comment(content=content, user_id=user_id, document_id=document_id)
+    db.session.add(comment)
+    db.session.commit()
+
+
+def remove_comment(comment_id):
+    comment = Comment.query.get(comment_id)
+    if comment:
+        db.session.delete(comment)
+        db.session.commit()
+
+
 def get_document_by_id(doc_id):
     doc = Document.query.get(doc_id)
     return doc
+
+def get_users():
+    users = User.query.filter(User.user_role.__eq__(UserRole.USER))
+    users = users.filter(User.is_active.__eq__(1))
+    return users.all()
+
 
 if __name__ == '__main__':
     with app.app_context():

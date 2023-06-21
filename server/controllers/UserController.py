@@ -1,5 +1,5 @@
 import hashlib
-
+import time
 from flask import request, url_for, render_template, jsonify, session, flash
 from flask_login import login_user, current_user
 from sqlalchemy.exc import IntegrityError
@@ -15,44 +15,56 @@ from server.my_token import generate_confirmation_token
 
 # "/register" ['POST']
 def user_register():
-    email = request.json.get('email')
-    username = request.json.get('name')
-    u = get_existed_user(username, email)
-    if u:
-        if u.email == email:
-            msg = f"Email {email} đã được sử dụng. Vui lòng chọn email khác."
-        else:
-            msg = f'Username {username} đã được sử dụng. Vui lòng chọn username khác.'
+    try:
+        email = request.json.get('email')
+        username = request.json.get('name')
+        u = get_existed_user(username, email)
+        if u:
+            if u.email == email:
+                msg = f"Email {email} đã được sử dụng. Vui lòng chọn email khác."
+            else:
+                msg = f'Username {username} đã được sử dụng. Vui lòng chọn username khác.'
+            response_data = {
+                'message': msg,
+                'status': 404
+            }
+            return jsonify(response_data), 404
+
+        fields = {'email': email, 'username': username}
+        password = request.json.get('password')
+        password = hashlib.md5(password.encode()).hexdigest()
+        fields['password'] = password
+
+        token = generate_confirmation_token(email)
+        start_time = time.time()
+        confirm_url = url_for('user_bp.confirm_email', token=token, _external=True)
+        html = render_template('confirm.html', confirm_url=confirm_url)
+        subject = "Vui lòng xác thực email"
+        send_email(email, subject, html)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+
+        msg = f"Đã gửi link xác nhận đến {email}."
         response_data = {
             'message': msg,
-            'status': 404
+            'status': 200
         }
-        return jsonify(response_data), 404
-
-    fields = {'email': email, 'username': username}
-    password = request.json.get('password')
-    password = hashlib.md5(password.encode()).hexdigest()
-    fields['password'] = password
-
-    token = generate_confirmation_token(email)
-    confirm_url = url_for('user_bp.confirm_email', token=token, _external=True)
-    html = render_template('confirm.html', confirm_url=confirm_url)
-    subject = "Vui lòng xác thực email"
-    send_email(email, subject, html)
-
-    msg = f"Đã gửi link xác nhận đến {email}."
-    response_data = {
-        'message': msg,
-        'status': 200
-    }
-    key = app.config['USER_TEMP_KEY']
-    session[key] = {
-        "username": username,
-        "password": password,
-        "email": email,
-        "is_confirm": False
-    }
-    return jsonify(response_data), 200
+        key = app.config['USER_TEMP_KEY']
+        session[key] = {
+            "username": username,
+            "password": password,
+            "email": email,
+            "is_confirm": False,
+            "elapsed_time": elapsed_time,
+        }
+        return jsonify(response_data), 200
+    except Exception as e:
+        response_data = {
+            'message': "Lỗi server",
+            'status': 505
+        }
+        print(e)
+        return jsonify(response_data), 505
 
 
 # "/confirm/<token>" ['GET']
@@ -65,9 +77,11 @@ def confirm_email(token):
             'status': 404
         }
         return jsonify(response_data), 404
+    data = session[key]
 
+    elapsed_time = data['elapsed_time']
     try:
-        email = my_token.confirm_token(token)
+        email = my_token.confirm_token(token, expiration=elapsed_time+90)
     except:
         email = False
     if email is False:
@@ -78,7 +92,6 @@ def confirm_email(token):
         }
         return jsonify(response_data), 404
 
-    data = session[key]
     mail = data['email']
 
     u = get_user_by_email(email)
