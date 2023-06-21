@@ -2,39 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6416d12c-eec0-4579-b9bf-92e134178fd1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/controllers/CommentController.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/routes/comment.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/templates/admin/model/list.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/templates/admin/notification.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/utils/convert_files.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.idea/flask-server.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/APIControlller.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/APIControlller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/AdminController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/AdminController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/controllers/DocumentController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/DocumentController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/UserController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/UserController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/dao.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/flask_session/2029240f6d1128be89ddc32729463129" beforeDir="false" afterPath="$PROJECT_DIR$/server/flask_session/2029240f6d1128be89ddc32729463129" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/flask_session/b3cf11b0c5e102f7cd86a4bfcc1286db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/my_token.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/my_token.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routes/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routes/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/routes/document.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/document.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/templates/confirm.html" beforeDir="false" afterPath="$PROJECT_DIR$/server/templates/confirm.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

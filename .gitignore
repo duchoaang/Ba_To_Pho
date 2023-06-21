@@ -17,6 +17,7 @@ server/flask_session
 # other environment files
 .idea
 .vscode
+.idea/workspace.xml
 
 # session
 flask_session
