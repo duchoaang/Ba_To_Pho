@@ -52,10 +52,10 @@ def upload_dropbox():
     # access_token = input("Nhap access token: ").strip()
     # doc_id = input("Document ID: ")
 
-    documents = request.json("documents")
-    access_token = request.json("token")
+    documents = request.json.get("documents")
+    access_token = request.json.get("token")
     try:
-        for document in documents.values():
+        for document in documents:
             doc = dao.get_document_by_id(document)
             pdf_url = doc.cloudinary_secure_url
             with open("temp.pdf", "wb") as f:
@@ -136,6 +136,6 @@ def upload_dropbox():
     return "success"
 
 
-def test_duyet_bai():
-    print(request.json)
-    return jsonify({"ok": '200'})
+# def test_duyet_bai():
+#     print(request.json)
+#     return jsonify({"ok": '200'})

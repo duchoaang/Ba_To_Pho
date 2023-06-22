@@ -10,27 +10,15 @@ from server.models import Status
 
 # "/documents" ['GET']
 def api_documents():
-    if request.method == 'POST':
-        category_ids = request.json("categories")
-        type_ids = request.json("type_ids")
-        title = request.json("title")
-        documents = get_documents(title=title, category_ids=category_ids.values(), type_ids=type_ids.values())
-        documents_list = [doc.to_dict(
-            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount", "name"
-                    "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc
-            in
-            documents]
+    status = request.args.get('status')
+    documents = get_documents(status=status)
+    documents_list = [doc.to_dict(
+        fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
+                "name"
+                "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc in
+        documents]
 
-        return jsonify(documents_list)
-    else:
-        status = request.args.get('status')
-        documents = get_documents(status=status)
-        documents_list = [doc.to_dict(
-            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount", "name"
-                    "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc in
-            documents]
-
-        return jsonify(documents_list)
+    return jsonify(documents_list)
 
 
 # "/categories" ['GET']
@@ -57,12 +45,6 @@ def api_comments(document_id):
     comment_list = [c.to_dict(fields=["id", "content", "user.username"]) for c in comments]
     print(comment_list)
     return jsonify(comment_list)
-
-
-def api_users():
-    users = get_users()
-    user_list = [u.to_dict(fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media", "address", "gem", "warn_time"]) for u in users]
-    return jsonify(user_list)
 
 
 # if __name__ == '__main__':

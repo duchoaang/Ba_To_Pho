@@ -4,11 +4,12 @@ from flask import request, url_for, render_template, jsonify, session, flash
 from flask_login import login_user, current_user
 from sqlalchemy.exc import IntegrityError
 
-from server import my_token, app
+from server import my_token, app, dao
 from server.dao import get_existed_user, add_user, get_user_by_email, confirm_user, check_login
 from server.models import UserRole
 from server.sendmail import send_email
 from server.my_token import generate_confirmation_token
+
 
 # -------------- "/user" ------------------
 
@@ -81,11 +82,10 @@ def confirm_email(token):
 
     elapsed_time = data['elapsed_time']
     try:
-        email = my_token.confirm_token(token, expiration=elapsed_time+90)
+        email = my_token.confirm_token(token, expiration=elapsed_time + 90)
     except:
         email = False
     if email is False:
-
         response_data = {
             'message': "Link xác thực đã hết hạn",
             'status': 404
@@ -194,6 +194,8 @@ def user_login():
             login_user(user=user)
             response_data = {
                 'message': "Success",
+                'id': current_user.id,
+                'name': current_user.name,
                 'username': current_user.username,
                 'avatar': current_user.avatar,
                 'status': 200
@@ -207,4 +209,9 @@ def user_login():
             return jsonify(response_data), 404
 
 
-
+def get_user_info(id):
+    user = dao.get_user_by_id(id)
+    user_info = user.to_dict(
+        fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media",
+                "address", "gem", "warn_time"])
+    return jsonify(user_info)

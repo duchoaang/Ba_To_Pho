@@ -16,13 +16,6 @@ def add_user(fields):
     return user
 
 
-def add_user(fields):
-    user = User(username=fields['username'], password=fields['password'], email=fields['email'])
-    db.session.add(user)
-    db.session.commit()
-    return user
-
-
 def get_documents(title=None, category_ids=None, type_ids=None, created_date=None, username=None, status=None):
     d = Document.query
     if status:
@@ -200,6 +193,27 @@ def remove_comment(comment_id):
 def get_document_by_id(doc_id):
     doc = Document.query.get(doc_id)
     return doc
+
+
+def rate_document(doc_id, number_star, user_id):
+    rate = Rate.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
+    if rate:
+        rate.number_star = number_star
+    else:
+        rate = Rate(document_id=doc_id, number_star=number_star, user_id=user_id)
+    db.session.add(rate)
+    db.session.commit()
+
+
+def favour(doc_id, user_id):
+    fav = FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
+    if fav:
+        return False
+    else:
+        fav = FavourList(document_id=doc_id, user_id=user_id)
+    db.session.add(fav)
+    db.session.commit()
+    return True
 
 
 def get_users():
