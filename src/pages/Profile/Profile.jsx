@@ -5,6 +5,7 @@ const cx = classNames.bind(styles);
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
 import { Link } from 'react-router-dom';
 import {
@@ -29,8 +30,6 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 
-
-
 const Profile = () => {
     const { id } = useParams();
     const [value, setValue] = useState(0);
@@ -39,29 +38,28 @@ const Profile = () => {
         setValue(newValue);
     };
     useEffect(() => {
-        const decodeId = decodeURIComponent(id)
+        const decodeId = decodeURIComponent(id);
         console.log(decodeId);
         axios
-        .post(`http://127.0.0.1:5000/profile/${decodeId}`)
-        .then((response) => {
-            // console.log(response.data);
-            setInfoUser({
-                id: response.data.id,
-                username: response.data.username,
-                avatar: response.data.avatar,
-
+            .get(`http://127.0.0.1:5000/profile/${decodeId}`)
+            .then((response) => {
+                console.log(response.data); 
+                setInfoUser({
+                    id: response.data.id,
+                    username: response.data.username,
+                    avatar: response.data.avatar,
+                    email:response.data.email,
+                });
+                console.log(setInfoUser);
+            })
+            .catch((error) => {
+                console.log('Ko gui dc');
             });
-            console.log(setInfoUser);
-        })
-        .catch((error) => {
-            console.log("Ko gui dc");
-        });
         // Sử dụng giá trị `decodedId` trong ứng dụng của bạn
-      }, [id]);
-    
+    }, [id]);
+
     return (
         <>
-           
             <section style={{ backgroundColor: '#eee' }}>
                 <MDBContainer className="py-5">
                     <MDBRow>
@@ -71,7 +69,7 @@ const Profile = () => {
                                     <a href="#">Home</a>
                                 </MDBBreadcrumbItem>
                                 <MDBBreadcrumbItem>
-                                    <a href="#">User</a>
+                                    <a href="#">{infoUser.username}</a>
                                 </MDBBreadcrumbItem>
                                 <MDBBreadcrumbItem active>User Profile</MDBBreadcrumbItem>
                             </MDBBreadcrumb>
@@ -89,13 +87,10 @@ const Profile = () => {
                                         style={{ width: '150px' }}
                                         fluid
                                     />
-                                    <p className="text-muted mb-1">User</p>
-                                    <p className="text-muted mb-4">Go Vap HCm</p>
+                                    <p className="text-muted mb-1">{infoUser.username}</p>
+                                    <p className="text-muted mb-4">Email: {infoUser.email}</p>
                                     <div className="d-flex justify-content-center mb-2">
-                                        <button>Chỉnh sửa thông tin</button>
-                                        {/* <MDBBtn outline className="ms-1">
-                                            Message
-                                        </MDBBtn> */}
+                                    <Button variant="contained" style={{fontSize:'13px', marginTop:'-10px'}}>Chỉnh sửa thông tin</Button>
                                     </div>
                                 </MDBCardBody>
                             </MDBCard>
@@ -110,10 +105,25 @@ const Profile = () => {
                                     autoComplete="off"
                                 >
                                     <div className={cx('changeName')}>
-                                    <h1>Ten nguoi dung</h1>
-                                    <TextField id="outlined-basic" label="Tên" variant="outlined" />
+                                        <h1>Ten nguoi dung</h1>
+                                        <TextField style={{width:'96%'}} size="small" id="outlined-basic" label="Tên" variant="outlined" />
                                     </div>
-                                   
+                                    <div className={cx('changeName')}>
+                                        <h1>Ten nguoi dung</h1>
+                                        <TextField style={{width:'96%'}} size="small" id="outlined-basic" label="Tên" variant="outlined" />
+                                    </div>
+                                    <div className={cx('changeName')}>
+                                        <h1>Ten nguoi dung</h1>
+                                        <TextField style={{width:'96%'}} size="small" id="outlined-basic" label="Tên" variant="outlined" />
+                                    </div>
+                                    <div className={cx('changeName')}>
+                                        <h1>Ten nguoi dung</h1>
+                                        <TextField style={{width:'96%'}} size="small" id="outlined-basic" label="Tên" variant="outlined" />
+                                    </div>
+                                    <div className={cx('changeName')}>
+                                        <h1>Ten nguoi dung</h1>
+                                        <TextField style={{width:'96%'}} size="small" id="outlined-basic" label="Tên" variant="outlined" />
+                                    </div>  
                                 </Box>
                             </MDBCard>
                         </MDBCol>
@@ -133,7 +143,14 @@ const Profile = () => {
                                     </Tabs>
                                 </Box>
                             </div>
-                            <input className={cx('search')} type="text" placeholder="Tìm kiếm tài liệu của bạn..." />
+                            <div className={cx('searchParent')}>
+                            <span className={cx("iconSearch",'material-icons')}>search</span>
+                                <input
+                                    className={cx('search')}
+                                    type="text"
+                                    placeholder="Tìm kiếm tài liệu của bạn..."
+                                />
+                            </div>
                         </MDBCol>
                     </MDBRow>
                 </MDBContainer>
