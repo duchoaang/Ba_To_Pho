@@ -134,16 +134,3 @@ def upload_dropbox():
         return "fail"
     return "success"
 
-
-<<<<<<< HEAD
-# def test_duyet_bai():
-#     print(request.json)
-#     return jsonify({"ok": '200'})
-=======
-def test_duyet_bai():
-    print("\n===========")
-    print(request.json)
-    print("===========\n")
-    return jsonify({"ok": '200'})
-
->>>>>>> 1347ce722f40725c531dec7d0afce4d445d9901c
