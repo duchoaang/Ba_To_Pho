@@ -9,13 +9,18 @@
     width: 100%;
     background-color: black;
     max-height: 200px;
-    overflow-y: scroll !important;
+    overflow-y: auto;
     position: absolute;
     z-index: 1;
-    div{
-        margin-top:10px;
+    display: flex;
+    flex-direction: column;
+    a{
+        padding:10px;
         font-weight: 600;
         color:white;
         font-size:13px;
     }
+}
+.result{
+   
 }

@@ -8,108 +8,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 
-
-const lists = [
-    {
-        id: 1,
-        context: 'Khoa học',
-    },
-    {
-        id: 2,
-        context: 'Ngoại ngữ',
-    },
-    {
-        id: 3,
-        context: 'Lịch sử',
-    },
-];
-const moreList = [
-    {
-        id: 4,
-        context: 'Hóa học',
-    },
-    {
-        id: 5,
-        context: 'Vật lý',
-    },
-    {
-        id: 6,
-        context: 'Tin học',
-    },
-];
-const types = [
-    {
-        id: 1,
-        context: 'PPT',
-    },
-    {
-        id: 2,
-        context: 'PDF',
-    },
-    {
-        id: 3,
-        context: 'Word',
-    },
-];
-const documents = [
-    {
-        id: 1,
-        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
-        context:
-            'Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc ',
-        listID: 1,
-        typeID: 1,
-    },
-    {
-        id: 2,
-        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
-        context:
-            'Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu ',
-        listID: 2,
-        typeID: 2,
-    },
-    {
-        id: 3,
-        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
-        context:
-            'Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su ',
-        listID: 3,
-        typeID: 3,
-    },
-    {
-        id: 4,
-        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
-        context:
-            'Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su ',
-        listID: 3,
-        typeID: 3,
-    },
-    {
-        id: 5,
-        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
-        context:
-            'Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su ',
-        listID: 3,
-        typeID: 3,
-    },
-    {
-        id: 6,
-        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
-        context:
-            'Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su ',
-        listID: 3,
-        typeID: 3,
-    },
-];
 
 const PAGE_SIZE = 1;
 
 const handlePageClick = () => {};
 const Documents = () => {
+    
     const [listID, setListID] = useState('');
-    const [typeID, setTypeID] = useState('8586a786-2c1d-41e1-b278-13653c29ba4b');
+    const [typeID, setTypeID] = useState('');
     const [showList, setShowList] = useState(false);
     const [listDocs, setListDocs] = useState([]);
     const [listCategories, setListCategories] = useState([]);
@@ -146,7 +55,7 @@ const Documents = () => {
             .get('http://127.0.0.1:5000/api/types')
             .then((response) => {
                 setListTypes(response.data);
-                // console.log(response.data);
+                setTypeID(response.data[0].id);
             })
             .catch((error) => {
                 console.log('that bai');
@@ -155,7 +64,7 @@ const Documents = () => {
             .get('http://127.0.0.1:5000/api/documents')
             .then((response) => {
                 setListDocs(response.data);
-                // console.log(response.data);
+                
             })
             .catch((error) => {
                 console.log('that bai');
@@ -261,7 +170,7 @@ const Documents = () => {
                                             </div>
                                             <div className={cx('content__right')}>
                                                 <div className={cx('content__right--title')}>
-                                                    <h1 style={{ color: '#3379b5' }}>{document.content}</h1>
+                                                    <Link to="/Documents/1"><h1 style={{ color: '#3379b5' }}>{document.content}</h1></Link>
                                                 </div>
                                                 <div className={cx('content__right--main')}>
                                                     <h1> {document.title}</h1>
