@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="c2f3ac1d-edcf-465b-b515-bfec3191249a" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/server/controllers/SiteController.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/routes/site.py" afterDir="false" />
@@ -16,6 +14,11 @@
       <change beforePath="$PROJECT_DIR$/server/image.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/server/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/routes/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/api.py" afterDir="false" />
+=======
+    <list default="true" id="6416d12c-eec0-4579-b9bf-92e134178fd1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/controllers/DocumentController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/DocumentController.py" afterDir="false" />
+>>>>>>> 1347ce722f40725c531dec7d0afce4d445d9901c
       <change beforePath="$PROJECT_DIR$/server/routes/document.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/document.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,62 +26,27 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="HTML File" />
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2RF0dKlmk0sTISrVzs1PgXTZike" />
+  <component name="ProjectId" id="2RIGLHzFrkulPzL4YKlchu7cgj3" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/PersonalFolder/Documents/temp/Ba_To_Pho&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/batopho/Backend/Ba_To_Pho&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\PersonalFolder\Documents\New folder\Ba_To_Pho\server" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Python.index">
-    <configuration name="APIControlller" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Ba_To_Pho" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server/controllers" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/server/controllers/APIControlller.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.models">
     <configuration name="dao" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Ba_To_Pho" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -142,26 +110,31 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.dao" />
+      <item itemvalue="Python.models" />
+      <item itemvalue="Python.index" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.index" />
         <item itemvalue="Python.models" />
         <item itemvalue="Python.dao" />
-        <item itemvalue="Python.APIControlller" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="c2f3ac1d-edcf-465b-b515-bfec3191249a" name="Changes" comment="" />
-      <created>1686830607640</created>
+      <changelist id="6416d12c-eec0-4579-b9bf-92e134178fd1" name="Changes" comment="" />
+      <created>1686930126794</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1686830607640</updated>
+      <updated>1686930126794</updated>
     </task>
     <servers />
   </component>
+<<<<<<< HEAD
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -177,5 +150,17 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+=======
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+>>>>>>> 1347ce722f40725c531dec7d0afce4d445d9901c
   </component>
 </project>

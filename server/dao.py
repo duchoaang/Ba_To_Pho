@@ -172,8 +172,8 @@ def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_
         doc.cloud_link = cloud_link
         doc.img_cloud_link = img_cloud_link
         doc.file_link_download = file_link_download
-        doc.updated_date
         doc.img_link_download = img_link_download
+        doc.updated_date = datetime.now()
         db.session.commit()
 
 
@@ -193,7 +193,6 @@ def remove_comment(comment_id):
 def get_document_by_id(doc_id):
     doc = Document.query.get(doc_id)
     return doc
-
 
 def rate_document(doc_id, number_star, user_id):
     rate = Rate.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
