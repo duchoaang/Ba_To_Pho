@@ -17,3 +17,11 @@ def favour():
     user_id = requests.json.get('user_id')
     dao.favour(document_id, user_id)
     return jsonify({"status": 200})
+
+
+def get_user_info(id):
+    user = dao.get_user_by_id(id)
+    user_info = user.to_dict(
+        fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media",
+                "address", "gem", "warn_time"])
+    return jsonify(user_info)

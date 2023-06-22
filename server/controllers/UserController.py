@@ -186,7 +186,7 @@ def resend_confirmation():
 # "/login" ['POST']
 def user_login():
     if request.method == 'POST':
-        username = request.json.get('name')
+        username = request.json.get('username')
         password = request.json.get('password')
 
         user = check_login(username=username, password=password)
@@ -207,11 +207,3 @@ def user_login():
                 'status': 404
             }
             return jsonify(response_data), 404
-
-
-def get_user_info(id):
-    user = dao.get_user_by_id(id)
-    user_info = user.to_dict(
-        fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media",
-                "address", "gem", "warn_time"])
-    return jsonify(user_info)
