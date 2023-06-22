@@ -298,25 +298,25 @@ const Header = () => {
                     <p className="mt-3">hoặc</p>
                     <form onSubmit={handleSubmitLogin}>
                         <div className="mb-3 text-start">
-                            <label for="login-email" class="form-label">
+                            <label htmlFor="login-email" className="form-label">
                                 Tên người dùng hoặc email
                             </label>
                             <input
                                 onChange={(e) => setUserName(e.target.value)}
                                 type="text"
-                                class="form-control"
+                                className="form-control"
                                 id="login-email"
                                 placeholder="Tên tài khoản..."
                             />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="login-password" className="form-label">
                                 Mật khẩu
                             </label>
                             <input
                                 onChange={(e) => setUserPassword(e.target.value)}
                                 type="password"
-                                class="form-control"
+                                className="form-control"
                                 id="login-password"
                                 placeholder="Mật khẩu..."
                             />
@@ -357,48 +357,48 @@ const Header = () => {
                     )}
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3 text-start">
-                            <label for="login-email" class="form-label">
+                            <label htmlFor="login-email" className="form-label">
                                 Tên người dùng của bạn
                             </label>
                             <input
                                 type="text"
                                 onChange={(e) => setUserName(e.target.value)}
-                                class="form-control"
+                                className="form-control"
                                 id="login-email"
                                 placeholder="username"
                             />
                         </div>
                         <div className="mb-3 text-start">
-                            <label for="login-email" class="form-label">
+                            <label htmlFor="login-email" className="form-label">
                                 Email của bạn
                             </label>
                             <input
                                 type="email"
                                 onChange={(e) => setUserEmail(e.target.value)}
-                                class="form-control"
+                                className="form-control"
                                 id="login-email"
                                 placeholder="name@example.com"
                             />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="login-password" className="form-label">
                                 Mật khẩu
                             </label>
                             <input
                                 onChange={(e) => setUserPassword(e.target.value)}
                                 type="password"
-                                class="form-control"
+                                className="form-control"
                                 id="login-password"
                             />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="login-password" className="form-label">
                                 Xác nhận mật khẩu
                             </label>
                             <input
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 type="password"
-                                class="form-control"
+                                className="form-control"
                                 id="login-password"
                             />
                         </div>
@@ -462,7 +462,7 @@ const Header = () => {
                             search
                         </span>
                     </div>
-                
+
                     <button className="btn"></button>
                 </div>
                 <div className={cx('actions')}>

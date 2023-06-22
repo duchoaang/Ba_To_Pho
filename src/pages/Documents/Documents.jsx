@@ -12,6 +12,99 @@ import { Link } from 'react-router-dom';
 
 
 
+const lists = [
+    {
+        id: 1,
+        context: 'Khoa học',
+    },
+    {
+        id: 2,
+        context: 'Ngoại ngữ',
+    },
+    {
+        id: 3,
+        context: 'Lịch sử',
+    },
+];
+const moreList = [
+    {
+        id: 4,
+        context: 'Hóa học',
+    },
+    {
+        id: 5,
+        context: 'Vật lý',
+    },
+    {
+        id: 6,
+        context: 'Tin học',
+    },
+];
+const types = [
+    {
+        id: 1,
+        context: 'PPT',
+    },
+    {
+        id: 2,
+        context: 'PDF',
+    },
+    {
+        id: 3,
+        context: 'Word',
+    },
+];
+const documents = [
+    {
+        id: 1,
+        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
+        context:
+            'Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc Khoa hoc ',
+        listID: 1,
+        typeID: 1,
+    },
+    {
+        id: 2,
+        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
+        context:
+            'Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu Ngoai ngu ',
+        listID: 2,
+        typeID: 2,
+    },
+    {
+        id: 3,
+        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
+        context:
+            'Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su ',
+        listID: 3,
+        typeID: 3,
+    },
+    {
+        id: 4,
+        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
+        context:
+            'Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su ',
+        listID: 3,
+        typeID: 3,
+    },
+    {
+        id: 5,
+        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
+        context:
+            'Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su ',
+        listID: 3,
+        typeID: 3,
+    },
+    {
+        id: 6,
+        image: 'https://gcs.vn/wp-content/uploads/2021/02/img_601d3e4f4f863.png',
+        context:
+            'Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su Lich su ',
+        listID: 3,
+        typeID: 3,
+    },
+];
+
 const PAGE_SIZE = 1;
 
 const handlePageClick = () => {};
@@ -30,7 +123,7 @@ const Documents = () => {
     useEffect(() => {
         setStart((numberPage - 1) * PAGE_SIZE);
     }, [numberPage]);
-    console.log((numberPage-1) * PAGE_SIZE)
+    console.log((numberPage - 1) * PAGE_SIZE);
     // console.log(start);
     // // console.log(listID);
     const handleChecklist = (checked, id) => {
@@ -70,8 +163,8 @@ const Documents = () => {
                 console.log('that bai');
             });
     }, []);
-    
-    console.log(typeID)
+
+    console.log(typeID);
 
     const handleShowList = () => {
         setShowList(!showList);
@@ -154,16 +247,12 @@ const Documents = () => {
                 </div>
                 <div className={cx('main__mid')}>
                     <div className={cx('content__mid')}>
-                        {listDocs.slice(start, (start + PAGE_SIZE)).map(
+                        {listDocs.slice(start, start + PAGE_SIZE).map(
                             (document, index) =>
                                 userChoice.every((v) => document.categories.map((cate) => cate.id).includes(v)) &&
-                                typeID === document.document_type_id &&
-                                 (
-                                    
+                                typeID === document.document_type_id && (
                                     <>
-                                    {
-                                        console.log(document.document_type_id)
-                                    }
+                                        {console.log(document.document_type_id)}
                                         <div className={cx('item')} key={index}>
                                             <div className={cx('content__left')}>
                                                 <img src={document.img} alt="preview" width={170} />

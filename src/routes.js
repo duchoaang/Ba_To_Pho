@@ -1,8 +1,12 @@
+import Empty from './layout/Empty';
+
 import Home from '@pages/Home';
 import Upload from '@pages/Upload';
 import Documents from '@pages/Documents';
 import Detail from '@pages/Detail';
-import Profile from '@pages/Profile'
+import Admin from '@pages/Admin';
+import Profile from '@pages/Profile';
+
 const routes = [
     {
         path: '/',
@@ -21,8 +25,14 @@ const routes = [
         component: Detail,
     },
     {
+        path: '/admin/duyet-bai',
+        component: Admin,
+        layout: Empty,
+    },
+    {
         path: '/profile/:id',
         component: Profile,
+        layout: Empty,
     },
 ];
 
