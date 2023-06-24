@@ -127,7 +127,7 @@ def add_keyword(name):
 def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, cloudinary_secure_url,
                            cloudinary_image_public_id, cloudinary_image_secure_url):
     with db.session.no_autoflush:
-        doc = Document(title=fields['title'], author=fields['owner'], description=fields['description'],
+        doc = Document(title=fields['title'], author=fields['author'], description=fields['description'],
                        user_id=fields['user_id'], document_type_id=fields['document_type_id'])
 
         doc.captcha = "AFB2QD1"
@@ -145,11 +145,11 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
         doc.cloudinary_image_public_id = cloudinary_image_public_id
         doc.cloudinary_image_secure_url = cloudinary_image_secure_url
 
-        for cate in categories.values():
+        for cate in categories:
             c = Category.query.get(cate)
             if c:
                 doc.categories.append(c)
-        for key in keywords.values():
+        for key in keywords:
             kw = get_keyword_by_name(key)
             if kw:
                 doc.keywords.append(kw)
@@ -237,26 +237,3 @@ def get_users():
     users = users.filter(User.is_active.__eq__(1))
     return users.all()
 
-
-if __name__ == '__main__':
-    with app.app_context():
-        u_id = User.query.first().id
-        dt_id = DocumentType.query.first().id
-        fields = {
-            "title": "heheheheheheheh",
-            "author": "Phat",
-            "description": "1234567890",
-            "user_id": u_id,
-            "document_type_id": dt_id
-        }
-        categories = {
-            "cate-1": "34a2fb94-fec1-4b97-a5a1-b85f3efa4416",
-            "cate-2": "a77ee434-2efe-44f6-91b5-32d4466cb636",
-        }
-        keywords = {
-            "kw-1": "Võ",
-            "kw-2": "Phú",
-            "kw-3": "Phát",
-        }
-
-        add_no_accept_document(fields, categories, keywords, "download_path", "path", "download_path_img", "path_img")

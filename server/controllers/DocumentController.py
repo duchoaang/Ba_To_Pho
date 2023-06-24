@@ -47,18 +47,23 @@ def upload_cloudinary():
         "document_type_id": dt_id
     }
     categories = {
+        "name": "Học tập"
     }
 
     keywords = {
+        "name": "Học tập"
     }
+
+    # kw = request.json.get('keywords')
+    # keywords = [utils.strip_accents(k.lower()) for k in kw]
 
     add_no_accept_document(fields, categories, keywords, download_path, path, download_path_img, path_img)
     return jsonify({"status": "200", "message": "success"})
 
 
 def upload_dropbox():
-    documents = request.json["documents"]
-    access_token = request.json["token"]
+    documents = request.json.get("documents")
+    access_token = request.json.get("access_token")
     try:
         for document in documents:
             doc = dao.get_document_by_id(document)
