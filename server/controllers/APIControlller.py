@@ -1,7 +1,8 @@
 from flask import jsonify, request
 
 from server import app
-from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users
+from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users, \
+    get_document_by_id
 from server.models import Status
 
 
@@ -10,29 +11,31 @@ from server.models import Status
 
 # "/documents" ['GET']
 def api_documents():
-    if request.method == 'POST':
-        category_ids = request.json("categories")
-        type_ids = request.json("type_ids")
-        title = request.json("title")
-        documents = get_documents(title=title, category_ids=category_ids.values(), type_ids=type_ids.values())
-        documents_list = [doc.to_dict(
-            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
-                    "name"
-                    "document_type_id", "document_type", "keywords", "categories", "average_rate", "num_rate"]) for doc
-            in documents]
-        return jsonify(documents_list)
-    else:
-        status = request.args.get('status')
-        documents = get_documents(status=status)
-        documents_list = [doc.to_dict(
-            fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
-                    "username", "cloudinary_image_secure_url", "cloudinary_secure_url",
-                                                               "document_type_id", "document_type", "keywords",
-                    "categories", "average_rate", "num_rate"]) for doc
-            in
-            documents]
+    status = request.args.get('status')
+    documents = get_documents(status=status)
+    documents_list = [doc.to_dict(
+        fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
+                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
+                "img_link_download", "cloudinary_secure_url"
+                                     "document_type_id", "document_type", "keywords",
+                "categories", "average_rate", "num_rate"]) for doc
+        in
+        documents]
 
-        return jsonify(documents_list)
+    return jsonify(documents_list)
+
+
+def api_document_by_id(id):
+    doc = get_document_by_id(id)
+    doc_info = doc.to_dict(
+        fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
+                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
+                "img_link_download", "cloudinary_secure_url"
+                                     "document_type_id", "document_type", "keywords",
+                "categories", "average_rate", "num_rate"])
+
+    return jsonify(doc_info)
+
 
 
 # "/categories" ['GET']

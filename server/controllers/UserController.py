@@ -4,14 +4,14 @@ from flask import request, url_for, render_template, jsonify, session, flash
 from flask_login import login_user, current_user
 from sqlalchemy.exc import IntegrityError
 
-from server import my_token, app
-from server.dao import get_existed_user, add_user, get_user_by_email, confirm_user, check_login
+from server import my_token, app, dao, login
+from server.dao import get_existed_user, add_user, get_user_by_email, confirm_user, check_login, get_user_by_id
 from server.models import UserRole
 from server.sendmail import send_email
 from server.my_token import generate_confirmation_token
 
-# -------------- "/user" ------------------
 
+# -------------- "/user" ------------------
 
 # "/register" ['POST']
 def user_register():
@@ -81,11 +81,10 @@ def confirm_email(token):
 
     elapsed_time = data['elapsed_time']
     try:
-        email = my_token.confirm_token(token, expiration=elapsed_time+90)
+        email = my_token.confirm_token(token, expiration=elapsed_time + 90)
     except:
         email = False
     if email is False:
-
         response_data = {
             'message': "Link xác thực đã hết hạn",
             'status': 404
@@ -186,7 +185,7 @@ def resend_confirmation():
 # "/login" ['POST']
 def user_login():
     if request.method == 'POST':
-        username = request.json.get('name')
+        username = request.json.get('username')
         password = request.json.get('password')
 
         user = check_login(username=username, password=password)
@@ -194,6 +193,8 @@ def user_login():
             login_user(user=user)
             response_data = {
                 'message': "Success",
+                'id': current_user.id,
+                'name': current_user.name,
                 'username': current_user.username,
                 'avatar': current_user.avatar,
                 'status': 200
@@ -207,4 +208,13 @@ def user_login():
             return jsonify(response_data), 404
 
 
-
+def get_favour_list():
+    user = get_user_by_id(current_user.id)
+    favour_list = user.favour_lists
+    favour_docs = [favour.document for favour in favour_list]
+    docs_list = [doc.to_dict(
+        fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
+                "username", "cloud_link", "img_cloud_link", "file_link_download", "img_link_download",
+                "document_type_id", "document_type", "keywords",
+                "categories", "average_rate", "num_rate"]) for doc in favour_docs]
+    return jsonify(docs_list)
