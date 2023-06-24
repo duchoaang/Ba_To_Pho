@@ -1,5 +1,6 @@
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Input from '@mui/material/Input';
 import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState, useRef } from 'react';
 import request from '~/utils/request';
@@ -34,6 +35,14 @@ const DataTable = ({ inputTokenRef }) => {
             ),
         },
         { field: 'categories', headerName: 'Danh mục', width: 200 },
+        {
+            field: 'codeGem',
+            headerName: 'Code Gem',
+            width: 150,
+            renderCell: () => {
+                return <Input placeholder="Placeholder" value="100" />;
+            },
+        },
         {
             field: 'action',
             headerName: 'Action',
