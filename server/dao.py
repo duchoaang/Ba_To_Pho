@@ -173,6 +173,22 @@ def get_comment_by_doc(doc_id):
     return Comment.query.filter(Comment.document_id.__eq__(doc_id)).all()
 
 
+def get_document_type_id_by_extension(extension):
+    if extension == "pdf":
+        doc_type = DocumentType.query.filter(DocumentType.name.__eq__("PDF")).first()
+        if doc_type:
+            return doc_type.id
+    elif extension == "docx":
+        doc_type = DocumentType.query.filter(DocumentType.name.__eq__("Word")).first()
+        if doc_type:
+            return doc_type.id
+    elif extension == "pptx":
+        doc_type = DocumentType.query.filter(DocumentType.name.__eq__("Powerpoint")).first()
+        if doc_type:
+            return doc_type.id
+    else:
+        return None
+
 def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_link_download):
     doc = Document.query.get(doc_id)
     if doc:
@@ -200,6 +216,7 @@ def remove_comment(comment_id):
 def get_document_by_id(doc_id):
     doc = Document.query.get(doc_id)
     return doc
+
 
 def get_users():
     users = User.query.filter(User.user_role.__eq__(UserRole.USER))

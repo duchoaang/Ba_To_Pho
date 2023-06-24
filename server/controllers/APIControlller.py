@@ -26,7 +26,7 @@ def api_documents():
         documents = get_documents(status=status)
         documents_list = [doc.to_dict(
             fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
-                    "username", "cloudinary_image_secure_url", "cloudinary_secure_url"
+                    "username", "cloudinary_image_secure_url", "cloudinary_secure_url",
                                                                "document_type_id", "document_type", "keywords",
                     "categories", "average_rate", "num_rate"]) for doc
             in

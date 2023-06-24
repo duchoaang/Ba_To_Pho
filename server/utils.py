@@ -1,9 +1,16 @@
 import hashlib
+import io
+import tempfile
+from urllib import request
+
 import dropbox
 from dropbox.exceptions import AuthError
 from dropbox.oauth import DropboxOAuth2FlowNoRedirect
+from flask import jsonify
+
 from server import app, db, APP_KEY, APP_SECRET
 import unicodedata
+
 
 
 def hash_text(plain_text):
