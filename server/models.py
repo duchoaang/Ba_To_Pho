@@ -86,16 +86,14 @@ class DocumentType(BaseModel):
 
 class Document(BaseModel):
     title = Column(String(100), nullable=False)
-    content = Column(Text, nullable=False)
-    owner = Column(String(50), nullable=False)
+    description = Column(Text, nullable=False)
+    author = Column(String(50), nullable=False)
     created_date = Column(DateTime, default=datetime.now())
     updated_date = Column(DateTime, default=datetime.now())
-    img = Column(String(255),
-                 default="https://img.freepik.com/free-vector/documents-concept-illustration_114360-138.jpg")
     view_count = Column(Integer, default=0)
     captcha = Column(String(25), nullable=False)
     discount = Column(Float, default=0)
-    gem_cost = Column(Float, nullable=False)
+    gem_cost = Column(Float, nullable=False, default=100)
 
     # Link after confirm
     cloud_link = Column(Text, nullable=False)  # link view dropbox
@@ -265,39 +263,6 @@ if __name__ == '__main__':
         dt3 = DocumentType(name='Powerpoint')
         db.session.add_all([dt1, dt2, dt3])
 
-        d1 = Document(title='Cơ sở lập trình', content='Học lập trình cơ bản', owner='Võ Thị B', captcha='xTz9Kp',
-                      discount=0, gem_cost=100000, user=u1, document_type=dt1,
-                      cloud_link="LinkFileSauConfirm",
-                      img_cloud_link="LinkImgSauConfirm",
-                      file_link_download="LinkDownFileTaiWeb",
-                      img_link_download="LinkDownImgTaiWeb",
-                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
-        d2 = Document(title='Toán cao cấp', content='Toán cao cấp', owner='Nguyễn Văn A', captcha='xTz9Kp',
-                      discount=50000, gem_cost=80000, user=u1, document_type=dt2,
-                      cloud_link="LinkFileSauConfirm",
-                      img_cloud_link="LinkImgSauConfirm",
-                      file_link_download="LinkDownFileTaiWeb",
-                      img_link_download="LinkDownImgTaiWeb",
-                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
-        d3 = Document(title='Nhập môn hướng đối tượng', content='Hướng đối tượng cho người mới bắt đầu',
-                      owner='Trần Thị C', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
-                      cloud_link="LinkFileSauConfirm",
-                      img_cloud_link="LinkImgSauConfirm",
-                      file_link_download="LinkDownFileTaiWeb",
-                      img_link_download="LinkDownImgTaiWeb",
-                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
-
-        db.session.add_all([d1, d2, d3])
-
         chuoi = """Tiểu thuyết, Tiểu thuyết tình cảm, Lãng mạn, Hình sự, Khoa học viễn tưởng,
         Lịch sử hư cấu, Phi hư cấu, Hồi ký, Tự truyện, Tiểu sử,
         Lịch sử, Tự giúp đỡ, Tâm lý học, Triết học, Khoa học,
@@ -320,12 +285,6 @@ if __name__ == '__main__':
             category = Category(name=c)
             cate_list.append(category)
 
-        d1.categories.append(cate_list[17])
-        d2.categories.append(cate_list[13])
-        d3.categories.append(cate_list[17])
-        d3.categories.append(cate_list[20])
-
-        db.session.add_all(cate_list)
 
         r = Rule(name='waiting_time_confirm', value=30)
         db.session.add(r)
