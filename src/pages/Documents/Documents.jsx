@@ -8,6 +8,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+
+
 
 const lists = [
     {
@@ -106,8 +109,9 @@ const PAGE_SIZE = 1;
 
 const handlePageClick = () => {};
 const Documents = () => {
+    
     const [listID, setListID] = useState('');
-    const [typeID, setTypeID] = useState('8586a786-2c1d-41e1-b278-13653c29ba4b');
+    const [typeID, setTypeID] = useState('');
     const [showList, setShowList] = useState(false);
     const [listDocs, setListDocs] = useState([]);
     const [listCategories, setListCategories] = useState([]);
@@ -144,7 +148,7 @@ const Documents = () => {
             .get('http://127.0.0.1:5000/api/types')
             .then((response) => {
                 setListTypes(response.data);
-                // console.log(response.data);
+                setTypeID(response.data[0].id);
             })
             .catch((error) => {
                 console.log('that bai');
@@ -153,7 +157,7 @@ const Documents = () => {
             .get('http://127.0.0.1:5000/api/documents')
             .then((response) => {
                 setListDocs(response.data);
-                // console.log(response.data);
+                
             })
             .catch((error) => {
                 console.log('that bai');
@@ -255,7 +259,7 @@ const Documents = () => {
                                             </div>
                                             <div className={cx('content__right')}>
                                                 <div className={cx('content__right--title')}>
-                                                    <h1 style={{ color: '#3379b5' }}>{document.content}</h1>
+                                                    <Link to="/Documents/1"><h1 style={{ color: '#3379b5' }}>{document.content}</h1></Link>
                                                 </div>
                                                 <div className={cx('content__right--main')}>
                                                     <h1> {document.title}</h1>

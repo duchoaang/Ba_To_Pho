@@ -108,7 +108,7 @@ const AlertConfirmEmail = () => {
 const Header = () => {
     const [user, setUser] = useState(false);
     const [infoUser, setInfoUser] = useState([]);
-
+    const [idUser, setIdUser] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [userName, setUserName] = useState('');
@@ -134,7 +134,6 @@ const Header = () => {
         });
     };
 
-    console.log(infoUser);
     useEffect(() => {
         setIsFormValid(
             userName !== '' && userPassword !== '' && userEmail !== '' && confirmPassword !== '' && checkButton,
@@ -153,7 +152,7 @@ const Header = () => {
         password: userPassword,
     });
     // console.log(formData);
-    console.log(formDataLogin);
+   
     const handleLogin = () => {
         setShowModal(true);
         setShowRegister(false);
@@ -187,7 +186,7 @@ const Header = () => {
                 })
                     .then((response) => response.json())
                     .then((data) => {
-                        console.log(data);
+                        
                         if (data.status === 200) {
                             clearInterval(timer);
                             setConfirmEmail(false);
@@ -200,6 +199,10 @@ const Header = () => {
                     });
             }, 3000);
             setTimeout(() => {
+                setUserPassword('');
+                setUserEmail('')
+                setUserName('');
+                setConfirmPassword('');
                 clearInterval(timer); // Dừng hàm setInterval sau 30 giây
             }, 30000);
         }
@@ -213,7 +216,6 @@ const Header = () => {
             setShowLoading(true);
             setErrorMessage(false);
             // setShowRegister(false)
-
             fetch('http://127.0.0.1:5000/users/register', {
                 method: 'POST',
                 headers: {
@@ -249,9 +251,14 @@ const Header = () => {
             .post('http://127.0.0.1:5000/users/login', formDataLogin)
             .then((response) => {
                 setUser(true);
+                // console.log(response.data);
+                
+                
                 setInfoUser({
+                    id: response.data.id,
                     username: response.data.username,
                     avatar: response.data.avatar,
+
                 });
                 setShowModal(false);
             })
@@ -267,8 +274,12 @@ const Header = () => {
         setShowRegister(false);
         setShowModal(false);
     };
+    
     const handleAlertClose = () => {
-        setShowAlertConfirmEmail(false);
+        // setShowAlertConfirmEmail(false);
+        setShowLoading(false);
+       
+
     };
     return (
         <>
@@ -446,7 +457,7 @@ const Header = () => {
                         <option value="3">Giáo sư</option>
                     </select>
                     <div className={cx('search')}>
-                        <Input placeholder="12123123" />
+                        <Input placeholder="12123123"  />
                         <span className="material-icons" onClick={() => setShowAlertConfirmEmail(true)}>
                             search
                         </span>
@@ -459,12 +470,16 @@ const Header = () => {
                         <Button className="me-5 btn btn-warning border">Tải lên</Button>
                     </Link>
                     {user ? (
+                        <>
                         <img
                             onClick={() => setUser(false)}
                             className={cx('user_avatar')}
                             src={infoUser.avatar}
                             alt=""
                         />
+                      
+                      <Link to={`/profile/${infoUser.id}`}>Profile</Link>
+                        </>
                     ) : (
                         <>
                             <Btn

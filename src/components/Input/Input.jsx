@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import classnames from 'classnames/bind';
 import styles from './Input.module.scss';
-
+import { Link } from 'react-router-dom';
 const cx = classnames.bind(styles);
 const Input = () => {
     const [inputValue, setInputValue] = useState('');
@@ -42,9 +42,9 @@ const Input = () => {
                 <div className={cx('results_list')}>
                     {resultsList.map((result, id) => {
                         return (
-                            <div key={id} onClick={() => handleClickResult(result)}>
+                            <Link to="/" key={id} onClick={() => handleClickResult(result)}>
                                 {result.content}{' '}
-                            </div>
+                            </Link>
                         );
                     })}
                 </div>
