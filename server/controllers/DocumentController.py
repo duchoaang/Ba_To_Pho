@@ -36,12 +36,12 @@ def upload_cloudinary():
     print(image.filename)
     u_id = User.query.first().id
     title = request.json.get('title')
-    owner = request.json.get('author')
+    author = request.json.get('author')
     des = request.json.get('description')
 
     fields = {
         "title": title,
-        "owner": owner,
+        "author": author,
         "description": des,
         "user_id": u_id,
         "document_type_id": dt_id
@@ -51,7 +51,6 @@ def upload_cloudinary():
 
     keywords = {
     }
-    
 
     add_no_accept_document(fields, categories, keywords, download_path, path, download_path_img, path_img)
     return jsonify({"status": "200", "message": "success"})
@@ -129,4 +128,3 @@ def upload_dropbox():
         print("Lỗi: " + str(e))
         return "fail"
     return jsonify({"ok": '200'})
-

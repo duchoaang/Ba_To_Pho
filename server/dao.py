@@ -127,7 +127,7 @@ def add_keyword(name):
 def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, cloudinary_secure_url,
                            cloudinary_image_public_id, cloudinary_image_secure_url):
     with db.session.no_autoflush:
-        doc = Document(title=fields['title'], owner=fields['owner'], content=fields['description'],
+        doc = Document(title=fields['title'], author=fields['owner'], description=fields['description'],
                        user_id=fields['user_id'], document_type_id=fields['document_type_id'])
 
         doc.captcha = "AFB2QD1"
@@ -181,6 +181,7 @@ def get_document_type_id_by_extension(extension):
             return doc_type.id
     else:
         return None
+
 
 def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_link_download):
     doc = Document.query.get(doc_id)
@@ -243,7 +244,7 @@ if __name__ == '__main__':
         dt_id = DocumentType.query.first().id
         fields = {
             "title": "heheheheheheheh",
-            "owner": "Phat",
+            "author": "Phat",
             "description": "1234567890",
             "user_id": u_id,
             "document_type_id": dt_id

@@ -96,11 +96,14 @@ class DocumentModelView(AdminModelView):
     can_edit = True
     can_export = True
     can_view_details = True
-    column_filters = ['title', 'owner', 'content', 'view_count', 'gem_cost', 'discount', 'status', 'user.username', 'categories',
+    column_filters = ['title', 'author', 'description', 'view_count', 'gem_cost', 'discount', 'status', 'user.username',
+                      'categories',
                       'keywords']
-    column_list = ['title', 'owner', 'content', 'view_count', 'gem_cost', 'discount', 'status', 'user', 'categories',
+    column_list = ['title', 'author', 'description', 'view_count', 'gem_cost', 'discount', 'status', 'user',
+                   'categories',
                    'keywords']
-    column_list = ['title', 'owner', 'content', 'view_count', 'gem_cost', 'discount', 'status', 'user', 'categories', 'keywords']
+    column_list = ['title', 'author', 'description', 'view_count', 'gem_cost', 'discount', 'status', 'user',
+                   'categories', 'keywords']
 
 
 class RuleModelView(AdminModelView):

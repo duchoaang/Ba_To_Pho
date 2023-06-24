@@ -213,7 +213,7 @@ def get_favour_list():
     favour_list = user.favour_lists
     favour_docs = [favour.document for favour in favour_list]
     docs_list = [doc.to_dict(
-        fields=["id", "title", "owner", "content", "img", "view_count", "captcha", "status", "gem_cost", "discount",
+        fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
                 "username", "cloud_link", "img_cloud_link", "file_link_download", "img_link_download",
                 "document_type_id", "document_type", "keywords",
                 "categories", "average_rate", "num_rate"]) for doc in favour_docs]
