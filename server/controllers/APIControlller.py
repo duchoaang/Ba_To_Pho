@@ -18,7 +18,7 @@ def api_documents():
                 "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
                 "img_link_download", "cloudinary_secure_url"
                                      "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate"]) for doc
+                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc
         in
         documents]
 

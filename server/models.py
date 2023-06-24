@@ -65,8 +65,8 @@ class User(BaseModel, UserMixin):
     is_confirm = Column(Boolean, nullable=False, default=False)
     warn_time = Column(Integer, nullable=False, default=0)
 
+    favour_docs = relationship('Document', secondary='favour_list', back_populates='favour_users', lazy=True)
     documents = relationship('Document', backref='user', lazy=True)
-    favour_lists = relationship('FavourList', backref='user', lazy=True)
     comments = relationship("Comment", backref="user", lazy=True)
     rates = relationship("Rate", backref="user", lazy=True)
     downloads = relationship("UserDownloadDoc", backref="user", lazy=True)
@@ -74,6 +74,35 @@ class User(BaseModel, UserMixin):
 
     def __str__(self):
         return self.name
+
+    def to_dict(self, fields=None):
+        result = super().to_dict(fields)
+        if 'user_docs' in fields:
+            result['userDocs'] = [doc.to_dict(
+                fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
+                        "discount", "cloud_link", "img_cloud_link", "file_link_download",
+                        "img_link_download", "document_type_id", "document_type", "keywords",
+                        "categories", "average_rate", "num_rate", "num_favour_users"]) for doc in self.documents if
+                doc.status == Status.ACCEPT]
+        if 'wait_docs' in fields:
+            result['waitDocs'] = [doc.to_dict(
+                fields=["id", "title", "owner", "content", "status", "gem_cost",
+                        "discount", "cloudinary_secure_url", "cloudinary_image_secure_url", "document_type_id",
+                        "document_type", "keywords", "categories"]) for doc in self.documents if
+                doc.status == Status.WAITING]
+        if 'result_docs' in fields:
+            result['resultDocs'] = [doc.to_dict(
+                fields=["id", "title", "owner", "content", "status", "gem_cost",
+                        "discount", "cloudinary_secure_url", "cloudinary_image_secure_url", "document_type_id",
+                        "document_type", "keywords", "categories"]) for doc in self.documents if
+                doc.status != Status.ACCEPT]
+        if 'fav_docs' in fields:
+            [doc.to_dict(
+                fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
+                        "discount", "cloud_link", "img_cloud_link", "file_link_download",
+                        "img_link_download", "document_type_id", "document_type", "keywords",
+                        "categories", "average_rate", "num_rate", "num_favour_users"]) for doc in self.favour_docs]
+        return result
 
 
 class DocumentType(BaseModel):
@@ -90,8 +119,6 @@ class Document(BaseModel):
     owner = Column(String(50), nullable=False)
     created_date = Column(DateTime, default=datetime.now())
     updated_date = Column(DateTime, default=datetime.now())
-    img = Column(String(255),
-                 default="https://img.freepik.com/free-vector/documents-concept-illustration_114360-138.jpg")
     view_count = Column(Integer, default=0)
     captcha = Column(String(25), nullable=False)
     discount = Column(Float, default=0)
@@ -117,13 +144,12 @@ class Document(BaseModel):
     user_id = Column(String(36), ForeignKey(User.id), nullable=False)
     document_type_id = Column(String(36), ForeignKey(DocumentType.id), nullable=False)
 
-    favour_lists = relationship('FavourList', backref='document', lazy=True)
-
     comments = relationship("Comment", backref="document", lazy=True)
     rates = relationship("Rate", backref="document", lazy=True)
+    favour_users = relationship('User', secondary='favour_list', back_populates='favour_docs', lazy=True)
     downloads = relationship("UserDownloadDoc", backref="document", lazy=True)
-    categories = relationship('Category', secondary='document__category', back_populates='documents')
-    keywords = relationship('Keyword', secondary='document__keyword', back_populates='documents')
+    categories = relationship('Category', secondary='document__category', back_populates='documents', lazy=True)
+    keywords = relationship('Keyword', secondary='document__keyword', back_populates='documents', lazy=True)
 
     def __str__(self):
         return self.title
@@ -142,6 +168,8 @@ class Document(BaseModel):
             result['average_rate'] = sum(rate.number_star for rate in self.rates) / len(self.rates) if self.rates else 0
         if 'num_rate' in fields:
             result['num_rate'] = len(self.rates)
+        if 'num_favour_users' in fields:
+            result['num_favour_users'] = len(self.favour_users)
         return result
 
 
@@ -256,8 +284,8 @@ if __name__ == '__main__':
                      phone_number='0987654321', gender=1,
                      dob=datetime(2002, 2, 2), email="admin@gmail.com", gem=500000, user_role=UserRole.ADMIN)
         u1 = User(username='u1', password=hash_text(p), password2=hash_text(p2), name='user',
-                     phone_number='0987654321', gender=1,
-                     dob=datetime(2002, 2, 2), email="user1@gmail.com", gem=500000)
+                  phone_number='0987654321', gender=1,
+                  dob=datetime(2002, 2, 2), email="user1@gmail.com", gem=500000)
         db.session.add_all([admin, u1])
 
         dt1 = DocumentType(name='PDF')
@@ -326,6 +354,9 @@ if __name__ == '__main__':
         d3.categories.append(cate_list[20])
 
         db.session.add_all(cate_list)
+
+        u1.favour_docs.append(d1)
+        u1.favour_docs.append(d2)
 
         r = Rule(name='waiting_time_confirm', value=30)
         db.session.add(r)
