@@ -38,7 +38,7 @@ def upload_cloudinary():
 
     fields = {
         "title": "heheheheheheheh",
-        "owner": "Phtas",
+        "author": "Phtas",
         "description": "1234567890",
         "user_id": u_id,
         "document_type_id": dt_id

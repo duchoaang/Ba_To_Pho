@@ -115,8 +115,8 @@ class DocumentType(BaseModel):
 
 class Document(BaseModel):
     title = Column(String(100), nullable=False)
-    content = Column(Text, nullable=False)
-    owner = Column(String(50), nullable=False)
+    description = Column(Text, nullable=False)
+    author = Column(String(50), nullable=False)
     created_date = Column(DateTime, default=datetime.now())
     updated_date = Column(DateTime, default=datetime.now())
     view_count = Column(Integer, default=0)
@@ -293,7 +293,7 @@ if __name__ == '__main__':
         dt3 = DocumentType(name='Powerpoint')
         db.session.add_all([dt1, dt2, dt3])
 
-        d1 = Document(title='Cơ sở lập trình', content='Học lập trình cơ bản', owner='Võ Thị B', captcha='xTz9Kp',
+        d1 = Document(title='Cơ sở lập trình', description='Học lập trình cơ bản', author='Võ Thị B', captcha='xTz9Kp',
                       discount=0, gem_cost=100000, user=u1, document_type=dt1,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
@@ -303,7 +303,7 @@ if __name__ == '__main__':
                       cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
-        d2 = Document(title='Toán cao cấp', content='Toán cao cấp', owner='Nguyễn Văn A', captcha='xTz9Kp',
+        d2 = Document(title='Toán cao cấp', description='Toán cao cấp', author='Nguyễn Văn A', captcha='xTz9Kp',
                       discount=50000, gem_cost=80000, user=u1, document_type=dt2,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
@@ -313,8 +313,8 @@ if __name__ == '__main__':
                       cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
-        d3 = Document(title='Nhập môn hướng đối tượng', content='Hướng đối tượng cho người mới bắt đầu',
-                      owner='Trần Thị C', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
+        d3 = Document(title='Nhập môn hướng đối tượng', description='Hướng đối tượng cho người mới bắt đầu',
+                      author='Trần Thị C', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
                       file_link_download="LinkDownFileTaiWeb",
