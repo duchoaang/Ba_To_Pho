@@ -19,7 +19,7 @@ const DataTable = ({ inputTokenRef }) => {
             headerName: 'Link tài liệu',
             width: 150,
             renderCell: (params) => (
-                <a target="_blank" href={`${params.row.linkDoc || ''}`}>
+                <a target="_blank" href={`${params.row.cloudinary_secure_url || '/error'}`}>
                     Link
                 </a>
             ),
@@ -29,7 +29,7 @@ const DataTable = ({ inputTokenRef }) => {
             headerName: 'Link hình',
             width: 150,
             renderCell: (params) => (
-                <a target="_blank" href={`${params.row.linkImg || ''}`}>
+                <a target="_blank" href={`${params.row.cloudinary_image_secure_url || '/error'}`}>
                     Link
                 </a>
             ),
@@ -49,7 +49,7 @@ const DataTable = ({ inputTokenRef }) => {
             width: 250,
             renderCell: (params) => {
                 const disableButton = selectedRows.map((r) => r.id).includes(params.id);
-                const handleClickAction = (e) => {
+                const handleClickAction = () => {
                     if (inputTokenRef.current.value === '') return;
                 };
 
@@ -82,12 +82,7 @@ const DataTable = ({ inputTokenRef }) => {
         request.get('api/documents?status=WAITING').then((res) =>
             setData(
                 res.map((doc) => ({
-                    id: doc.id,
-                    title: doc.title,
-                    author: doc.owner,
-                    description: doc.content,
-                    linkDoc: doc.cloudinary_secure_url ?? 'khong co',
-                    linkImg: doc.cloudinary_image_secure_url ?? 'khong co',
+                    ...doc,
                     categories: doc.categories.map((cate) => cate.name),
                 })),
             ),

@@ -3,13 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Detail.module.scss';
 
-import Btn from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import CommentIcon from '@mui/icons-material/Comment';
 
-import Button from '@/Button';
 import request from '~/utils/request';
 
 const cx = classNames.bind(styles);
@@ -117,9 +116,9 @@ const CommentHeader = () => {
                     <textarea className="w-100" />
                 </div>
                 <div className="text-end mt-3">
-                    <Btn variant="contained" startIcon={<CommentIcon />}>
+                    <Button variant="contained" startIcon={<CommentIcon />}>
                         BÌNH LUẬN
-                    </Btn>
+                    </Button>
                 </div>
             </form>
             <div>
@@ -135,8 +134,8 @@ const CommentHeader = () => {
 const Detail = () => {
     const [data, setData] = useState({
         title: '',
-        imgUrl: '/src/assets/docImg.jpg',
-        gemCost: 0,
+        cloudinary_image_secure_url: '/src/assets/docImg.jpg',
+        gem_cost: 0,
         categories: [],
         description: '',
     });
@@ -145,12 +144,8 @@ const Detail = () => {
         let id = location.pathname.split('/')[2];
         request.get(`api/documents/${id}`).then((rawData) =>
             setData({
-                title: rawData.title,
-                imgUrl: rawData.cloudinary_image_secure_url,
-                // imgUrl: 'https://www.dropbox.com/s/zbb2popr17yjlxd/heheheheheheheh_2023-06-24%2022%3A19%3A22.129924.png?dl=1',
-                gemCost: rawData.gem_cost,
-                categories: rawData.categories,
-                description: rawData.content,
+                ...rawData,
+                // cloudinary_image_secure_url: 'https://www.dropbox.com/s/zbb2popr17yjlxd/heheheheheheheh_2023-06-24%2022%3A19%3A22.129924.png?dl=1',
             }),
         );
     }, [location]);
@@ -163,7 +158,7 @@ const Detail = () => {
                     <div className="info">
                         <div className={cx('doc-info', 'row')}>
                             <div className="col-md-4 border rounded p-2">
-                                <img src={data.imgUrl} className="w-100" alt="" />
+                                <img src={data.cloudinary_image_secure_url} className="w-100" alt="" />
                             </div>
                             <div className={cx('doc-details', 'col-md-8')}>
                                 <div className="doc-details-title">
@@ -178,11 +173,11 @@ const Detail = () => {
                                     <div className="d-flex justify-content-between">
                                         <div>
                                             <span>Phí tải:</span>
-                                            <span className="ms-2">{data.gemCost} CodeGem</span>
+                                            <span className="ms-2">{data.gem_cost} CodeGem</span>
                                         </div>
-                                        <Btn variant="outlined" color="error" startIcon={<FavoriteBorderIcon />}>
+                                        <Button variant="outlined" color="error" startIcon={<FavoriteBorderIcon />}>
                                             YÊU THÍCH
-                                        </Btn>
+                                        </Button>
                                     </div>
                                     <hr />
                                     <div className="d-flex justify-content-between">
@@ -208,9 +203,9 @@ const Detail = () => {
                                                 <span>26.7 MB</span>
                                             </div>
                                         </div>
-                                        <Btn variant="contained" startIcon={<FileDownloadIcon />}>
+                                        <Button variant="contained" startIcon={<FileDownloadIcon />}>
                                             DOWNLOAD
-                                        </Btn>
+                                        </Button>
                                     </div>
                                     <hr />
                                 </div>
