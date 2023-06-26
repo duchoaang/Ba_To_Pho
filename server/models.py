@@ -95,7 +95,7 @@ class User(BaseModel, UserMixin):
                 fields=["id", "title", "owner", "content", "status", "gem_cost",
                         "discount", "cloudinary_secure_url", "cloudinary_image_secure_url", "document_type_id",
                         "document_type", "keywords", "categories"]) for doc in self.documents if
-                doc.status != Status.ACCEPT]
+                doc.status != Status.WAITING]
         if 'fav_docs' in fields:
             [doc.to_dict(
                 fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
