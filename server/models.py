@@ -122,7 +122,7 @@ class Document(BaseModel):
     view_count = Column(Integer, default=0)
     captcha = Column(String(25), nullable=False)
     discount = Column(Float, default=0)
-    gem_cost = Column(Float, nullable=False)
+    gem_cost = Column(Float, nullable=False, default=100)
 
     # Link after confirm
     cloud_link = Column(Text, nullable=False)  # link view dropbox
@@ -348,12 +348,6 @@ if __name__ == '__main__':
             category = Category(name=c)
             cate_list.append(category)
 
-        d1.categories.append(cate_list[17])
-        d2.categories.append(cate_list[13])
-        d3.categories.append(cate_list[17])
-        d3.categories.append(cate_list[20])
-
-        db.session.add_all(cate_list)
 
         u1.favour_docs.append(d1)
         u1.favour_docs.append(d2)

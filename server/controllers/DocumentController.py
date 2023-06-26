@@ -23,11 +23,11 @@ def upload_cloudinary():
     if dt_id is None:
         return jsonify({"status": "404", "message": "File không đúng định dạng"})
     filename = secrets.token_hex(10) + "_" + file.filename
-    res = cloudinary.uploader.upload(file, resource_type="raw", public_id=filename)  # luu file tren clundinary
-    path = res['secure_url']  # link dowload
+    res = cloudinary.uploader.upload(file, resource_type="raw", public_id=filename)  # luu file tren cloudinary
+    path = res['secure_url']  # link download
     download_path = res['public_id']
-    res_img = cloudinary.uploader.upload(image, resource_type="auto")  # luu file tren clundinary
-    path_img = res_img['secure_url']  # link dowload
+    res_img = cloudinary.uploader.upload(image, resource_type="auto")  # luu file tren cloudinary
+    path_img = res_img['secure_url']  # link download
     download_path_img = res_img['public_id']
 
     print(path, download_path)
@@ -35,36 +35,39 @@ def upload_cloudinary():
     print(path_img, download_path_img)
     print(image.filename)
     u_id = User.query.first().id
+    title = request.json.get('title')
+    author = request.json.get('author')
+    des = request.json.get('description')
 
     fields = {
-        "title": "heheheheheheheh",
-        "author": "Phtas",
-        "description": "1234567890",
+        "title": title,
+        "author": author,
+        "description": des,
         "user_id": u_id,
         "document_type_id": dt_id
     }
     categories = {
+        "name": "Học tập"
     }
 
     keywords = {
+        "name": "Học tập"
     }
+
+    # kw = request.json.get('keywords')
+    # keywords = [utils.strip_accents(k.lower()) for k in kw]
 
     add_no_accept_document(fields, categories, keywords, download_path, path, download_path_img, path_img)
     return jsonify({"status": "200", "message": "success"})
 
 
 def upload_dropbox():
-    # print("Link: https://www.dropbox.com/developers/apps/info/mmtoae7qmte1tyq")
-    # access_token = input("Nhap access token: ").strip()
-    # doc_id = input("Document ID: ")
-
-    documents = request.json["documents"]
-    access_token = request.json["token"]
+    documents = request.json.get("documents")
+    access_token = request.json.get("access_token")
     try:
         for document in documents:
             doc = dao.get_document_by_id(document)
             pdf_url = doc.cloudinary_secure_url
-            # doc.cloudinary_public_id = test.pptx
             with open(doc.cloudinary_public_id, "wb") as f:
                 response = requests.get(pdf_url)
                 f.write(response.content)
@@ -80,17 +83,7 @@ def upload_dropbox():
             extension = doc.cloudinary_public_id.split('.')[-1]
             file_name = doc_name + "_" + str(created_date) + "." + extension
             file_name_img = doc_name + "_" + str(created_date) + ".png"
-
-            # Luu session
             dbx = dropbox.Dropbox(access_token)
-
-            # TRY - CATCH
-
-            # fields update into database
-            cloud_link = None
-            img_cloud_link = None
-            file_link_download = None
-            img_link_download = None
 
             with open(doc.cloudinary_public_id, "rb") as f:
                 response = dbx.files_upload(f.read(), "/" + file_name)
@@ -117,7 +110,7 @@ def upload_dropbox():
                     shared_link = dbx.sharing_create_shared_link(response.path_display)
                 else:
                     shared_link = shared_links[0]
-                # create dowload link
+                # create download link
                 links = dbx.sharing_get_shared_links(response.path_display).links
                 if len(links) > 0:
                     img_cloud_link = links[0].url
@@ -140,4 +133,3 @@ def upload_dropbox():
         print("Lỗi: " + str(e))
         return "fail"
     return jsonify({"ok": '200'})
-
