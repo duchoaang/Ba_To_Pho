@@ -1,9 +1,15 @@
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Detail.module.scss';
 
-import Button from '@/Button';
-import { useEffect, useState } from 'react';
+import Button from '@mui/material/Button';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import CommentIcon from '@mui/icons-material/Comment';
+
+import request from '~/utils/request';
 
 const cx = classNames.bind(styles);
 
@@ -110,7 +116,9 @@ const CommentHeader = () => {
                     <textarea className="w-100" />
                 </div>
                 <div className="text-end mt-3">
-                    <Button leftIcon={<span className="material-icons">comment</span>}>BÌNH LUẬN</Button>
+                    <Button variant="contained" startIcon={<CommentIcon />}>
+                        BÌNH LUẬN
+                    </Button>
                 </div>
             </form>
             <div>
@@ -124,11 +132,24 @@ const CommentHeader = () => {
 };
 
 const Detail = () => {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState({
+        title: '',
+        cloudinary_image_secure_url: '/src/assets/docImg.jpg',
+        gem_cost: 0,
+        categories: [],
+        description: '',
+    });
     const location = useLocation();
     useEffect(() => {
-        console.log(location.pathname.split('/')[2]);
+        let id = location.pathname.split('/')[2];
+        request.get(`api/documents/${id}`).then((rawData) =>
+            setData({
+                ...rawData,
+                // cloudinary_image_secure_url: 'https://www.dropbox.com/s/zbb2popr17yjlxd/heheheheheheheh_2023-06-24%2022%3A19%3A22.129924.png?dl=1',
+            }),
+        );
     }, [location]);
+
     return (
         <div className="container">
             <div className="row">
@@ -137,12 +158,12 @@ const Detail = () => {
                     <div className="info">
                         <div className={cx('doc-info', 'row')}>
                             <div className="col-md-4 border rounded p-2">
-                                <img src="/src/assets/docImg.jpg" className="w-100" alt="" />
+                                <img src={data.cloudinary_image_secure_url} className="w-100" alt="" />
                             </div>
                             <div className={cx('doc-details', 'col-md-8')}>
                                 <div className="doc-details-title">
                                     <h4>
-                                        <b>Quản lý khách sạn giao diện đẹp full code C# Winform + Csdl Sqlserver</b>
+                                        <b>{data.title}</b>
                                     </h4>
                                     <div className="d-flex justify-content-between">
                                         <div></div>
@@ -152,10 +173,9 @@ const Detail = () => {
                                     <div className="d-flex justify-content-between">
                                         <div>
                                             <span>Phí tải:</span>
-                                            <span className="ms-2">30 Xu</span>
-                                            <span className="ms-2">(1 Xu = 1.000đ)</span>
+                                            <span className="ms-2">{data.gem_cost} CodeGem</span>
                                         </div>
-                                        <Button leftIcon={<span className="material-icons">favorite</span>}>
+                                        <Button variant="outlined" color="error" startIcon={<FavoriteBorderIcon />}>
                                             YÊU THÍCH
                                         </Button>
                                     </div>
@@ -164,11 +184,7 @@ const Detail = () => {
                                         <div>
                                             <div className="d-flex g-2">
                                                 <span>Danh mục</span>
-                                                <span>Visual C#</span>
-                                            </div>
-                                            <div className="d-flex g-2">
-                                                <span>Thể loại</span>
-                                                <span>Phần mềm - Ứng dụng</span>
+                                                <span>{data.categories.map((c) => c.name).join(', ')}</span>
                                             </div>
                                             <div className="d-flex g-2">
                                                 <span>Nhóm code</span>
@@ -187,7 +203,7 @@ const Detail = () => {
                                                 <span>26.7 MB</span>
                                             </div>
                                         </div>
-                                        <Button leftIcon={<span className="material-icons">download</span>}>
+                                        <Button variant="contained" startIcon={<FileDownloadIcon />}>
                                             DOWNLOAD
                                         </Button>
                                     </div>
@@ -203,43 +219,7 @@ const Detail = () => {
                         </div>
                     </div>
                     <div className={cx('description')}>
-                        <p className={cx('description-text')}>
-                            Source code quản lý khách sạn đầy đủ các nghiệp vụ được viết bằng ngôn ngữ C# WinForm,code
-                            lập trình dễ hiểu, thích hợp với những bạn muốn tìm hiểu, tham khảo mã nguồn để lập trình về
-                            C#,làm đồ án,làm bài tập lớn,làm luận văn tốt nghiệp,làm dự án cho cá nhân,công ty,khách sạn
-                            v.v...
-                        </p>
-                        <div>
-                            <h5>
-                                <b>HÌNH ẢNH DEMO</b>
-                            </h5>
-                            <div className="text-center">
-                                <img className={cx('description-img')} src="/src/assets/detImg-1.jpg" alt="" />
-                                <img className={cx('description-img')} src="/src/assets/detImg-2.jpg" alt="" />
-                            </div>
-                        </div>
-                    </div>
-                    <div className={cx('action', 'rounded border-warning mt-3')}>
-                        <div className="col-md-9">
-                            <div>
-                                <h5>LINK DOWNLOAD</h5>
-                            </div>
-                            <div></div>
-                        </div>
-                        <div className="col-md-3 d-flex flex-column align-items-center" style={{ gap: '5px' }}>
-                            <Button leftIcon={<span className="material-icons">download</span>}>
-                                <b>DOWNLOAD</b>
-                                <br />
-                                <span>(30 Xu)</span>
-                            </Button>
-                            <Button>
-                                <span>Bạn có code hay</span>
-                                <br />
-                                <b className="d-flex align-items-center">
-                                    <span className="material-icons me-2">cloud_upload</span>ĐĂNG BÁN NGAY
-                                </b>
-                            </Button>
-                        </div>
+                        <p className={cx('description-text')}>{data.description}</p>
                     </div>
                     <Suggestion />
                     <CommentHeader />

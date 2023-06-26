@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const cx = classnames.bind(styles);
 const Input = () => {
     const [inputValue, setInputValue] = useState('');
-    const [resultsList, setResultsList] = useState([])
+    const [resultsList, setResultsList] = useState([]);
 
     useEffect(() => {
         fetch('http://127.0.0.1:5000/api/documents')
@@ -13,7 +13,12 @@ const Input = () => {
             .then((json) => {
              
                 const results = json.filter((docs) => {
-                    return inputValue && docs && docs.content && docs.content.toLowerCase().includes(inputValue.toLowerCase());
+                    return (
+                        inputValue &&
+                        docs &&
+                        docs.content &&
+                        docs.content.toLowerCase().includes(inputValue.toLowerCase())
+                    );
                 });
           
                 setResultsList(results);
@@ -25,12 +30,17 @@ const Input = () => {
 
     const handleClickResult = (value) => {
         alert('Click result ' + value.content);
-
-    }
+    };
     return (
         <>
             <div className={cx('search')}>
-                <input type="text" placeholder='Tìm kiếm....' style={{height: '100%'}} value={inputValue} onChange={(e) => handleChangeInput(e.target.value)} />
+                <input
+                    type="text"
+                    placeholder="Tìm kiếm...."
+                    style={{ height: '100%' }}
+                    value={inputValue}
+                    onChange={(e) => handleChangeInput(e.target.value)}
+                />
                 <div className={cx('results_list')}>
                {    
                 resultsList.map((result, id) =>{
@@ -41,7 +51,6 @@ const Input = () => {
                }
             </div>
             </div>
-            
         </>
     );
 };

@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Upload.module.scss';
+import Button from '@mui/material/Button';
+import ClearIcon from '@mui/icons-material/Clear';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-import Button from '@/Button';
+import request from '~/utils/request';
 
 const cx = classNames.bind(styles);
 
@@ -22,36 +26,39 @@ const InputGroup = ({ title, children, info }) => {
 };
 
 const Upload = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: '',
-        category: '',
+        categories: [],
         description: '',
         author: '',
-        keywords: '',
+        keywords: [],
         file: null,
         image: null,
     });
+    const [keywordTmp, setKeywordTmp] = useState('');
+    const [categories, setCategories] = useState([]);
     const handleFileChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.type === 'file' ? e.target.files[0] : e.target.value });
     };
 
+    useEffect(() => {
+        request.get('api/categories').then((data) => setCategories(data));
+    }, []);
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const data = new FormData();
+        formData.categories = formData.categories.map((i) => categories[i].id);
 
+        const data = new FormData();
         Object.entries(formData).map(([key, value] = entry) => {
             key === 'file' || key === 'image' ? data.append(key, value, value.name) : data.append(key, value);
         });
 
-        // 👇 Uploading the files using the fetch API to the server
-        fetch('http://127.0.0.1:5000/upload', {
-            method: 'POST',
-            body: data,
-        })
-            .then((res) => res.json())
-            .then((data) => console.log(data))
-            .catch((err) => console.error(err));
+        request.post('documents/upload', data).then(() => {
+            navigate('/');
+        });
     };
 
     return (
@@ -63,14 +70,53 @@ const Upload = () => {
                         name="title"
                         id="title"
                         className="form-control"
-                        placeholder="Tối thiểu 20 kí tự"
-                        minLength={20}
+                        placeholder="Tối thiểu 10 kí tự"
+                        minLength={10}
                         onChange={handleFileChange}
                     />
                 </InputGroup>
                 <InputGroup title="Danh mục" info="">
-                    <select name="category" id="category" className="form-select" onChange={handleFileChange}>
+                    {formData.categories.map((c, index) => (
+                        <Button
+                            key={index}
+                            size="small"
+                            variant="outlined"
+                            endIcon={<ClearIcon />}
+                            onClick={() => {
+                                setFormData({
+                                    ...formData,
+                                    categories: (() => {
+                                        formData.categories.splice(index, 1);
+                                        return formData.categories;
+                                    })(),
+                                });
+                            }}
+                        >
+                            {categories[c].name}
+                        </Button>
+                    ))}
+                    <select
+                        name="categories"
+                        id="categories"
+                        className="form-select"
+                        onChange={(e) => {
+                            setFormData({
+                                ...formData,
+                                categories: (() => {
+                                    formData.categories.push(e.target.value - 0);
+                                    return formData.categories;
+                                })(),
+                            });
+                        }}
+                    >
                         <option hidden>--Chọn danh mục--</option>
+                        {categories.map((c, index) =>
+                            formData.categories.includes(index - 0) ? null : (
+                                <option key={index} value={index}>
+                                    {c.name}
+                                </option>
+                            ),
+                        )}
                     </select>
                 </InputGroup>
                 <InputGroup title="Mô tả ngắn" info="Tối ưu từ 70 - 200 kí tự">
@@ -78,7 +124,6 @@ const Upload = () => {
                         name="description"
                         className="form-control"
                         placeholder="Tối thiểu 70 kí tự"
-                        minLength={70}
                         maxLength={200}
                         onChange={handleFileChange}
                     />
@@ -93,13 +138,54 @@ const Upload = () => {
                     />
                 </InputGroup>
                 <InputGroup title="Từ khóa" info="Tối đa 6 từ khóa">
-                    <input
-                        type="text"
-                        name="keywords"
-                        className="form-control"
-                        placeholder="Tối thiểu 3 từ khóa"
-                        onChange={handleFileChange}
-                    />
+                    {formData.keywords.map((k, index) => (
+                        <Button
+                            key={index}
+                            size="small"
+                            variant="outlined"
+                            endIcon={<ClearIcon />}
+                            onClick={() => {
+                                setFormData({
+                                    ...formData,
+                                    keywords: (() => {
+                                        formData.keywords.splice(index, 1);
+                                        return formData.keywords;
+                                    })(),
+                                });
+                            }}
+                        >
+                            {k}
+                        </Button>
+                    ))}
+                    <div className="d-flex">
+                        <input
+                            type="text"
+                            name="keywords"
+                            className="form-control"
+                            placeholder="Tối thiểu 3 từ khóa"
+                            value={keywordTmp}
+                            onChange={(e) => {
+                                setKeywordTmp(e.target.value);
+                            }}
+                        />
+                        <Button
+                            className="ms-2"
+                            variant="contained"
+                            onClick={() => {
+                                if (formData.keywords.length < 6)
+                                    setFormData({
+                                        ...formData,
+                                        keywords: (() => {
+                                            formData.keywords.push(keywordTmp.trim(' '));
+                                            return formData.keywords;
+                                        })(),
+                                    });
+                                setKeywordTmp('');
+                            }}
+                        >
+                            Thêm
+                        </Button>
+                    </div>
                 </InputGroup>
                 <InputGroup title="File tài liệu" info="">
                     <input
@@ -143,11 +229,7 @@ const Upload = () => {
                 <input name="confirm" id="confirm" type="checkbox" />
                 <label htmlFor="confirm">Tôi đã đọc và đồng ý với các điều khoản của BaToPho</label>
                 <br />
-                <Button
-                    type="submit"
-                    className="text-uppercase text-white btn btn-warning"
-                    leftIcon={<span className="material-icons">cloud_upload</span>}
-                >
+                <Button variant="contained" type="submit" color="warning" startIcon={<CloudUploadIcon />}>
                     Tải lên ngay
                 </Button>
             </section>

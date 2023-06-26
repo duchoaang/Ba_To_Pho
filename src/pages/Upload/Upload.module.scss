@@ -30,6 +30,9 @@
 
     &-field {
         flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
         max-width: 550px;
     }
 
