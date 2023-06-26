@@ -97,7 +97,7 @@ class User(BaseModel, UserMixin):
                         "document_type", "keywords", "categories"]) for doc in self.documents if
                 doc.status != Status.WAITING]
         if 'fav_docs' in fields:
-            [doc.to_dict(
+            result['favDocs'] = [doc.to_dict(
                 fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
                         "discount", "cloud_link", "img_cloud_link", "file_link_download",
                         "img_link_download", "document_type_id", "document_type", "keywords",
@@ -347,7 +347,6 @@ if __name__ == '__main__':
         for c in ket_qua:
             category = Category(name=c)
             cate_list.append(category)
-
 
         u1.favour_docs.append(d1)
         u1.favour_docs.append(d2)
