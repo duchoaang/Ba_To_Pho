@@ -10,10 +10,11 @@ const DataTable = ({ inputTokenRef }) => {
     const [reload, setReload] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [rowSelectionModel, setRowSelectionModel] = useState([]);
     const columns = [
         { field: 'title', headerName: 'Tên tài liệu', width: 250 },
         { field: 'author', headerName: 'Tác giả', width: 150 },
-        { field: 'description', headerName: 'Mô tả', width: 130 },
+        { field: 'description', headerName: 'Mô tả', width: 450, editable: true },
         {
             field: 'linkDoc',
             headerName: 'Link tài liệu',
@@ -36,12 +37,10 @@ const DataTable = ({ inputTokenRef }) => {
         },
         { field: 'categories', headerName: 'Danh mục', width: 200 },
         {
-            field: 'codeGem',
+            field: 'gem_cost',
             headerName: 'Code Gem',
             width: 150,
-            renderCell: () => {
-                return <Input placeholder="Placeholder" value="100" />;
-            },
+            editable: true,
         },
         {
             field: 'action',
@@ -49,8 +48,26 @@ const DataTable = ({ inputTokenRef }) => {
             width: 250,
             renderCell: (params) => {
                 const disableButton = selectedRows.map((r) => r.id).includes(params.id);
-                const handleClickAction = () => {
+                const handleClickAction = (e) => {
                     if (inputTokenRef.current.value === '') return;
+
+                    request
+                        .patch(
+                            `api/documents/${params.id}`,
+                            {
+                                status: e.target.innerText.toUpperCase(),
+                                description: params.row.description,
+                                gem_cost: params.row.gem_cost - '0',
+                            },
+                            {
+                                headers: {
+                                    access_token: inputTokenRef.current.value,
+                                },
+                            },
+                        )
+                        .then(() => {
+                            setReload((prev) => !prev);
+                        });
                 };
 
                 return (
@@ -107,9 +124,11 @@ const DataTable = ({ inputTokenRef }) => {
             });
     };
 
+    console.log(rowSelectionModel);
+
     return (
         <>
-            <div style={{ height: 400, width: '100%' }}>
+            <div style={{ height: 'calc(100vh - 200px)', width: '100%' }}>
                 <DataGrid
                     rows={data}
                     columns={columns}
@@ -118,13 +137,19 @@ const DataTable = ({ inputTokenRef }) => {
                             paginationModel: { page: 0, pageSize: 5 },
                         },
                     }}
-                    pageSizeOptions={[5, 10]}
+                    getRowHeight={() => 'auto'}
+                    pageSizeOptions={[1, 5, 10]}
+                    getEstimatedRowHeight={() => 200}
                     checkboxSelection
                     disableRowSelectionOnClick
-                    onRowSelectionModelChange={(ids) => {
-                        const selectedIDs = new Set(ids);
-                        setSelectedRows(data.filter((row) => selectedIDs.has(row.id)));
+                    onRowSelectionModelChange={(newRowSelectionModel) => {
+                        setRowSelectionModel(newRowSelectionModel);
                     }}
+                    rowSelectionModel={rowSelectionModel}
+                    processRowUpdate={(updatedRow, originalRow) => {
+                        console.log(updatedRow);
+                    }}
+                    onProcessRowUpdateError={() => {}}
                 />
             </div>
             <div className="mt-3 text-end">

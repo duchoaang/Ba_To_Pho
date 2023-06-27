@@ -6,6 +6,7 @@ import styles from './Detail.module.scss';
 import Button from '@mui/material/Button';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import Textarea from '@mui/joy/Textarea';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import CommentIcon from '@mui/icons-material/Comment';
 
@@ -113,13 +114,21 @@ const CommentHeader = () => {
             <form>
                 <div className="d-flex">
                     <span className="material-icons fs-1">portrait</span>
-                    <textarea className="w-100" />
+                    <Textarea
+                        placeholder="Type something here…"
+                        minRows={3}
+                        sx={{
+                            width: '100%',
+                            flex: '1',
+                        }}
+                        endDecorator={
+                            <Button sx={{ marginLeft: 'auto' }} variant="contained" startIcon={<CommentIcon />}>
+                                BÌNH LUẬN
+                            </Button>
+                        }
+                    />
                 </div>
-                <div className="text-end mt-3">
-                    <Button variant="contained" startIcon={<CommentIcon />}>
-                        BÌNH LUẬN
-                    </Button>
-                </div>
+                <div className="text-end mt-3"></div>
             </form>
             <div>
                 <Comment />
@@ -181,7 +190,7 @@ const Detail = () => {
                                     </div>
                                     <hr />
                                     <div className="d-flex justify-content-between">
-                                        <div>
+                                        <div className="">
                                             <div className="d-flex g-2">
                                                 <span>Danh mục</span>
                                                 <span>{data.categories.map((c) => c.name).join(', ')}</span>
@@ -210,12 +219,6 @@ const Detail = () => {
                                     <hr />
                                 </div>
                             </div>
-                        </div>
-                        <div className={cx('other-info', 'row')}>
-                            <div className="col-md-4">
-                                <span>Xem thêm</span>
-                            </div>
-                            <div className="col-md-8"></div>
                         </div>
                     </div>
                     <div className={cx('description')}>
