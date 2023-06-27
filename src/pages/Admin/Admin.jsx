@@ -8,8 +8,8 @@ import request from '~/utils/request';
 const DataTable = ({ inputTokenRef }) => {
     const [data, setData] = useState([]);
     const [reload, setReload] = useState(false);
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [buttonDisabled, setButtonDisabled] = useState(false);
+    // const [selectedRows, setSelectedRows] = useState([]);
+    // const [buttonDisabled, setButtonDisabled] = useState(false);
     const [rowSelectionModel, setRowSelectionModel] = useState([]);
     const columns = [
         { field: 'title', headerName: 'Tên tài liệu', width: 250 },
@@ -47,7 +47,7 @@ const DataTable = ({ inputTokenRef }) => {
             headerName: 'Action',
             width: 250,
             renderCell: (params) => {
-                const disableButton = selectedRows.map((r) => r.id).includes(params.id);
+                // const disableButton = selectedRows.map((r) => r.id).includes(params.id);
                 const handleClickAction = (e) => {
                     if (inputTokenRef.current.value === '') return;
 
@@ -62,6 +62,7 @@ const DataTable = ({ inputTokenRef }) => {
                             {
                                 headers: {
                                     access_token: inputTokenRef.current.value,
+                                    'Access-Control-Allow-Origin': '*',
                                 },
                             },
                         )
@@ -73,15 +74,15 @@ const DataTable = ({ inputTokenRef }) => {
                 return (
                     <>
                         <Button
-                            disabled={disableButton}
+                            // disabled={disableButton}
                             color="success"
                             variant="contained"
                             onClick={handleClickAction}
                         >
-                            Approve
+                            Accept
                         </Button>
                         <Button
-                            disabled={disableButton}
+                            // disabled={disableButton}
                             color="error"
                             variant="outlined"
                             className="ms-3"
@@ -106,29 +107,27 @@ const DataTable = ({ inputTokenRef }) => {
         );
     }, [reload]);
 
-    const handleAction = (e) => {
-        if (selectedRows.length === 0) return;
-        if (inputTokenRef.current.value === '') return;
-
-        setButtonDisabled(true);
-
-        request
-            .post('documents/duyet-bai', {
-                documents: selectedRows.map((r) => r.id),
-                status: e.target.innerText.toUpperCase(),
-                token: inputTokenRef.current.value,
-            })
-            .then(() => {
-                setButtonDisabled(false);
-                setReload((prev) => !prev);
-            });
-    };
-
-    console.log(rowSelectionModel);
+    // const handleAction = (e) => {
+    //     if (selectedRows.length === 0) return;
+    //     if (inputTokenRef.current.value === '') return;
+    //
+    //     setButtonDisabled(true);
+    //
+    //     request
+    //         .post('documents/duyet-bai', {
+    //             documents: selectedRows.map((r) => r.id),
+    //             status: e.target.innerText.toUpperCase(),
+    //             token: inputTokenRef.current.value,
+    //         })
+    //         .then(() => {
+    //             setButtonDisabled(false);
+    //             setReload((prev) => !prev);
+    //         });
+    // };
 
     return (
         <>
-            <div style={{ height: 'calc(100vh - 200px)', width: '100%' }}>
+            <div style={{ height: 'calc(100vh - 100px)', width: '100%' }}>
                 <DataGrid
                     rows={data}
                     columns={columns}
@@ -140,32 +139,32 @@ const DataTable = ({ inputTokenRef }) => {
                     getRowHeight={() => 'auto'}
                     pageSizeOptions={[1, 5, 10]}
                     getEstimatedRowHeight={() => 200}
-                    checkboxSelection
+                    // checkboxSelection
                     disableRowSelectionOnClick
                     onRowSelectionModelChange={(newRowSelectionModel) => {
                         setRowSelectionModel(newRowSelectionModel);
                     }}
                     rowSelectionModel={rowSelectionModel}
-                    processRowUpdate={(updatedRow, originalRow) => {
-                        console.log(updatedRow);
-                    }}
-                    onProcessRowUpdateError={() => {}}
+                    // processRowUpdate={(updatedRow, originalRow) => {
+                    //     console.log(updatedRow);
+                    // }}
+                    // onProcessRowUpdateError={() => {}}
                 />
             </div>
-            <div className="mt-3 text-end">
-                <Button disabled={buttonDisabled} color="success" variant="contained" onClick={handleAction}>
-                    Approve
-                </Button>
-                <Button
-                    disabled={buttonDisabled}
-                    color="error"
-                    variant="outlined"
-                    className="ms-3"
-                    onClick={handleAction}
-                >
-                    Reject
-                </Button>
-            </div>
+            {/* <div className="mt-3 text-end"> */}
+            {/*     <Button disabled={buttonDisabled} color="success" variant="contained" onClick={handleAction}> */}
+            {/*         Approve */}
+            {/*     </Button> */}
+            {/*     <Button */}
+            {/*         disabled={buttonDisabled} */}
+            {/*         color="error" */}
+            {/*         variant="outlined" */}
+            {/*         className="ms-3" */}
+            {/*         onClick={handleAction} */}
+            {/*     > */}
+            {/*         Reject */}
+            {/*     </Button> */}
+            {/* </div> */}
         </>
     );
 };
