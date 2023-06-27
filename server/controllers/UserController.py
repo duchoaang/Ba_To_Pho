@@ -1,7 +1,7 @@
 import hashlib
 import time
 from flask import request, url_for, render_template, jsonify, session, flash
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from server import my_token, app, dao, login
@@ -206,4 +206,14 @@ def user_login():
                 'status': 404
             }
             return jsonify(response_data), 404
+
+
+def user_logout():
+    data = request.form
+    id = next(data.items())[0]
+    if current_user.id == id:
+        logout_user()
+        return "success"
+    else:
+        return "logged out before"
 
