@@ -25,19 +25,21 @@ const InputGroup = ({ title, children, info }) => {
     );
 };
 
+const INIT_FORM_DATA = {
+    title: '',
+    categories: [],
+    description: '',
+    author: '',
+    keywords: [],
+    file: null,
+    image: null,
+};
+
 const Upload = () => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        title: '',
-        categories: [],
-        description: '',
-        author: '',
-        keywords: [],
-        file: null,
-        image: null,
-    });
+    const [formData, setFormData] = useState(INIT_FORM_DATA);
     const [keywordTmp, setKeywordTmp] = useState('');
     const [categories, setCategories] = useState([]);
+    const [disableButton, setDisableButton] = useState(false);
     const handleFileChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.type === 'file' ? e.target.files[0] : e.target.value });
     };
@@ -48,16 +50,33 @@ const Upload = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        formData.categories = formData.categories.map((i) => categories[i].id);
+        setDisableButton(true);
 
         const data = new FormData();
         Object.entries(formData).map(([key, value] = entry) => {
-            key === 'file' || key === 'image' ? data.append(key, value, value.name) : data.append(key, value);
+            switch (key) {
+                case 'file':
+                case 'image':
+                    data.append(key, value, value.name);
+                    break;
+                case 'categories':
+                    data.append(
+                        key,
+                        value.map((i) => categories[i].id),
+                    );
+                    break;
+                default:
+                    data.append(key, value);
+                    break;
+            }
         });
 
-        request.post('documents/upload', data).then(() => {
-            navigate('/');
+        request.post('documents/upload', data).then((res) => {
+            if (res.status === '200') {
+                alert('Upload tài liệu thành công');
+                setFormData(INIT_FORM_DATA);
+                setDisableButton(false);
+            }
         });
     };
 
@@ -72,7 +91,9 @@ const Upload = () => {
                         className="form-control"
                         placeholder="Tối thiểu 10 kí tự"
                         minLength={10}
+                        value={formData.title}
                         onChange={handleFileChange}
+                        required
                     />
                 </InputGroup>
                 <InputGroup title="Danh mục" info="">
@@ -108,6 +129,7 @@ const Upload = () => {
                                 })(),
                             });
                         }}
+                        required
                     >
                         <option hidden>--Chọn danh mục--</option>
                         {categories.map((c, index) =>
@@ -125,7 +147,9 @@ const Upload = () => {
                         className="form-control"
                         placeholder="Tối thiểu 70 kí tự"
                         maxLength={200}
+                        value={formData.description}
                         onChange={handleFileChange}
+                        required
                     />
                 </InputGroup>
                 <InputGroup title="Tác giả" info="">
@@ -134,7 +158,9 @@ const Upload = () => {
                         name="author"
                         className="form-control"
                         placeholder="Tên tác giả gốc của tài liệu"
+                        value={formData.author}
                         onChange={handleFileChange}
+                        required
                     />
                 </InputGroup>
                 <InputGroup title="Từ khóa" info="Tối đa 6 từ khóa">
@@ -194,6 +220,7 @@ const Upload = () => {
                         type="file"
                         accept="application/pdf, .pdf, application/msword, .doc, .docx, application/vnd.ms-powerpoint, .ppt, .pptx"
                         onChange={handleFileChange}
+                        required
                     />
                 </InputGroup>
                 <InputGroup
@@ -204,7 +231,15 @@ const Upload = () => {
                         <span className="material-icons">add_circle</span>
                         Thêm ảnh...
                     </label>
-                    <input name="image" id="image" type="file" accept="image/*" hidden onChange={handleFileChange} />
+                    <input
+                        name="image"
+                        id="image"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={handleFileChange}
+                        required
+                    />
                 </InputGroup>
             </section>
             <section className="border border-primary-subtle bg-info">
@@ -229,7 +264,13 @@ const Upload = () => {
                 <input name="confirm" id="confirm" type="checkbox" />
                 <label htmlFor="confirm">Tôi đã đọc và đồng ý với các điều khoản của BaToPho</label>
                 <br />
-                <Button variant="contained" type="submit" color="warning" startIcon={<CloudUploadIcon />}>
+                <Button
+                    disabled={disableButton}
+                    variant="contained"
+                    type="submit"
+                    color="warning"
+                    startIcon={<CloudUploadIcon />}
+                >
                     Tải lên ngay
                 </Button>
             </section>
