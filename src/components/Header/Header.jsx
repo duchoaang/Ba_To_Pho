@@ -11,6 +11,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import Input from '@/Input';
+import Tooltip from '@mui/material/Tooltip';
+import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 // import Results from '@/Results';
 const cx = classNames.bind(styles);
 
@@ -78,35 +80,11 @@ const SubMenu = ({ data }) => {
 const ModalWrapper = ({ show, children }) => {
     return <div className={cx('modal-wrapper', { show })}>{children}</div>;
 };
-const AlertConfirmEmail = () => {
-    let timerInterval;
-    Swal.fire({
-        title: 'Xác nhận email !',
-        html: 'Hãy xác nhận email của bạn trong <b></b> giây .',
-        timer: 30000,
-        timerProgressBar: true,
-        didOpen: () => {
-            Swal.showLoading();
-            const b = Swal.getHtmlContainer().querySelector('b');
-            let remainingTime;
-            timerInterval = setInterval(() => {
-                remainingTime = Math.floor(Swal.getTimerLeft() / 1000);
-                b.textContent = remainingTime;
-            }, 1000);
-        },
-        willClose: () => {
-            clearInterval(timerInterval);
-        },
-    }).then((result) => {
-        /* Read more about handling dismissals below */
-        if (result.dismiss === Swal.DismissReason.timer) {
-            console.log('I was closed by the timer');
-        }
-    });
-};
 
 const Header = () => {
     const [user, setUser] = useState(false);
+    // const [userGoogle, setUserGoogle] = useState([]);
+    const [profile, setProfile] = useState([]);
     const [infoUser, setInfoUser] = useState([]);
     const [idUser, setIdUser] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -119,11 +97,54 @@ const Header = () => {
     const [isFormValid, setIsFormValid] = useState(false);
     const [errorMessage, setErrorMessage] = useState(false);
     const [confirmEmail, setConfirmEmail] = useState(false);
-    const [countdown, setCountdown] = useState(5);
+
     const [showAlertConfirmEmail, setShowAlertConfirmEmail] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [ErrorUserNameEmail, setErrorUserNameEmail] = useState(false);
     const [results, setResults] = useState([]);
+    const [loginFailed, setLoginFailed] = useState(false);
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    useEffect(() => {
+        axios
+        .get('http://127.0.0.1:5000/current-user', { withCredentials: true })
+        .then((response) => {
+            console.log(response.data.is_active)
+            if(response.data.is_active === true){
+                setUser(true);
+                // console.log(response.data);
+                setInfoUser({
+                    id: response.data.id,
+                    username: response.data.username,
+                    avatar: response.data.avatar,
+                });
+            }
+        })
+    }, []);
+
+    // const login = useGoogleLogin({
+    //     onSuccess: (codeResponse) => setUser(codeResponse),
+    //     onError: (error) => console.log('Login Failed:', error),
+    // });
+    // useEffect(() => {
+    //     if (user) {
+    //         axios
+    //             .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${user.access_token}`,
+    //                     Accept: 'application/json',
+    //                 },
+    //             })
+    //             .then((res) => {
+    //                 setProfile(res.data);
+    //             })
+    //             .catch((err) => console.log(err));
+    //     }
+    // }, [userGoogle]);
+    const logOut = () => {
+        googleLogout();
+        setProfile(null);
+    };
     const AlertConfirmEmailSucess = () => {
         Swal.fire({
             icon: 'success',
@@ -131,6 +152,39 @@ const Header = () => {
             text: 'Chúc bạn có một trải nghiệm tốt lành!',
 
             willClose: setShowAlertConfirmEmail(false),
+        });
+    };
+    const responseMessage = (response) => {
+        console.log(response);
+    };
+    const errorMessages = (error) => {
+        console.log(error);
+    };
+    const AlertConfirmEmail = () => {
+        let timerInterval;
+        Swal.fire({
+            title: 'Xác nhận email !',
+            html: 'Hãy xác nhận email của bạn trong <b></b> giây .',
+            timer: 5000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+                const b = Swal.getHtmlContainer().querySelector('b');
+                let remainingTime;
+                timerInterval = setInterval(() => {
+                    remainingTime = Math.floor(Swal.getTimerLeft() / 1000);
+                    b.textContent = remainingTime;
+                }, 1000);
+            },
+            willClose: () => {
+                setConfirmEmail(false);
+                clearInterval(timerInterval);
+            },
+        }).then((result) => {
+            /* Read more about handling dismissals below */
+            if (result.dismiss === Swal.DismissReason.timer) {
+                console.log('I was closed by the timer');
+            }
         });
     };
 
@@ -152,7 +206,7 @@ const Header = () => {
         password: userPassword,
     });
     // console.log(formData);
-   
+
     const handleLogin = () => {
         setShowModal(true);
         setShowRegister(false);
@@ -186,7 +240,6 @@ const Header = () => {
                 })
                     .then((response) => response.json())
                     .then((data) => {
-                        
                         if (data.status === 200) {
                             clearInterval(timer);
                             setConfirmEmail(false);
@@ -199,12 +252,8 @@ const Header = () => {
                     });
             }, 3000);
             setTimeout(() => {
-                setUserPassword('');
-                setUserEmail('')
-                setUserName('');
-                setConfirmPassword('');
                 clearInterval(timer); // Dừng hàm setInterval sau 30 giây
-            }, 30000);
+            }, 5000);
         }
     }, [confirmEmail]);
     //dang ki
@@ -248,39 +297,65 @@ const Header = () => {
         console.log(formDataLogin);
         e.preventDefault();
         axios
-            .post('http://127.0.0.1:5000/users/login', formDataLogin)
+            .post('http://127.0.0.1:5000/users/login', formDataLogin, { withCredentials: true })
             .then((response) => {
                 setUser(true);
                 // console.log(response.data);
-                
-                
                 setInfoUser({
                     id: response.data.id,
                     username: response.data.username,
                     avatar: response.data.avatar,
-
                 });
                 setShowModal(false);
+                setLoginFailed(false);
+       
             })
             .catch((error) => {
-                console.log(123);
+                console.log(error.message);
+                setLoginFailed(true);
+                console.log('dang nhap k thanh cong');
             });
     };
     const handleRegister = () => {
+        setErrorUserNameEmail(false);
+        setUserPassword('');
+        setUserEmail('');
+        setUserName('');
+        setConfirmPassword('');
+        setShowLoading(false);
         setShowModal(false);
         setShowRegister(true);
     };
     const handleCancel = () => {
+        setUserName('');
         setShowRegister(false);
         setShowModal(false);
     };
-    
+
     const handleAlertClose = () => {
         // setShowAlertConfirmEmail(false);
         setShowLoading(false);
-       
-
     };
+    const handleLogout = () =>{
+        axios
+        .post('http://127.0.0.1:5000/users/logout', infoUser.id, { withCredentials: true })
+        .then((response) => {
+            
+        })
+        .catch((error) => {
+           
+        });
+        setUser(false);
+    }
+    // useEffect(() => {
+    //     google.accounts.id.initialize({
+    //         client_id: '1055285564287-btv8jijatg63ljno0490idtrl9kc4330.apps.googleusercontent.com',
+    //         callback: handleCallbackReponse,
+    //     });
+
+    //     google.accounts.id.renderButton(document.getElementById('signInGoogle'), { theme: 'outline', size: 'large' });
+    // }, []);
+
     return (
         <>
             {showAlertConfirmEmail && <AlertConfirmEmailSucess onClose={handleAlertClose} />}
@@ -288,35 +363,36 @@ const Header = () => {
             <ModalWrapper show={showModal}>
                 <div className={cx('modal-inner')}>
                     <h2>Đăng nhập với...</h2>
+                    {loginFailed && <h2 style={{ fontSize: '16px', color: 'red' }}>Tài khoản hoặc mật khẩu sai !</h2>}
                     <span className={cx('cancel', 'material-icons')} onClick={handleCancel}>
                         cancel
                     </span>
                     <div className="d-flex g-2 justify-content-center">
-                        <Button>Google</Button>
-                        <Button>Facebook</Button>
+                        <div id="signInGoogle"></div>
                     </div>
                     <p className="mt-3">hoặc</p>
+
                     <form onSubmit={handleSubmitLogin}>
                         <div className="mb-3 text-start">
-                            <label htmlFor="login-email" className="form-label">
+                            <label for="login-email" class="form-label">
                                 Tên người dùng hoặc email
                             </label>
                             <input
                                 onChange={(e) => setUserName(e.target.value)}
                                 type="text"
-                                className="form-control"
+                                class="form-control"
                                 id="login-email"
                                 placeholder="Tên tài khoản..."
                             />
                         </div>
                         <div className="text-start">
-                            <label htmlFor="login-password" className="form-label">
+                            <label for="login-password" class="form-label">
                                 Mật khẩu
                             </label>
                             <input
                                 onChange={(e) => setUserPassword(e.target.value)}
                                 type="password"
-                                className="form-control"
+                                class="form-control"
                                 id="login-password"
                                 placeholder="Mật khẩu..."
                             />
@@ -357,49 +433,53 @@ const Header = () => {
                     )}
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3 text-start">
-                            <label htmlFor="login-email" className="form-label">
+                            <label for="login-email" class="form-label">
                                 Tên người dùng của bạn
                             </label>
                             <input
+                                value={userName}
                                 type="text"
                                 onChange={(e) => setUserName(e.target.value)}
-                                className="form-control"
+                                class="form-control"
                                 id="login-email"
                                 placeholder="username"
                             />
                         </div>
                         <div className="mb-3 text-start">
-                            <label htmlFor="login-email" className="form-label">
+                            <label for="login-email" class="form-label">
                                 Email của bạn
                             </label>
                             <input
+                                value={userEmail}
                                 type="email"
                                 onChange={(e) => setUserEmail(e.target.value)}
-                                className="form-control"
+                                class="form-control"
                                 id="login-email"
                                 placeholder="name@example.com"
                             />
                         </div>
                         <div className="text-start">
-                            <label htmlFor="login-password" className="form-label">
+                            <label for="login-password" class="form-label">
                                 Mật khẩu
                             </label>
                             <input
+                                value={userPassword}
                                 onChange={(e) => setUserPassword(e.target.value)}
                                 type="password"
-                                className="form-control"
+                                class="form-control"
                                 id="login-password"
                             />
                         </div>
                         <div className="text-start">
-                            <label htmlFor="login-password" className="form-label">
+                            <label for="login-password" class="form-label">
                                 Xác nhận mật khẩu
                             </label>
                             <input
+                                value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 type="password"
-                                className="form-control"
-                                id="login-password"
+                                class="form-control"
+                                id="login-ConfirmPassword"
                             />
                         </div>
                         <div className="d-flex justify-content-between mt-3">
@@ -457,7 +537,7 @@ const Header = () => {
                         <option value="3">Giáo sư</option>
                     </select>
                     <div className={cx('search')}>
-                        <Input placeholder="12123123"  />
+                        <Input placeholder="12123123" />
                         <span className="material-icons" onClick={() => setShowAlertConfirmEmail(true)}>
                             search
                         </span>
@@ -471,20 +551,21 @@ const Header = () => {
                     </Link>
                     {user ? (
                         <>
-                        <img
-                            onClick={() => setUser(false)}
-                            className={cx('user_avatar')}
-                            src={infoUser.avatar}
-                            alt=""
-                        />
-                      
-                      <Link to={`/profile/${infoUser.id}`}>Profile</Link>
+                            <Tooltip title={<Link to={`/profile/${infoUser.id}`}>Profile</Link>}>
+                                <img
+                                    onClick={handleLogout}
+                                    className={cx('user_avatar')}
+                                    src={infoUser.avatar}
+                                    alt=""
+                                />
+                            </Tooltip>
                         </>
                     ) : (
                         <>
                             <Btn
-                                variant="outlined"
+                                variant="contained"
                                 className="me-2"
+                                color="info"
                                 onClick={() => {
                                     setShowModal(true);
                                 }}
@@ -492,12 +573,29 @@ const Header = () => {
                                 Đăng nhập
                             </Btn>
 
-                            <Btn variant="contained" className="me" onClick={handleRegister}>
+                            <Btn variant="contained" color="inherit" className="me" onClick={handleRegister}>
                                 Đăng ký
                             </Btn>
                         </>
                     )}
                 </div>
+
+                {/* <GoogleOAuthProvider clientId="1055285564287-btv8jijatg63ljno0490idtrl9kc4330.apps.googleusercontent.com">
+                    {profile ? (
+                        <div>
+                            <img src={profile.picture} alt="user image" />
+                            <h3>User Logged in</h3>
+                            <p>Name: {profile.name}</p>
+                            <p>Email Address: {profile.email}</p>
+                            <br />
+                            <br />
+                            <button onClick={logOut}>Log out</button>
+                        </div>
+                    ) : (
+                        <GoogleLogin onClick={() => login()}  />
+                        // <button }>Sign in with Google 🚀 </button>
+                    )}
+                </GoogleOAuthProvider> */}
             </header>
             <ul className={cx('menu', 'd-flex justify-content-around mt-2')}>
                 {MENU_ITEM.map((item, index) => (

@@ -11,6 +11,7 @@ const Input = () => {
         fetch('http://127.0.0.1:5000/api/documents')
             .then((response) => response.json())
             .then((json) => {
+             
                 const results = json.filter((docs) => {
                     return (
                         inputValue &&
@@ -19,6 +20,7 @@ const Input = () => {
                         docs.content.toLowerCase().includes(inputValue.toLowerCase())
                     );
                 });
+          
                 setResultsList(results);
             });
     }, [inputValue]);
@@ -40,14 +42,14 @@ const Input = () => {
                     onChange={(e) => handleChangeInput(e.target.value)}
                 />
                 <div className={cx('results_list')}>
-                    {resultsList.map((result, id) => {
-                        return (
-                            <Link to="/" key={id} onClick={() => handleClickResult(result)}>
-                                {result.content}{' '}
-                            </Link>
-                        );
-                    })}
-                </div>
+               {    
+                resultsList.map((result, id) =>{
+                    return <Link className={cx('result')} to="/" key={id} 
+                        onClick={() => handleClickResult(result)}
+                    >{result.content} </Link>
+                })
+               }
+            </div>
             </div>
         </>
     );
