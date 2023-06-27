@@ -7,15 +7,15 @@ import Button from '@/Button';
 import Swal, { swal } from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import Btn from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
-import Stack from '@mui/material/Stack';
 import Input from '@/Input';
 import Tooltip from '@mui/material/Tooltip';
-import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
-// import Results from '@/Results';
+import { useGoogleLogin, googleLogout } from '@react-oauth/google';
+import GoogleButton from 'react-google-button';
 const cx = classNames.bind(styles);
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoffee, faBacon } from '@fortawesome/free-solid-svg-icons';
 
+import 'boxicons';
 const MENU_ITEM = [
     {
         icon: 'apps',
@@ -83,9 +83,11 @@ const ModalWrapper = ({ show, children }) => {
 
 const Header = () => {
     const [user, setUser] = useState(false);
-    // const [userGoogle, setUserGoogle] = useState([]);
-    const [profile, setProfile] = useState([]);
+    const [userGoogle, setUserGoogle] = useState([]);
+    // const [profile, setProfile] = useState([]);
     const [infoUser, setInfoUser] = useState([]);
+    const [infoUserGoogle, setInfoUserGoogle] = useState([]);
+    const [formDataLoginGoogle, setFormDataLoginGoogle] = useState([]);
     const [idUser, setIdUser] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
@@ -104,13 +106,63 @@ const Header = () => {
     const [results, setResults] = useState([]);
     const [loginFailed, setLoginFailed] = useState(false);
 
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const login = useGoogleLogin({
+        onSuccess: (codeResponse) => setUserGoogle(codeResponse),
+
+        onError: (error) => console.log('Login Failed:', error),
+    });
+    const logOut = () => {
+        googleLogout();
+        setProfile(null);
+    };
+    // console.log(userGoogle);
+    // lay thong tin user google
     useEffect(() => {
-        axios
-        .get('http://127.0.0.1:5000/current-user', { withCredentials: true })
-        .then((response) => {
-            console.log(response.data.is_active)
-            if(response.data.is_active === true){
+        if (userGoogle) {
+            axios
+                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
+                    headers: {
+                        Authorization: `Bearer ${user.access_token}`,
+                        Accept: 'application/json',
+                    },
+                })
+                .then((res) => {
+                    console.log(res);
+                    setFormDataLoginGoogle(res.data);
+                    // setProfile(res.data);
+                })
+                .catch((err) => console.log(err));
+        }
+    }, [userGoogle]);
+
+    // gui thong tin user google len server
+    useEffect(() => {
+        if (formDataLoginGoogle) {
+            axios
+                .post('http://127.0.0.1:5000/users/loginGoogle', formDataLoginGoogle, { withCredentials: true })
+                .then((response) => {
+                    setUser(true);
+                    // console.log(response.data);
+                    setInfoUserGoogle({
+                        id: response.data.id,
+                        name: response.data.name,
+                        avatar: response.data.avatar,
+                    });
+                    setShowModal(false);
+                    setLoginFailed(false);
+                })
+                .catch((error) => {
+                    console.log(error.message);
+                    // setLoginFailed(true);
+                    console.log('dang nhap k thanh cong');
+                });
+        }
+    }, [formDataLoginGoogle]);
+
+    useEffect(() => {
+        axios.get('http://127.0.0.1:5000/current-user', { withCredentials: true }).then((response) => {
+            console.log(response.data.is_active);
+            if (response.data.is_active === true) {
                 setUser(true);
                 // console.log(response.data);
                 setInfoUser({
@@ -119,32 +171,9 @@ const Header = () => {
                     avatar: response.data.avatar,
                 });
             }
-        })
+        });
     }, []);
 
-    // const login = useGoogleLogin({
-    //     onSuccess: (codeResponse) => setUser(codeResponse),
-    //     onError: (error) => console.log('Login Failed:', error),
-    // });
-    // useEffect(() => {
-    //     if (user) {
-    //         axios
-    //             .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
-    //                 headers: {
-    //                     Authorization: `Bearer ${user.access_token}`,
-    //                     Accept: 'application/json',
-    //                 },
-    //             })
-    //             .then((res) => {
-    //                 setProfile(res.data);
-    //             })
-    //             .catch((err) => console.log(err));
-    //     }
-    // }, [userGoogle]);
-    const logOut = () => {
-        googleLogout();
-        setProfile(null);
-    };
     const AlertConfirmEmailSucess = () => {
         Swal.fire({
             icon: 'success',
@@ -154,12 +183,7 @@ const Header = () => {
             willClose: setShowAlertConfirmEmail(false),
         });
     };
-    const responseMessage = (response) => {
-        console.log(response);
-    };
-    const errorMessages = (error) => {
-        console.log(error);
-    };
+
     const AlertConfirmEmail = () => {
         let timerInterval;
         Swal.fire({
@@ -308,7 +332,6 @@ const Header = () => {
                 });
                 setShowModal(false);
                 setLoginFailed(false);
-       
             })
             .catch((error) => {
                 console.log(error.message);
@@ -336,25 +359,13 @@ const Header = () => {
         // setShowAlertConfirmEmail(false);
         setShowLoading(false);
     };
-    const handleLogout = () =>{
+    const handleLogout = () => {
         axios
-        .post('http://127.0.0.1:5000/users/logout', infoUser.id, { withCredentials: true })
-        .then((response) => {
-            
-        })
-        .catch((error) => {
-           
-        });
+            .post('http://127.0.0.1:5000/users/logout', infoUser.id, { withCredentials: true })
+            .then((response) => {})
+            .catch((error) => {});
         setUser(false);
-    }
-    // useEffect(() => {
-    //     google.accounts.id.initialize({
-    //         client_id: '1055285564287-btv8jijatg63ljno0490idtrl9kc4330.apps.googleusercontent.com',
-    //         callback: handleCallbackReponse,
-    //     });
-
-    //     google.accounts.id.renderButton(document.getElementById('signInGoogle'), { theme: 'outline', size: 'large' });
-    // }, []);
+    };
 
     return (
         <>
@@ -362,13 +373,24 @@ const Header = () => {
 
             <ModalWrapper show={showModal}>
                 <div className={cx('modal-inner')}>
-                    <h2>Đăng nhập với...</h2>
+                    <h2>Đăng nhập bằng </h2>
                     {loginFailed && <h2 style={{ fontSize: '16px', color: 'red' }}>Tài khoản hoặc mật khẩu sai !</h2>}
                     <span className={cx('cancel', 'material-icons')} onClick={handleCancel}>
                         cancel
                     </span>
                     <div className="d-flex g-2 justify-content-center">
-                        <div id="signInGoogle"></div>
+                        <div id="signInGoogle">
+                            <>
+                                {/* <GoogleLogin /> */}
+                                <GoogleButton
+                                    type="dark"
+                                    label="Đăng nhập với Google "
+                                    size="small"
+                                    onClick={() => login()}
+                                />
+                                {/* <button onClick={() => login()}>Sign in with Google 🚀 </button> */}
+                            </>
+                        </div>
                     </div>
                     <p className="mt-3">hoặc</p>
 
@@ -578,24 +600,9 @@ const Header = () => {
                             </Btn>
                         </>
                     )}
+                    <FontAwesomeIcon icon={faBacon} />
+             
                 </div>
-
-                {/* <GoogleOAuthProvider clientId="1055285564287-btv8jijatg63ljno0490idtrl9kc4330.apps.googleusercontent.com">
-                    {profile ? (
-                        <div>
-                            <img src={profile.picture} alt="user image" />
-                            <h3>User Logged in</h3>
-                            <p>Name: {profile.name}</p>
-                            <p>Email Address: {profile.email}</p>
-                            <br />
-                            <br />
-                            <button onClick={logOut}>Log out</button>
-                        </div>
-                    ) : (
-                        <GoogleLogin onClick={() => login()}  />
-                        // <button }>Sign in with Google 🚀 </button>
-                    )}
-                </GoogleOAuthProvider> */}
             </header>
             <ul className={cx('menu', 'd-flex justify-content-around mt-2')}>
                 {MENU_ITEM.map((item, index) => (
