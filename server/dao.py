@@ -211,6 +211,7 @@ def get_document_by_id(doc_id):
     doc = Document.query.get(doc_id)
     return doc
 
+
 def rate_document(doc_id, number_star, user_id):
     rate = Rate.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
     if rate:
@@ -237,3 +238,13 @@ def get_users():
     users = users.filter(User.is_active.__eq__(1))
     return users.all()
 
+
+def update_document_admin(document_id, description=None, status=None, gem_cost=None):
+    doc = Document.query.get(document_id)
+    if description:
+        doc.description = description
+    if gem_cost:
+        doc.gem_cost = gem_cost
+    if status:
+        doc.status = status
+    db.session.commit()

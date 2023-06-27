@@ -294,39 +294,39 @@ if __name__ == '__main__':
         db.session.add_all([dt1, dt2, dt3])
 
         d1 = Document(title='Cơ sở lập trình', description='Học lập trình cơ bản', author='Võ Thị B', captcha='xTz9Kp',
-                      discount=0, gem_cost=100, user=u1, document_type=dt1,
+                      discount=0, gem_cost=100000, user=u1, document_type=dt1,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
                       file_link_download="LinkDownFileTaiWeb",
                       img_link_download="LinkDownImgTaiWeb",
                       cloudinary_public_id="ChuaCo",
-                      cloudinary_secure_url="ChuaCo",
-                      cloudinary_image_public_id="ChuaCo",
-                      cloudinary_image_secure_url="ChuaCo")
+                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
         d2 = Document(title='Toán cao cấp', description='Toán cao cấp', author='Nguyễn Văn A', captcha='xTz9Kp',
                       discount=50000, gem_cost=80000, user=u1, document_type=dt2,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
                       file_link_download="LinkDownFileTaiWeb",
                       img_link_download="LinkDownImgTaiWeb",
-                      cloudinary_public_id="ChuaCo",
-                      cloudinary_secure_url="ChuaCo",
-                      cloudinary_image_public_id="ChuaCo",
-                      cloudinary_image_secure_url="ChuaCo")
+                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
         d3 = Document(title='Nhập môn hướng đối tượng', description='Hướng đối tượng cho người mới bắt đầu',
                       author='Trần Thị C', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
                       file_link_download="LinkDownFileTaiWeb",
                       img_link_download="LinkDownImgTaiWeb",
-                      cloudinary_public_id="ChuaCo",
-                      cloudinary_secure_url="ChuaCo",
-                      cloudinary_image_public_id="ChuaCo",
-                      cloudinary_image_secure_url="ChuaCo")
+                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
 
         db.session.add_all([d1, d2, d3])
 
-        categoriesList = """Tiểu thuyết, Tiểu thuyết tình cảm, Lãng mạn, Hình sự, Khoa học viễn tưởng,
+        chuoi = """Tiểu thuyết, Tiểu thuyết tình cảm, Lãng mạn, Hình sự, Khoa học viễn tưởng,
         Lịch sử hư cấu, Phi hư cấu, Hồi ký, Tự truyện, Tiểu sử,
         Lịch sử, Tự giúp đỡ, Tâm lý học, Triết học, Khoa học,
         Khoa học xã hội, Khoa học tự nhiên, Công nghệ, Kinh doanh,
@@ -341,10 +341,10 @@ if __name__ == '__main__':
         Văn học Anh, Văn học Pháp, Ma quái, Huyền bí, Huyền thoại,
         Thiếu niên, Thanh thiếu niên, Hội hoạ, Kiến trúc, Truyện tranh, Manga"""
 
-        result = [x.strip() for x in categoriesList.split(",")]
+        ket_qua = [x.strip() for x in chuoi.split(",")]
 
         cate_list = []
-        for c in result:
+        for c in ket_qua:
             category = Category(name=c)
             cate_list.append(category)
 
@@ -353,4 +353,5 @@ if __name__ == '__main__':
 
         r = Rule(name='waiting_time_confirm', value=30)
         db.session.add(r)
+        db.session.add_all(cate_list)
         db.session.commit()

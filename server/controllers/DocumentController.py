@@ -35,9 +35,9 @@ def upload_cloudinary():
     print(path_img, download_path_img)
     print(image.filename)
     u_id = User.query.first().id
-    title = request.json.get('title')
-    author = request.json.get('author')
-    des = request.json.get('description')
+    title = request.form.get('title')
+    author = request.form.get('author')
+    des = request.form.get('description')
 
     fields = {
         "title": title,
@@ -46,13 +46,9 @@ def upload_cloudinary():
         "user_id": u_id,
         "document_type_id": dt_id
     }
-    categories = {
-        "name": "Học tập"
-    }
+    categories = request.form.get('categories')
 
-    keywords = {
-        "name": "Học tập"
-    }
+    keywords = request.form.get('keywords')
 
     # kw = request.json.get('keywords')
     # keywords = [utils.strip_accents(k.lower()) for k in kw]
