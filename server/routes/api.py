@@ -2,6 +2,7 @@ from flask import Blueprint
 from server.controllers.APIControlller import api_documents, api_categories, api_document_types, api_keywords, \
     api_comments, api_document_update, api_document_by_id
 
+
 api_bp = Blueprint('api_bp', __name__)
 
 api_bp.route('/documents', methods=['GET'])(api_documents)

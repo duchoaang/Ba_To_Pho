@@ -11,16 +11,14 @@ import cloudinary
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
-
 app.secret_key = '689567gh$^^&*#%^&*^&%^*DFGH^&*&*^*'
 app.config['SECURITY_PASSWORD_SALT'] = 'test_test'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:%s@localhost/batopho?charset=utf8mb4' % quote("Admin@123")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['PAGE_SIZE'] = 8 # chỉnh số trang hiển thị product
+app.config['PAGE_SIZE'] = 8  # chỉnh số trang hiển thị product
 app.config['COMMENT_SIZE'] = 8
 app.config['PAGE_INF'] = 9999
 app.config['USER_TEMP_KEY'] = 'user_temp'
-
 
 mail = Mail()
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -44,9 +42,9 @@ mail.init_app(app)
 login = LoginManager(app=app)
 
 cloudinary.config(
-    cloud_name = "dhffue7d7",
-    api_key = "215425482852391",
-    api_secret = "a9xaGBMJr7KgKhJa-1RpSpx_AmU"
+    cloud_name="dhffue7d7",
+    api_key="215425482852391",
+    api_secret="a9xaGBMJr7KgKhJa-1RpSpx_AmU"
 )
 
 APP_KEY = 'youh9irihpuik2f'
