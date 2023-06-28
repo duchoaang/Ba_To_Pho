@@ -35,6 +35,20 @@ def get_documents(title=None, category_ids=None, type_ids=None, created_date=Non
     return d.all()
 
 
+def get_popular_documents(limit=None):
+    d = Document.query.outerjoin(Document.downloads).group_by(Document.id).order_by(func.count(Document.downloads).desc())
+    if limit:
+        d = d.limit(limit)
+    return d.all()
+
+
+def get_new_documents(limit=None):
+    d = Document.query.order_by(Document.created_date.desc())
+    if limit:
+        d = d.limit(limit)
+    return d.all()
+
+
 def get_user_by_email(email):
     u = User.query.filter(User.email.__eq__(email)).first()
     if u:
