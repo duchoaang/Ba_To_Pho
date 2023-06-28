@@ -35,9 +35,9 @@ def upload_cloudinary():
     print(path_img, download_path_img)
     print(image.filename)
     u_id = User.query.first().id
-    title = request.json.get('title')
-    author = request.json.get('author')
-    des = request.json.get('description')
+    title = request.form.get('title')
+    author = request.form.get('author')
+    des = request.form.get('description')
 
     fields = {
         "title": title,
@@ -46,16 +46,10 @@ def upload_cloudinary():
         "user_id": u_id,
         "document_type_id": dt_id
     }
-    categories = {
-        "name": "Học tập"
-    }
+    categories = request.form.get('categories')
 
-    keywords = {
-        "name": "Học tập"
-    }
-
-    # kw = request.json.get('keywords')
-    # keywords = [utils.strip_accents(k.lower()) for k in kw]
+    kw = request.form.get('keywords').split(',')
+    keywords = [utils.strip_accents(k.lower()) for k in kw]
 
     add_no_accept_document(fields, categories, keywords, download_path, path, download_path_img, path_img)
     return jsonify({"status": "200", "message": "success"})
@@ -66,7 +60,15 @@ def upload_dropbox():
     access_token = request.json.get("access_token")
     try:
         for document in documents:
-            doc = dao.get_document_by_id(document)
+            doc_id = document.get('id')
+            description = document.get('description')
+            gem_cost = document.get('gem_cost')
+            if description or gem_cost:
+                try:
+                    dao.update_document_admin(id=doc_id, description=description, gem_cost=gem_cost)
+                except Exception as e:
+                    print(str(e))
+            doc = dao.get_document_by_id(doc_id)
             pdf_url = doc.cloudinary_secure_url
             with open(doc.cloudinary_public_id, "wb") as f:
                 response = requests.get(pdf_url)
@@ -132,4 +134,12 @@ def upload_dropbox():
     except Exception as e:
         print("Lỗi: " + str(e))
         return "fail"
-    return jsonify({"ok": '200'})
+    return jsonify({"status": 200})
+
+
+def reject_document():
+    documents = request.json.get("documents")
+    for document in documents:
+        dao.reject_document(document)
+    return jsonify({"status": 200})
+

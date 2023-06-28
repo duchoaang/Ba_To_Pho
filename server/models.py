@@ -300,7 +300,7 @@ if __name__ == '__main__':
                       img_cloud_link="LinkImgSauConfirm",
                       file_link_download="LinkDownFileTaiWeb",
                       img_link_download="LinkDownImgTaiWeb",
-                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_public_id="ChuaCo",
                       cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
@@ -354,4 +354,5 @@ if __name__ == '__main__':
 
         r = Rule(name='waiting_time_confirm', value=30)
         db.session.add(r)
+        db.session.add_all(cate_list)
         db.session.commit()

@@ -1,9 +1,16 @@
+import os
+from datetime import datetime
+
+import cloudinary
+import dropbox
+import requests
 from flask import jsonify, request
 
-from server import app
+from server import app, utils
 from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users, \
     get_document_by_id
 from server.models import Status
+from server import dao
 
 
 # -------------- "/api" ------------------
@@ -16,8 +23,8 @@ def api_documents():
     documents_list = [doc.to_dict(
         fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
                 "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "cloudinary_secure_url"
-                                     "document_type_id", "document_type", "keywords",
+                "img_link_download", "cloudinary_secure_url",
+                "document_type_id", "document_type", "keywords",
                 "categories", "average_rate", "num_rate", "num_favour_users"]) for doc
         in
         documents]
@@ -25,6 +32,7 @@ def api_documents():
     return jsonify(documents_list)
 
 
+# "/documents/<id>" ['GET']
 def api_document_by_id(id):
     doc = get_document_by_id(id)
     doc_info = doc.to_dict(
@@ -35,6 +43,85 @@ def api_document_by_id(id):
                 "categories", "average_rate", "num_rate"])
 
     return jsonify(doc_info)
+
+
+# "/documents/<id>" ['PATCH']
+def api_document_update(id):
+    status = request.json.get('status')
+    if status == Status.REJECT:
+        return
+    description = request.json.get('description')
+    gem_cost = request.json.get('gem_cost')
+    access_token = request.headers.get('access_token')
+    try:
+        dao.update_document_admin(id, description, status, gem_cost)
+    except Exception as e:
+        print(str(e))
+    doc = dao.get_document_by_id(id)
+    pdf_url = doc.cloudinary_secure_url
+    with open(doc.cloudinary_public_id, "wb") as f:
+        response = requests.get(pdf_url)
+        f.write(response.content)
+
+    img_url = doc.cloudinary_image_secure_url
+    with open("image.png", "wb") as f:
+        response = requests.get(img_url)
+        f.write(response.content)
+    doc_name = doc.title.replace(" ", "_")
+    doc_name = utils.strip_accents(doc_name)
+    created_date = datetime.now()
+
+    extension = doc.cloudinary_public_id.split('.')[-1]
+    file_name = doc_name + "_" + str(created_date) + "." + extension
+    file_name_img = doc_name + "_" + str(created_date) + ".png"
+    dbx = dropbox.Dropbox(access_token)
+
+    with open(doc.cloudinary_public_id, "rb") as f:
+        response = dbx.files_upload(f.read(), "/" + file_name)
+        shared_links = dbx.sharing_list_shared_links(response.path_display).links
+        if len(shared_links) == 0:
+            shared_link = dbx.sharing_create_shared_link(response.path_display)
+        else:
+            shared_link = shared_links[0]
+        # create dowload link
+        links = dbx.sharing_get_shared_links(response.path_display).links
+        if len(links) > 0:
+            cloud_link = links[0].url
+            file_link_download = cloud_link.replace('?dl=0', '?dl=1')
+        else:
+            cloud_link = shared_link.url
+            file_link_download = cloud_link.url.replace('?dl=0', '?dl=1')
+
+    print(cloud_link, file_link_download)
+
+    with open("image.png", "rb") as f:
+        response = dbx.files_upload(f.read(), "/" + file_name_img)
+        shared_links = dbx.sharing_list_shared_links(response.path_display).links
+        if len(shared_links) == 0:
+            shared_link = dbx.sharing_create_shared_link(response.path_display)
+        else:
+            shared_link = shared_links[0]
+        # create download link
+        links = dbx.sharing_get_shared_links(response.path_display).links
+        if len(links) > 0:
+            img_cloud_link = links[0].url
+            img_link_download = img_cloud_link.replace('?dl=0', '?dl=1')
+        else:
+            img_cloud_link = shared_link.url
+            img_link_download = img_cloud_link.replace('?dl=0', '?dl=1')
+
+    print(img_cloud_link, img_link_download)
+
+    os.remove(doc.cloudinary_public_id)
+    os.remove("image.png")
+
+    # Xóa trên cloudinary
+    cloudinary.uploader.destroy(doc.cloudinary_public_id)
+    cloudinary.uploader.destroy(doc.cloudinary_image_public_id)
+
+    dao.update_document(doc.id, cloud_link, img_cloud_link, file_link_download, img_link_download)
+
+    return jsonify({"status" : 200})
 
 
 # "/categories" ['GET']

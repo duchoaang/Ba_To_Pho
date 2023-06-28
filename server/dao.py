@@ -209,6 +209,7 @@ def get_document_type_id_by_extension(extension):
 def update_document(doc_id, cloud_link, img_cloud_link, file_link_download, img_link_download):
     doc = Document.query.get(doc_id)
     if doc:
+        doc.status = Status.ACCEPT
         doc.cloud_link = cloud_link
         doc.img_cloud_link = img_cloud_link
         doc.file_link_download = file_link_download
@@ -260,3 +261,22 @@ def get_users():
     users = User.query.filter(User.user_role.__eq__(UserRole.USER))
     users = users.filter(User.is_active.__eq__(1))
     return users.all()
+
+
+def update_document_admin(document_id, description=None, status=None, gem_cost=None):
+    doc = Document.query.get(document_id)
+    if description:
+        doc.description = description
+    if gem_cost:
+        doc.gem_cost = gem_cost
+    if status:
+        doc.status = Status.ACCEPT
+    db.session.commit()
+
+
+def reject_document(doc_id):
+    doc = Document.query.get(doc_id)
+    if doc:
+        doc.status = Status.REJECT
+        return True
+    return False
