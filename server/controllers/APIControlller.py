@@ -1,8 +1,9 @@
 import os
 from datetime import datetime
+
+import cloudinary
 import dropbox
 import requests
-from cloudinary.templatetags import cloudinary
 from flask import jsonify, request
 
 from server import app, utils
@@ -50,7 +51,10 @@ def api_document_update(id):
     description = request.json.get('description')
     gem_cost = request.json.get('gem_cost')
     access_token = request.headers.get('access_token')
-    dao.update_document_admin(id, description, status, gem_cost)
+    try:
+        dao.update_document_admin(id, description, status, gem_cost)
+    except Exception as e:
+        print(str(e))
     doc = dao.get_document_by_id(id)
     pdf_url = doc.cloudinary_secure_url
     with open(doc.cloudinary_public_id, "wb") as f:
