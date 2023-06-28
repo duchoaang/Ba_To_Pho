@@ -1,7 +1,9 @@
 import hashlib
+import secrets
 from datetime import date
 
 from flask_login import current_user
+from sqlalchemy.exc import IntegrityError
 
 from server import app, db
 from sqlalchemy import or_, and_, not_, func, extract
@@ -59,6 +61,27 @@ def add_user(fields):
     db.session.add(user)
     db.session.commit()
     return user
+
+
+def get_user_by_email(email):
+    user = User.query.filter(User.email.__eq__(email)).first()
+    return user
+
+
+def add_user_form_google(fields):
+    username = "google_user_" + secrets.token_hex(10)
+    password = secrets.token_hex(10)
+    user = User(username=username, password=password, email=fields['email'], name=fields['name'],
+                avatar=fields['avatar'])
+    db.session.add(user)
+    for i in range(4):
+        try:
+            db.session.commit()
+            return user
+        except IntegrityError as e:
+            if "username" in str(e):
+                user.username = "google_user_" + secrets.token_hex(10)
+    return None
 
 
 def get_user_by_id(user_id):
@@ -211,6 +234,7 @@ def get_document_by_id(doc_id):
     doc = Document.query.get(doc_id)
     return doc
 
+
 def rate_document(doc_id, number_star, user_id):
     rate = Rate.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
     if rate:
@@ -236,4 +260,3 @@ def get_users():
     users = User.query.filter(User.user_role.__eq__(UserRole.USER))
     users = users.filter(User.is_active.__eq__(1))
     return users.all()
-

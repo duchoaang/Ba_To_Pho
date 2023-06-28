@@ -12,7 +12,6 @@ from server import app, db, APP_KEY, APP_SECRET
 import unicodedata
 
 
-
 def hash_text(plain_text):
     return hashlib.md5(plain_text.encode()).hexdigest()
 
