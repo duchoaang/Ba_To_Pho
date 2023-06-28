@@ -247,7 +247,7 @@ def update_document_admin(document_id, description=None, status=None, gem_cost=N
     if gem_cost:
         doc.gem_cost = gem_cost
     if status:
-        doc.status = 'ACCEPT'
+        doc.status = Status.ACCEPT
     db.session.commit()
 
 

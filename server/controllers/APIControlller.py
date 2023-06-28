@@ -48,6 +48,8 @@ def api_document_by_id(id):
 # "/documents/<id>" ['PATCH']
 def api_document_update(id):
     status = request.json.get('status')
+    if status == Status.REJECT:
+        return
     description = request.json.get('description')
     gem_cost = request.json.get('gem_cost')
     access_token = request.headers.get('access_token')
@@ -118,6 +120,8 @@ def api_document_update(id):
     cloudinary.uploader.destroy(doc.cloudinary_image_public_id)
 
     dao.update_document(doc.id, cloud_link, img_cloud_link, file_link_download, img_link_download)
+
+    return jsonify({"status" : 200})
 
 
 # "/categories" ['GET']

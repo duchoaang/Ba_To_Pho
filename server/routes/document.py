@@ -1,5 +1,5 @@
 from flask import Blueprint
-from server.controllers.DocumentController import upload_cloudinary, upload_dropbox
+from server.controllers.DocumentController import upload_cloudinary, upload_dropbox, reject_document
 
 document_bp = Blueprint('document_bp', __name__)
 

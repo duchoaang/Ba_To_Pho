@@ -63,7 +63,7 @@ def upload_dropbox():
             doc_id = document.get('id')
             description = document.get('description')
             gem_cost = document.get('gem_cost')
-            if  description or gem_cost:
+            if description or gem_cost:
                 try:
                     dao.update_document_admin(id=doc_id, description=description, gem_cost=gem_cost)
                 except Exception as e:
