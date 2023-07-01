@@ -39,6 +39,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 
+
+
+
 const Profile = () => {
     const { id } = useParams();
     const [value, setValue] = useState(0);
@@ -50,15 +53,16 @@ const Profile = () => {
     const [totalFavDocs, setTotalFavDocs] = useState('');
     const [totalUserDocs, setTotalUserDocs] = useState('');
     const [formInfoUser, setFormInfoUser] = useState({
+        id: decodeURIComponent(id),
         fullName: '',
         bio: '',
         socialMedia: '',
         address: '',
         phoneNumber: '',
     });
-
+    const decodeId = decodeURIComponent(id);
     const sendDataToServer = () => {
-        const url = "http://127.0.0.1:5000/user"; // Thay thế bằng URL thực tế của bạn
+        const url = "http://127.0.0.1:5000/users"; // Thay thế bằng URL thực tế của bạn
         const data = { key: formInfoUser }; // Thay thế bằng dữ liệu thực tế bạn muốn gửi
         console.log("da gui")
         axios.patch(url, data)
@@ -75,7 +79,7 @@ const Profile = () => {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    const decodeId = decodeURIComponent(id);
+   
 
     const handleDocsType = {
         waitDocs: (responseData) => {
