@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Detail.module.scss';
 
@@ -9,8 +9,13 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import Textarea from '@mui/joy/Textarea';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import CommentIcon from '@mui/icons-material/Comment';
+import Rating from '@mui/material/Rating';
+
+import SuggestSection from './layouts/Suggest';
+import InfoList from './components/InfoList';
 
 import request from '~/utils/request';
+import Status from '~/utils/StatusCode';
 
 const cx = classNames.bind(styles);
 
@@ -36,63 +41,13 @@ const Nav = () => (
     </nav>
 );
 
-const SuggestItem = () => {
-    return (
-        <div className={cx('suggest-item')}>
-            <div className={cx('suggest-item-img')}>
-                <img src="/src/assets/sgtImg.jpg" alt="" />
-            </div>
-            <div className={cx('suggest-item-preview')}>
-                <div className={'view-count'}>
-                    <span className="material-icons">visibility</span>
-                    <b>488</b>
-                </div>
-                <div className={'download-count'}>
-                    <span className="material-icons">download</span>
-                    <b>12</b>
-                </div>
-            </div>
-            <div className={cx('suggest-item-category')}>
-                <span className="material-icons">bookmark</span>
-                <span>HTML, CSS</span>
-            </div>
-            <div className={cx('suggest-item-title')}>
-                <b>Full code Đồ án quản lí nhà hàng</b>
-            </div>
-            <div className={cx('suggest-item-star')}>
-                <span className="material-icons">star_rate</span>
-                <span className="material-icons">star_rate</span>
-                <span className="material-icons">star_rate</span>
-                <span className="material-icons">star_rate</span>
-                <span className="material-icons">star_outline</span>
-            </div>
-        </div>
-    );
-};
-
-const Suggestion = () => {
-    return (
-        <div className={cx('suggest', 'mt-3')}>
-            <h5>
-                <b>GỢI Ý CHO BẠN</b>
-            </h5>
-            <div className="d-flex flex-wrap" style={{ gap: '15px' }}>
-                <SuggestItem />
-                <SuggestItem />
-                <SuggestItem />
-                <SuggestItem />
-            </div>
-        </div>
-    );
-};
-
 const Comment = () => {
     return (
         <div className="d-flex p-2 mt-2 border rounded">
             <span className="material-icons fs-1">portrait</span>
             <div className="flex-fill">
                 <div className="d-flex justify-content-between">
-                    <span className="user-name">Quang Huy</span>
+                    <span className="name">Quang Huy</span>
                     <div className="d-flex g-2">
                         <span>22:06 - 28/10/2022</span>
                         <span>Trả lời</span>
@@ -128,7 +83,6 @@ const CommentHeader = () => {
                         }
                     />
                 </div>
-                <div className="text-end mt-3"></div>
             </form>
             <div>
                 <Comment />
@@ -147,22 +101,32 @@ const Detail = () => {
         gem_cost: 0,
         categories: [],
         description: '',
+        average_rate: 0,
+        num_favour_users: 0,
+        num_rate: 0,
+        view_count: 0,
     });
+
+    const [favorite, setFavorite] = useState(false);
+
     const location = useLocation();
+    const navigate = useNavigate();
     useEffect(() => {
         let id = location.pathname.split('/')[2];
-        request.get(`api/documents/${id}`).then((rawData) =>
-            setData({
-                ...rawData,
-                // cloudinary_image_secure_url: 'https://www.dropbox.com/s/zbb2popr17yjlxd/heheheheheheheh_2023-06-24%2022%3A19%3A22.129924.png?dl=1',
-            }),
-        );
+        request.get(`api/documents/${id}`).then((res) => {
+            if (res.status === Status.NOT_FOUND) {
+                navigate('/');
+                return;
+            }
+
+            setData({ ...data, ...res });
+        });
     }, [location]);
 
     return (
         <div className="container">
             <div className="row">
-                <div className="col-md-8">
+                <div className="col-md-8 col-sm-12">
                     <Nav />
                     <div className="info">
                         <div className={cx('doc-info', 'row')}>
@@ -170,49 +134,72 @@ const Detail = () => {
                                 <img src={data.cloudinary_image_secure_url} className="w-100" alt="" />
                             </div>
                             <div className={cx('doc-details', 'col-md-8')}>
-                                <div className="doc-details-title">
+                                <div>
                                     <h4>
                                         <b>{data.title}</b>
                                     </h4>
                                     <div className="d-flex justify-content-between">
-                                        <div></div>
-                                        <div></div>
+                                        <div className="d-flex align-items-center">
+                                            <Rating
+                                                precision={0.5}
+                                                value={data.average_rate}
+                                                onChange={(_, newValue) => {
+                                                    setData({
+                                                        ...data,
+                                                        average_rate:
+                                                            (data.average_rate * data.num_rate + newValue) /
+                                                            (data.num_rate + 1),
+                                                        num_rate: data.num_rate + 1,
+                                                    });
+                                                }}
+                                            />
+                                            <span>{data.num_rate} Đánh giá</span>
+                                        </div>
+                                        <div>
+                                            <span>
+                                                <span className="material-icons">download</span>
+                                            </span>
+                                            <span>
+                                                <span className="material-icons">visibility</span>
+                                                {data.view_count}
+                                            </span>
+                                            <span>
+                                                <span className="material-icons">favorite</span>
+                                                {data.num_favour_users}
+                                            </span>
+                                        </div>
                                     </div>
                                     <hr />
                                     <div className="d-flex justify-content-between">
-                                        <div>
-                                            <span>Phí tải:</span>
-                                            <span className="ms-2">{data.gem_cost} CodeGem</span>
-                                        </div>
-                                        <Button variant="outlined" color="error" startIcon={<FavoriteBorderIcon />}>
-                                            YÊU THÍCH
+                                        <InfoList title="Phí tải" value={`${data.gem_cost} CodeGem`} />
+                                        <Button
+                                            variant="outlined"
+                                            color="error"
+                                            startIcon={favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                                            onClick={() => {
+                                                setFavorite((prev) => !prev);
+                                            }}
+                                        >
+                                            {favorite ? 'BỎ YÊU THÍCH' : 'YÊU THÍCH'}
                                         </Button>
                                     </div>
                                     <hr />
-                                    <div className="d-flex justify-content-between">
-                                        <div className="">
-                                            <div className="d-flex g-2">
-                                                <span>Danh mục</span>
-                                                <span>{data.categories.map((c) => c.name).join(', ')}</span>
-                                            </div>
-                                            <div className="d-flex g-2">
-                                                <span>Nhóm code</span>
-                                                <span>Code tham khảo</span>
-                                            </div>
-                                            <div className="d-flex g-2">
-                                                <span>Ngày đăng</span>
-                                                <span>29-12-2016</span>
-                                            </div>
-                                            <div className="d-flex g-2">
-                                                <span>Loại file</span>
-                                                <span>Full code</span>
-                                            </div>
-                                            <div className="d-flex g-2">
-                                                <span>Dung lượng</span>
-                                                <span>26.7 MB</span>
-                                            </div>
+                                    <div>
+                                        <div className="d-md-inline-block">
+                                            <InfoList
+                                                title="Danh mục"
+                                                value={data.categories.map((c) => c.name).join(', ')}
+                                            />
+                                            <InfoList title="Nhóm code" value="Code tham khảo" />
+                                            <InfoList title="Ngày đăng" value="29-12-2016" />
+                                            <InfoList title="Loại file" value="Full code" />
+                                            <InfoList title="Dung lượng" value="26.7 MB" />
                                         </div>
-                                        <Button variant="contained" startIcon={<FileDownloadIcon />}>
+                                        <Button
+                                            className="float-end"
+                                            variant="contained"
+                                            startIcon={<FileDownloadIcon />}
+                                        >
                                             DOWNLOAD
                                         </Button>
                                     </div>
@@ -224,7 +211,7 @@ const Detail = () => {
                     <div className={cx('description')}>
                         <p className={cx('description-text')}>{data.description}</p>
                     </div>
-                    <Suggestion />
+                    <SuggestSection />
                     <CommentHeader />
                 </div>
                 <div className="col-md-4">
