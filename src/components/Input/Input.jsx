@@ -11,13 +11,13 @@ const Input = () => {
         fetch('http://127.0.0.1:5000/api/documents')
             .then((response) => response.json())
             .then((json) => {
-             
+             console.log(json);
                 const results = json.filter((docs) => {
                     return (
                         inputValue &&
                         docs &&
-                        docs.content &&
-                        docs.content.toLowerCase().includes(inputValue.toLowerCase())
+                        docs.title &&
+                        docs.title.toLowerCase().includes(inputValue.toLowerCase())
                     );
                 });
           
@@ -26,6 +26,9 @@ const Input = () => {
     }, [inputValue]);
     const handleChangeInput = (value) => {
         setInputValue(value);
+        console.log(inputValue)
+        console.log(resultsList)
+        
     };
 
     const handleClickResult = (value) => {
@@ -46,7 +49,7 @@ const Input = () => {
                 resultsList.map((result, id) =>{
                     return <Link className={cx('result')} to="/" key={id} 
                         onClick={() => handleClickResult(result)}
-                    >{result.content} </Link>
+                    >{result.title} </Link>
                 })
                }
             </div>

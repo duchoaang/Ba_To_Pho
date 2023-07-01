@@ -123,9 +123,7 @@ const Documents = () => {
     useEffect(() => {
         setStart((numberPage - 1) * PAGE_SIZE);
     }, [numberPage]);
-    console.log((numberPage - 1) * PAGE_SIZE);
-    // console.log(start);
-    // // console.log(listID);
+ 
     const handleChecklist = (checked, id) => {
         if (checked) {
             setUserChoice([...userChoice, id]);
@@ -139,10 +137,10 @@ const Documents = () => {
             .get('http://127.0.0.1:5000/api/categories')
             .then((response) => {
                 setListCategories(response.data);
-                // console.log(response.data)
+             
             })
             .catch((error) => {
-                console.log(123);
+          
             });
         axios
             .get('http://127.0.0.1:5000/api/types')
@@ -164,7 +162,7 @@ const Documents = () => {
             });
     }, []);
 
-    console.log(typeID);
+   
 
     const handleShowList = () => {
         setShowList(!showList);
@@ -252,7 +250,7 @@ const Documents = () => {
                                 userChoice.every((v) => document.categories.map((cate) => cate.id).includes(v)) &&
                                 typeID === document.document_type_id && (
                                     <>
-                                        {console.log(document.document_type_id)}
+                                    
                                         <div className={cx('item')} key={index}>
                                             <div className={cx('content__left')}>
                                                 <img src={document.img} alt="preview" width={170} />

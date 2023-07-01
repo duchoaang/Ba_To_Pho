@@ -13,7 +13,18 @@ import { useGoogleLogin, googleLogout } from '@react-oauth/google';
 import GoogleButton from 'react-google-button';
 const cx = classNames.bind(styles);
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCoffee, faBacon } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Settings from '@mui/icons-material/Settings';
+import Logout from '@mui/icons-material/Logout';
+// import UserController from '@/UserController';
 
 import 'boxicons';
 const MENU_ITEM = [
@@ -81,10 +92,15 @@ const ModalWrapper = ({ show, children }) => {
     return <div className={cx('modal-wrapper', { show })}>{children}</div>;
 };
 
+const UserController = ({ show, children }) => {
+    return <div className={cx('user-controller', { show })}>{children}</div>;
+};
+
 const Header = () => {
     const [user, setUser] = useState(false);
     const [userGoogle, setUserGoogle] = useState([]);
     // const [profile, setProfile] = useState([]);
+    const [anchorEl, setAnchorEl] = useState(null);
     const [infoUser, setInfoUser] = useState([]);
     const [infoUserGoogle, setInfoUserGoogle] = useState([]);
     const [formDataLoginGoogle, setFormDataLoginGoogle] = useState([]);
@@ -99,7 +115,7 @@ const Header = () => {
     const [isFormValid, setIsFormValid] = useState(false);
     const [errorMessage, setErrorMessage] = useState(false);
     const [confirmEmail, setConfirmEmail] = useState(false);
-
+    const [showUserControll, setUserControll] = useState(false);
     const [showAlertConfirmEmail, setShowAlertConfirmEmail] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [ErrorUserNameEmail, setErrorUserNameEmail] = useState(false);
@@ -115,10 +131,17 @@ const Header = () => {
         googleLogout();
         setProfile(null);
     };
-    // console.log(userGoogle);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     // lay thong tin user google
     useEffect(() => {
-        if (userGoogle) {
+        if (userGoogle != null) {
             axios
                 .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
                     headers: {
@@ -127,11 +150,10 @@ const Header = () => {
                     },
                 })
                 .then((res) => {
-                    console.log(res);
                     setFormDataLoginGoogle(res.data);
                     // setProfile(res.data);
                 })
-                .catch((err) => console.log(err));
+                .catch((err) => {});
         }
     }, [userGoogle]);
 
@@ -142,17 +164,17 @@ const Header = () => {
                 .post('http://127.0.0.1:5000/users/loginGoogle', formDataLoginGoogle, { withCredentials: true })
                 .then((response) => {
                     setUser(true);
-                    // console.log(response.data);
+
                     setInfoUserGoogle({
                         id: response.data.id,
                         name: response.data.name,
                         avatar: response.data.avatar,
                     });
+
                     setShowModal(false);
                     setLoginFailed(false);
                 })
                 .catch((error) => {
-                    console.log(error.message);
                     // setLoginFailed(true);
                     console.log('dang nhap k thanh cong');
                 });
@@ -161,10 +183,9 @@ const Header = () => {
 
     useEffect(() => {
         axios.get('http://127.0.0.1:5000/current-user', { withCredentials: true }).then((response) => {
-            console.log(response.data.is_active);
             if (response.data.is_active === true) {
                 setUser(true);
-                // console.log(response.data);
+
                 setInfoUser({
                     id: response.data.id,
                     username: response.data.username,
@@ -172,7 +193,7 @@ const Header = () => {
                 });
             }
         });
-    }, []);
+    }, [user]);
 
     const AlertConfirmEmailSucess = () => {
         Swal.fire({
@@ -229,7 +250,6 @@ const Header = () => {
         username: userName,
         password: userPassword,
     });
-    // console.log(formData);
 
     const handleLogin = () => {
         setShowModal(true);
@@ -252,8 +272,6 @@ const Header = () => {
     useEffect(() => {
         let prevConfirmEmail = confirmEmail;
         if (confirmEmail === true && prevConfirmEmail === true) {
-            console.log('setup fetch');
-
             const timer = setInterval(() => {
                 fetch('http://127.0.0.1:5000/users/confirm-status/', {
                     method: 'GET',
@@ -284,7 +302,6 @@ const Header = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log(showLoading);
         if (userPassword === confirmPassword) {
             setShowLoading(true);
             setErrorMessage(false);
@@ -318,7 +335,6 @@ const Header = () => {
 
     // dang nhap
     const handleSubmitLogin = (e) => {
-        console.log(formDataLogin);
         e.preventDefault();
         axios
             .post('http://127.0.0.1:5000/users/login', formDataLogin, { withCredentials: true })
@@ -334,7 +350,6 @@ const Header = () => {
                 setLoginFailed(false);
             })
             .catch((error) => {
-                console.log(error.message);
                 setLoginFailed(true);
                 console.log('dang nhap k thanh cong');
             });
@@ -573,14 +588,110 @@ const Header = () => {
                     </Link>
                     {user ? (
                         <>
-                            <Tooltip title={<Link to={`/profile/${infoUser.id}`}>Profile</Link>}>
-                                <img
-                                    onClick={handleLogout}
-                                    className={cx('user_avatar')}
-                                    src={infoUser.avatar}
-                                    alt=""
-                                />
-                            </Tooltip>
+                            
+                            {/* <UserController show={true}>
+                                <div className={cx('user_controller')}>
+                                    <img
+                                        onClick={handleLogout}
+                                        className={cx('user_avatar')}
+                                        src={infoUser.avatar}
+                                        alt=""
+                                    />
+                                    <div className={cx('menu_controller')}>
+                                        <div className={cx('c_profile')}>
+                                            <FontAwesomeIcon icon={faUser} />
+                                            <h1>
+                                                <Link style={{ color: 'black' }} to={`/profile/${infoUser.id}`}>
+                                                    Profile
+                                                </Link>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </UserController> */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                                <Tooltip title="Account settings">
+                                    <IconButton
+                                        onClick={handleClick}
+                                        size="small"
+                                        sx={{ ml: 2 }}
+                                        aria-controls={open ? 'account-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                    >
+                                        <Avatar sx={{ width: 32, height: 32 }}>
+                                            <img className={cx('user_avatar')} src={infoUser.avatar} alt="" />
+                                        </Avatar>
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                            <Menu
+                                anchorEl={anchorEl}
+                                id="account-menu"
+                                open={open}
+                                onClose={handleClose}
+                                onClick={handleClose}
+                                PaperProps={{
+                                    elevation: 0,
+                                    sx: {
+                                        overflow: 'visible',
+                                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                        mt: 1.5,
+                                        '& .MuiAvatar-root': {
+                                            width: 32,
+                                            height: 32,
+                                            ml: -0.5,
+                                            mr: 1,
+                                        },
+                                        '&:before': {
+                                            content: '""',
+                                            display: 'block',
+                                            position: 'absolute',
+                                            top: 0,
+                                            right: 14,
+                                            width: 10,
+                                            height: 10,
+                                            bgcolor: 'background.paper',
+                                            transform: 'translateY(-50%) rotate(45deg)',
+                                            zIndex: 0,
+                                        },
+                                    },
+                                }}
+                                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                            >
+                                <Link style={{color:'black'}} to={`/profile/${infoUser.id}`}>
+                                    <MenuItem onClick={handleClose}>
+                                        <Avatar /> Profile
+                                    </MenuItem>
+                                </Link>
+                                <MenuItem onClick={handleClose}>
+                                    <Avatar /> My account
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <PersonAdd fontSize="small" />
+                                    </ListItemIcon>
+                                    Add another account
+                                </MenuItem>
+                                <MenuItem onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <Settings fontSize="small" />
+                                    </ListItemIcon>
+                                    Settings
+                                </MenuItem>
+                                <MenuItem onClick={handleLogout}>
+                                    <ListItemIcon>
+                                        <Logout fontSize="small" />
+                                    </ListItemIcon>
+                                    Logout
+                                </MenuItem>
+                            </Menu>
+
+                            {/* <Tippy content="Tooltip">
+      <ThisWillWork />
+    </Tippy> */}
                         </>
                     ) : (
                         <>
@@ -600,8 +711,6 @@ const Header = () => {
                             </Btn>
                         </>
                     )}
-                    <FontAwesomeIcon icon={faBacon} />
-             
                 </div>
             </header>
             <ul className={cx('menu', 'd-flex justify-content-around mt-2')}>
