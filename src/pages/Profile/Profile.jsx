@@ -6,6 +6,15 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ImageIcon from '@mui/icons-material/Image';
+import WorkIcon from '@mui/icons-material/Work';
+import BeachAccessIcon from '@mui/icons-material/BeachAccess';
+import Divider from '@mui/material/Divider';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
 import { Link } from 'react-router-dom';
 import {
@@ -31,25 +40,50 @@ import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 
 
+
+
 const Profile = () => {
     const { id } = useParams();
     const [value, setValue] = useState(0);
     const [infoUser, setInfoUser] = useState([]);
     const [docsType, setDocsType] = useState('userDocs');
     const [listDocs, setListDocs] = useState([]);
-    const [totalWaitDocs, setTotalWaitDocs] = useState("");
-    const [totalResultDocs, setTotalResultDocs] = useState("");
-    const [totalFavDocs, setTotalFavDocs] = useState("");
-    const [totalUserDocs, setTotalUserDocs] = useState("");
+    const [totalWaitDocs, setTotalWaitDocs] = useState('');
+    const [totalResultDocs, setTotalResultDocs] = useState('');
+    const [totalFavDocs, setTotalFavDocs] = useState('');
+    const [totalUserDocs, setTotalUserDocs] = useState('');
+    const [formInfoUser, setFormInfoUser] = useState({
+        id: decodeURIComponent(id),
+        fullName: '',
+        bio: '',
+        socialMedia: '',
+        address: '',
+        phoneNumber: '',
+    });
+    const decodeId = decodeURIComponent(id);
+    const sendDataToServer = () => {
+        const url = "http://127.0.0.1:5000/users"; // Thay thế bằng URL thực tế của bạn
+        const data = { key: formInfoUser }; // Thay thế bằng dữ liệu thực tế bạn muốn gửi
+        console.log("da gui")
+        axios.patch(url, data)
+          .then(response => {
+            console.log("Gửi PATCH thành công!");
+            // Xử lý phản hồi từ server (nếu cần)
+          })
+          .catch(error => {
+            console.error("Gửi PATCH không thành công!");
+            // Xử lý lỗi (nếu cần)
+          });
+      };
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    const decodeId = decodeURIComponent(id);
- 
+   
+
     const handleDocsType = {
         waitDocs: (responseData) => {
             setListDocs(responseData.waitDocs);
-            
         },
         resultDocs: (responseData) => {
             setListDocs(responseData.resultDocs);
@@ -77,25 +111,25 @@ const Profile = () => {
 
         fetchData();
     }, [docsType]);
-   
+
     useEffect(() => {
         axios
             .get(`http://127.0.0.1:5000/profile/${decodeId}`)
             .then((response) => {
                 return response.data;
-                
-
-            }).then((data) =>{
+            })
+            .then((data) => {
                 setInfoUser({
                     id: data.id,
-                    username: data.username,
+                    name: data.name,
                     avatar: data.avatar,
                     email: data.email,
+                    gem: data.gem,
                 });
-                setTotalUserDocs(data.userDocs.length)
-                setTotalWaitDocs(data.waitDocs.length)
-                setTotalFavDocs(data.favDocs.length)
-                setTotalResultDocs(data.resultDocs.length)
+                setTotalUserDocs(data.userDocs.length);
+                setTotalWaitDocs(data.waitDocs.length);
+                setTotalFavDocs(data.favDocs.length);
+                setTotalResultDocs(data.resultDocs.length);
                 // setTotalUserDocs(data.userDocs.length)
                 // setTotalUserDocs(data.userDocs.length)
             })
@@ -104,7 +138,7 @@ const Profile = () => {
             });
         // Sử dụng giá trị `decodedId` trong ứng dụng của bạn
     }, [id]);
-  
+    console.log(formInfoUser);
     return (
         <>
             <section style={{ backgroundColor: '#eee' }}>
@@ -116,7 +150,7 @@ const Profile = () => {
                                     <a href="#">Home</a>
                                 </MDBBreadcrumbItem>
                                 <MDBBreadcrumbItem>
-                                    <a href="#">{infoUser.username}</a>
+                                    <a href="#">{infoUser.name}</a>
                                 </MDBBreadcrumbItem>
                                 <MDBBreadcrumbItem active>User Profile</MDBBreadcrumbItem>
                             </MDBBreadcrumb>
@@ -128,14 +162,15 @@ const Profile = () => {
                             <MDBCard className="mb-4">
                                 <MDBCardBody className="text-center">
                                     <MDBCardImage
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                                        src={infoUser.avatar}
                                         alt="avatar"
                                         className="rounded-circle"
                                         style={{ width: '150px' }}
                                         fluid
                                     />
-                                    <p className="text-muted mb-1">{infoUser.username}</p>
-                                    <p className="text-muted mb-4">Email: {infoUser.email}</p>
+                                    <p className="">{infoUser.name}</p>
+                                    <p className="">Email: {infoUser.email}</p>
+                                    <p>Số gem hiện tại : {infoUser.gem}</p>
                                     <div className="d-flex justify-content-center mb-2">
                                         <Button variant="contained" style={{ fontSize: '13px', marginTop: '-10px' }}>
                                             Chỉnh sửa thông tin
@@ -153,61 +188,85 @@ const Profile = () => {
                                     noValidate
                                     autoComplete="off"
                                 >
-                                    <div className={cx('changeName')}>
-                                        <h1>Tên người dùng</h1>
+                                    <div className={cx('changeInfo', 'changeName')}>
+                                        <h1>Họ và tên</h1>
                                         <TextField
                                             style={{ width: '96%' }}
                                             size="small"
                                             id="outlined-basic"
-                                            label="Tên"
+                                            placeholder="Họ tên"
                                             variant="outlined"
+                                            value={formInfoUser.fullName}
+                                            onChange={(e) =>
+                                                setFormInfoUser({ ...formInfoUser, fullName: e.target.value })
+                                            }
                                         />
                                     </div>
-                                    <div className={cx('changeName')}>
-                                        <h1>Email</h1>
+                                    <div className={cx('changeInfo', 'changeBio')}>
+                                        <h1>Giới thiệu</h1>
                                         <TextField
-                                            type="email"
+                                            type="text"
+                                            style={{ width: '96%' }}
+                                            size="medium"
+                                            id="outlined-basic"
+                                            placeholder="Giới thiệu"
+                                            variant="outlined"
+                                            value={formInfoUser.bio}
+                                            onChange={(e) => setFormInfoUser({ ...formInfoUser, bio: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className={cx('changeInfo', 'changeSocialMedia')}>
+                                        <h1>Mạng xã hội</h1>
+                                        <TextField
+                                            type="text"
                                             style={{ width: '96%' }}
                                             size="small"
                                             id="outlined-basic"
-                                            label="Email"
+                                            placeholder="Link facebook/instagram/twitter"
                                             variant="outlined"
+                                            value={formInfoUser.socialMedia}
+                                            onChange={(e) =>
+                                                setFormInfoUser({ ...formInfoUser, socialMedia: e.target.value })
+                                            }
                                         />
                                     </div>
-                                    <div className={cx('changeName')}>
-                                        <h1>Mật khẩu</h1>
-                                        <TextField
-                                            type="password"
-                                            style={{ width: '96%' }}
-                                            size="small"
-                                            id="outlined-basic"
-                                            label="Mật khẩu"
-                                            variant="outlined"
-                                        />
-                                    </div>
-                                    <div className={cx('changeName')}>
+                                    <div className={cx('changeInfo', 'changeAddress')}>
                                         <h1>Địa chỉ</h1>
                                         <TextField
+                                            type="text"
                                             style={{ width: '96%' }}
                                             size="small"
                                             id="outlined-basic"
-                                            label="Địa chỉ"
+                                            placeholder="Địa chỉ"
                                             variant="outlined"
+                                            value={formInfoUser.address}
+                                            onChange={(e) =>
+                                                setFormInfoUser({ ...formInfoUser, address: e.target.value })
+                                            }
                                         />
                                     </div>
-                                    <div className={cx('changeName')}>
+                                    <div className={cx('changeInfo', 'changePhone')}>
                                         <h1>Số điện thoại</h1>
                                         <TextField
+                                            type="text"
                                             style={{ width: '96%' }}
                                             size="small"
                                             id="outlined-basic"
-                                            label="Số điện thoại"
+                                            placeholder="Số điện thoại"
                                             variant="outlined"
+                                            value={formInfoUser.phoneNumber}
+                                            onChange={(e) =>
+                                                setFormInfoUser({ ...formInfoUser, phoneNumber: e.target.value })
+                                            }
                                         />
                                     </div>
                                 </Box>
                                 <div className={cx('btnChangeInfo')}>
-                                    <Button variant="contained" color="success" size="small">
+                                    <Button
+                                    
+                                    onClick={sendDataToServer}
+                                    variant="contained" color="success" size="small">
+                                      
                                         Lưu
                                     </Button>
                                     <Button variant="contained" color="inherit" size="small">
@@ -230,9 +289,8 @@ const Profile = () => {
                                             style={{ fontSize: '13px' }}
                                             onClick={(e) => setDocsType(e.target.name)}
                                             label={`Tài liệu cá nhân (${totalUserDocs})`}
-                                            
                                         />
-                                        
+
                                         <Tab
                                             name="waitDocs"
                                             style={{ fontSize: '13px' }}
@@ -266,7 +324,24 @@ const Profile = () => {
                             <div className="contentDocs">
                                 {listDocs.map((docs) => (
                                     <>
-                                        <div>{docs.title}</div>
+                                        <List
+                                            sx={{
+                                                width: '100%',
+
+                                                bgcolor: 'background.paper',
+                                            }}
+                                        >
+                                            <ListItem button>
+                                                <ListItemAvatar>
+                                                    <Avatar>
+                                                        <ImageIcon />
+                                                    </Avatar>
+                                                </ListItemAvatar>
+                                                <ListItemText primary={docs.title} secondary="Jan 9, 2014" />
+                                            </ListItem>
+                                            <Divider variant="inset" component="li" />
+                                        </List>
+                                        {/* <div>{docs.title}</div> */}
                                     </>
                                 ))}
                             </div>
