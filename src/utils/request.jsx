@@ -5,9 +5,14 @@ const request = axios.create({
     baseURL: 'http://127.0.0.1:5000',
 });
 
+const HEADER = {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+};
+
 export const get = async (path, options = {}, headerOptions = {}) => {
     try {
-        const response = await request.get(path, options, headerOptions).catch((err) => {
+        const response = await request.get(path, options, { ...HEADER, ...headerOptions }).catch((err) => {
             throw err;
         });
         return response.data;
@@ -17,22 +22,22 @@ export const get = async (path, options = {}, headerOptions = {}) => {
 };
 
 export const post = async (path, options = {}, headerOptions = {}) => {
-    const response = await request.post(path, options, headerOptions);
+    const response = await request.post(path, options, { ...HEADER, ...headerOptions });
     return response.data;
 };
 
 export const put = async (path, options = {}, headerOptions = {}) => {
-    const response = await request.put(path, options, headerOptions);
+    const response = await request.put(path, options, { ...HEADER, ...headerOptions });
     return response.data;
 };
 
 export const del = async (path, options = {}, headerOptions = {}) => {
-    const response = await request.delete(path, options, headerOptions);
+    const response = await request.delete(path, options, { ...HEADER, ...headerOptions });
     return response.data;
 };
 
 export const patch = async (path, options = {}, headerOptions = {}) => {
-    const response = await request.patch(path, options, headerOptions);
+    const response = await request.patch(path, options, { ...HEADER, ...headerOptions });
     return response.data;
 };
 

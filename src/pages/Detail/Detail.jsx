@@ -105,6 +105,10 @@ const Detail = () => {
         num_favour_users: 0,
         num_rate: 0,
         view_count: 0,
+        document_type: 'PDF',
+        created_date: '01-01-1970',
+        file_link_download: '',
+        file_size: 0,
     });
 
     const [favorite, setFavorite] = useState(false);
@@ -118,8 +122,11 @@ const Detail = () => {
                 navigate('/');
                 return;
             }
+            let d = new Date(res.created_date);
+            let date =
+                ('0' + d.getDate()).slice(-2) + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getFullYear();
 
-            setData({ ...data, ...res });
+            setData({ ...data, ...res, created_date: date });
         });
     }, [location]);
 
@@ -190,15 +197,15 @@ const Detail = () => {
                                                 title="Danh mục"
                                                 value={data.categories.map((c) => c.name).join(', ')}
                                             />
-                                            <InfoList title="Nhóm code" value="Code tham khảo" />
-                                            <InfoList title="Ngày đăng" value="29-12-2016" />
-                                            <InfoList title="Loại file" value="Full code" />
-                                            <InfoList title="Dung lượng" value="26.7 MB" />
+                                            <InfoList title="Ngày đăng" value={data.created_date} />
+                                            <InfoList title="Loại file" value={data.document_type} />
+                                            <InfoList title="Dung lượng" value={`${data.file_size} MB`} />
                                         </div>
                                         <Button
                                             className="float-end"
                                             variant="contained"
                                             startIcon={<FileDownloadIcon />}
+                                            href={data.file_link_download}
                                         >
                                             DOWNLOAD
                                         </Button>
