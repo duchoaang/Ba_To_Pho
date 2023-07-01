@@ -33,31 +33,32 @@ def api_documents():
 
 
 # "/documents/<id>" ['GET']
-def api_document_by_id(id):
-    doc = get_document_by_id(id)
+def api_document_by_id(doc_id):
+    doc = get_document_by_id(doc_id)
     doc_info = doc.to_dict(
         fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
                 "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "cloudinary_secure_url"
-                                     "document_type_id", "document_type", "keywords",
+                "img_link_download", "cloudinary_secure_url",
+                "document_type_id", "document_type", "keywords",
                 "categories", "average_rate", "num_rate"])
 
     return jsonify(doc_info)
 
 
 # "/documents/<id>" ['PATCH']
-def api_document_update(id):
+def api_document_update(doc_id):
     status = request.json.get('status')
     if status == Status.REJECT:
-        return
+        dao.reject_document(doc_id)
+        return jsonify({"status": 200})
     description = request.json.get('description')
     gem_cost = request.json.get('gem_cost')
     access_token = request.headers.get('access_token')
     try:
-        dao.update_document_admin(id, description, status, gem_cost)
+        dao.update_document_admin(doc_id, description, status, gem_cost)
     except Exception as e:
         print(str(e))
-    doc = dao.get_document_by_id(id)
+    doc = dao.get_document_by_id(doc_id)
     pdf_url = doc.cloudinary_secure_url
     with open(doc.cloudinary_public_id, "wb") as f:
         response = requests.get(pdf_url)
@@ -80,17 +81,12 @@ def api_document_update(id):
         response = dbx.files_upload(f.read(), "/" + file_name)
         shared_links = dbx.sharing_list_shared_links(response.path_display).links
         if len(shared_links) == 0:
-            shared_link = dbx.sharing_create_shared_link(response.path_display)
+            shared_link = dbx.sharing_create_shared_link_with_settings(response.path_display, settings=None)
         else:
             shared_link = shared_links[0]
-        # create dowload link
-        links = dbx.sharing_get_shared_links(response.path_display).links
-        if len(links) > 0:
-            cloud_link = links[0].url
-            file_link_download = cloud_link.replace('?dl=0', '?dl=1')
-        else:
-            cloud_link = shared_link.url
-            file_link_download = cloud_link.url.replace('?dl=0', '?dl=1')
+        # create download link
+        cloud_link = shared_link.url
+        file_link_download = cloud_link.replace('?dl=0', '?dl=1')
 
     print(cloud_link, file_link_download)
 
@@ -98,17 +94,12 @@ def api_document_update(id):
         response = dbx.files_upload(f.read(), "/" + file_name_img)
         shared_links = dbx.sharing_list_shared_links(response.path_display).links
         if len(shared_links) == 0:
-            shared_link = dbx.sharing_create_shared_link(response.path_display)
+            shared_link = dbx.sharing_create_shared_link_with_settings(response.path_display, settings=None)
         else:
             shared_link = shared_links[0]
         # create download link
-        links = dbx.sharing_get_shared_links(response.path_display).links
-        if len(links) > 0:
-            img_cloud_link = links[0].url
-            img_link_download = img_cloud_link.replace('?dl=0', '?dl=1')
-        else:
-            img_cloud_link = shared_link.url
-            img_link_download = img_cloud_link.replace('?dl=0', '?dl=1')
+        img_cloud_link = shared_link.url
+        img_link_download = img_cloud_link.replace('?dl=0', '?dl=1')
 
     print(img_cloud_link, img_link_download)
 
@@ -121,7 +112,7 @@ def api_document_update(id):
 
     dao.update_document(doc.id, cloud_link, img_cloud_link, file_link_download, img_link_download)
 
-    return jsonify({"status" : 200})
+    return jsonify({"status": 200})
 
 
 # "/categories" ['GET']
@@ -156,7 +147,3 @@ def api_users():
         fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media",
                 "address", "gem", "warn_time"]) for u in users]
     return jsonify(user_list)
-
-# if __name__ == '__main__':
-#     with app.app_context():
-#         api_comments("08cadefc-e544-46fe-92df-3eeb414ac7a1")
