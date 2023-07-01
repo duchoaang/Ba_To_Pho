@@ -1,0 +1,17 @@
+.card {
+    width: 23.5%;
+
+    &-img {
+        width: 100%;
+    }
+
+    &-info {
+        margin-top: 5px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-category {
+        color: orange;
+    }
+}
