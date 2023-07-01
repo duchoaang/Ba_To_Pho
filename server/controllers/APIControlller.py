@@ -8,7 +8,7 @@ from flask import jsonify, request
 
 from server import app, utils
 from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users, \
-    get_document_by_id
+    get_document_by_id, get_popular_documents, get_new_documents
 from server.models import Status
 from server import dao
 
@@ -30,6 +30,38 @@ def api_documents():
         documents]
 
     return jsonify(documents_list)
+
+
+def api_documents():
+    status = request.args.get('status')
+    documents = get_documents(status=status)
+    documents_list = [doc.to_dict(
+        fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
+                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
+                "img_link_download", "cloudinary_secure_url",
+                "document_type_id", "document_type", "keywords",
+                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc
+        in
+        documents]
+
+    return jsonify(documents_list)
+
+
+def api_popular_new_documents():
+    popular_docs = get_popular_documents(10)
+    new_docs = get_new_documents(10)
+    popular_list = [doc.to_dict(
+        fields=["id", "title", "author", "description", "view_count", "status", "gem_cost", "discount",
+                "username", "cloud_link", "img_cloud_link", "file_link_download",
+                "img_link_download", "document_type_id", "document_type", "keywords",
+                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc in popular_docs]
+    new_list = [doc.to_dict(
+        fields=["id", "title", "author", "description", "view_count", "status", "gem_cost", "discount",
+                "username", "cloud_link", "img_cloud_link", "file_link_download",
+                "img_link_download", "document_type_id", "document_type", "keywords",
+                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc in new_docs]
+    data = {"popular": popular_list, "new": new_list}
+    return jsonify(data)
 
 
 # "/documents/<id>" ['GET']

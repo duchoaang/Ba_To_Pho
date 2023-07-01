@@ -5,7 +5,8 @@ from flask_login import login_user, current_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from server import my_token, app, dao, login
-from server.dao import get_existed_user, add_user, get_user_by_email, confirm_user, check_login, get_user_by_id
+from server.dao import get_existed_user, add_user, get_user_by_email, confirm_user, check_login, get_user_by_id, \
+    add_user_form_google
 from server.models import UserRole
 from server.sendmail import send_email
 from server.my_token import generate_confirmation_token
@@ -217,3 +218,38 @@ def user_logout():
     else:
         return "logged out before"
 
+
+def user_login_by_google():
+    data = request.json
+    email_verified = data.get('verified_email')
+    fields = {'email': data.get('email'), 'name': data.get('name'), 'avatar': data.get('picture')}
+    user = dao.get_user_by_email(fields['email'])
+
+    # Tài khoản đã tồn tại
+    if user:
+        login_user(user=user)
+        response_data = user.to_dict(fields=["id", "username", "name", "email", "avatar"])
+        response_data['status'] = 200
+        response_data['message'] = "success"
+        return jsonify(response_data)
+
+    # Tài khoản chưa tồn tại
+    if email_verified:
+        result = add_user_form_google(fields)
+        # thêm thành công
+        if result is not None:
+            user = result
+            login_user(user=user)
+            response_data = user.to_dict(fields=["id", "username", "name", "email", "avatar"])
+            response_data['status'] = 200
+            response_data['message'] = "success"
+            return jsonify(response_data)
+        # thêm không thành công
+        else:
+            response_data = {'status': 404, 'message': "An error has occurred"}
+            return jsonify(response_data)
+
+    # Email chưa được xác thực
+    else:
+        response_data = {'status': 404, 'message': "Email is not verified"}
+        return jsonify(response_data)

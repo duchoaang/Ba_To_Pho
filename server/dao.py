@@ -1,7 +1,9 @@
 import hashlib
+import secrets
 from datetime import date
 
 from flask_login import current_user
+from sqlalchemy.exc import IntegrityError
 
 from server import app, db
 from sqlalchemy import or_, and_, not_, func, extract
@@ -33,6 +35,20 @@ def get_documents(title=None, category_ids=None, type_ids=None, created_date=Non
     return d.all()
 
 
+def get_popular_documents(limit=None):
+    d = Document.query.outerjoin(Document.downloads).group_by(Document.id).order_by(func.count(Document.downloads).desc())
+    if limit:
+        d = d.limit(limit)
+    return d.all()
+
+
+def get_new_documents(limit=None):
+    d = Document.query.order_by(Document.created_date.desc())
+    if limit:
+        d = d.limit(limit)
+    return d.all()
+
+
 def get_user_by_email(email):
     u = User.query.filter(User.email.__eq__(email)).first()
     if u:
@@ -59,6 +75,27 @@ def add_user(fields):
     db.session.add(user)
     db.session.commit()
     return user
+
+
+def get_user_by_email(email):
+    user = User.query.filter(User.email.__eq__(email)).first()
+    return user
+
+
+def add_user_form_google(fields):
+    username = "google_user_" + secrets.token_hex(10)
+    password = secrets.token_hex(10)
+    user = User(username=username, password=password, email=fields['email'], name=fields['name'],
+                avatar=fields['avatar'])
+    db.session.add(user)
+    for i in range(4):
+        try:
+            db.session.commit()
+            return user
+        except IntegrityError as e:
+            if "username" in str(e):
+                user.username = "google_user_" + secrets.token_hex(10)
+    return None
 
 
 def get_user_by_id(user_id):
@@ -257,4 +294,3 @@ def reject_document(doc_id):
         doc.status = Status.REJECT
         return True
     return False
-
