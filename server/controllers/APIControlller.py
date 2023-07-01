@@ -21,13 +21,15 @@ def api_documents():
     status = request.args.get('status')
     documents = get_documents(status=status)
     documents_list = [doc.to_dict(
-        fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
-                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "cloudinary_secure_url",
-                "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc
-        in
-        documents]
+        fields = [
+            "id", "title", "author", "description", "view_count", "captcha",
+            "status", "gem_cost", "discount", "username",
+            "cloudinary_image_secure_url", "cloud_link", "img_cloud_link",
+            "file_link_download", "img_link_download", "cloudinary_secure_url",
+            "document_type_id", "document_type", "keywords", "categories",
+            "average_rate", "num_rate", "num_favour_users", "created_date"
+        ]
+    ) for doc in documents]
 
     return jsonify(documents_list)
 
@@ -35,12 +37,19 @@ def api_documents():
 # "/documents/<id>" ['GET']
 def api_document_by_id(id):
     doc = get_document_by_id(id)
+    if doc == None:
+        return jsonify({"message": "Document does not exist"}), 404
+
     doc_info = doc.to_dict(
-        fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
-                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "cloudinary_secure_url"
-                                     "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate"])
+        fields = [
+            "id", "title", "author", "description", "view_count", "captcha",
+            "status", "gem_cost", "discount", "username",
+            "cloudinary_image_secure_url", "cloud_link", "img_cloud_link",
+            "file_link_download", "img_link_download", "cloudinary_secure_url",
+            "document_type_id", "document_type", "keywords", "categories",
+            "average_rate", "num_rate", "num_favour_users", "created_date"
+        ]
+    )
 
     return jsonify(doc_info)
 
@@ -49,7 +58,9 @@ def api_document_by_id(id):
 def api_document_update(id):
     status = request.json.get('status')
     if status == Status.REJECT:
-        return
+        dao.reject_document(doc_id)
+        return jsonify({"message": "Reject successfully"})
+
     description = request.json.get('description')
     gem_cost = request.json.get('gem_cost')
     access_token = request.headers.get('access_token')
@@ -83,7 +94,6 @@ def api_document_update(id):
             shared_link = dbx.sharing_create_shared_link(response.path_display)
         else:
             shared_link = shared_links[0]
-        # create dowload link
         links = dbx.sharing_get_shared_links(response.path_display).links
         if len(links) > 0:
             cloud_link = links[0].url
@@ -121,7 +131,7 @@ def api_document_update(id):
 
     dao.update_document(doc.id, cloud_link, img_cloud_link, file_link_download, img_link_download)
 
-    return jsonify({"status" : 200})
+    return jsonify({"message" : "Upload successfully"})
 
 
 # "/categories" ['GET']
