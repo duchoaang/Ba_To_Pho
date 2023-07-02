@@ -200,7 +200,7 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
 
 
 def get_comment_by_doc(doc_id):
-    return Comment.query.filter(Comment.document_id.__eq__(doc_id)).all()
+    return Comment.query.filter(and_(Comment.document_id.__eq__(doc_id), Comment.is_active.__eq__(True))).all()
 
 
 def get_document_type_id_by_extension(extension):

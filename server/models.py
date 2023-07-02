@@ -236,6 +236,8 @@ class Comment(BaseModel):
         result = super().to_dict(fields)
         if 'user.username' in fields:
             result['username'] = self.user.username
+        if 'user_id' in fields:
+            result['user_id'] = self.user.id
         return result
 
 
@@ -329,6 +331,10 @@ if __name__ == '__main__':
                       cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
 
         db.session.add_all([d1, d2, d3])
+
+        cmt1 = Comment(document=d1, user=u1, content="test1")
+        cmt2 = Comment(document=d1, user=u1, content="test2")
+        db.session.add_all([cmt1, cmt2])
 
         chuoi = """Tiểu thuyết, Tiểu thuyết tình cảm, Lãng mạn, Hình sự, Khoa học viễn tưởng,
         Lịch sử hư cấu, Phi hư cấu, Hồi ký, Tự truyện, Tiểu sử,
