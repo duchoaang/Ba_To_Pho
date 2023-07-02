@@ -9,7 +9,7 @@ from flask_session import Session
 import cloudinary
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+CORS(app, origins="http://localhost:3000", supports_credentials=True)
 
 app.secret_key = '689567gh$^^&*#%^&*^&%^*DFGH^&*&*^*'
 app.config['SECURITY_PASSWORD_SALT'] = 'test_test'
