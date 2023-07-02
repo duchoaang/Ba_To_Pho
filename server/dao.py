@@ -291,6 +291,7 @@ def update_document_admin(document_id, description=None, status=None, gem_cost=N
 def reject_document(doc_id):
     doc = Document.query.get(doc_id)
     if doc:
-        doc.status = Status.REJECT
+        doc.status = Status.REJECT.name
+        db.session.commit()
         return True
     return False

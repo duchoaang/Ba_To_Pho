@@ -34,21 +34,6 @@ def api_documents():
     return jsonify(documents_list)
 
 
-def api_documents():
-    status = request.args.get('status')
-    documents = get_documents(status=status)
-    documents_list = [doc.to_dict(
-        fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
-                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "cloudinary_secure_url",
-                "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc
-        in
-        documents]
-
-    return jsonify(documents_list)
-
-
 def api_popular_new_documents():
     popular_docs = get_popular_documents(10)
     new_docs = get_new_documents(10)
@@ -89,7 +74,7 @@ def api_document_by_id(id):
 # "/documents/<id>" ['PATCH']
 def api_document_update(doc_id):
     status = request.json.get('status')
-    if status == Status.REJECT:
+    if status == Status.REJECT.name:
         dao.reject_document(doc_id)
         return jsonify({"message": "Reject successfully"})
 
