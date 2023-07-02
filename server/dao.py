@@ -277,7 +277,7 @@ def get_users():
     return users.all()
 
 
-def update_document_admin(document_id, description=None, status=None, gem_cost=None):
+def update_document_admin(document_id, description=None, status=None, gem_cost=None, file_size=None):
     doc = Document.query.get(document_id)
     if description:
         doc.description = description
@@ -285,6 +285,8 @@ def update_document_admin(document_id, description=None, status=None, gem_cost=N
         doc.gem_cost = gem_cost
     if status:
         doc.status = Status.ACCEPT
+    if file_size:
+        doc.file_size = file_size
     db.session.commit()
 
 
