@@ -5,8 +5,6 @@ import cloudinary
 import dropbox
 import requests
 from flask import jsonify, request
-from pip._internal.utils.filesystem import file_size
-
 from server import app, utils
 from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users, \
     get_document_by_id, get_popular_documents, get_new_documents
@@ -22,12 +20,28 @@ def api_documents():
     status = request.args.get('status')
     documents = get_documents(status=status)
     documents_list = [doc.to_dict(
+        fields=[
+            "id", "title", "author", "description", "view_count", "captcha",
+            "status", "gem_cost", "discount", "username",
+            "cloudinary_image_secure_url", "cloud_link", "img_cloud_link",
+            "file_link_download", "img_link_download", "cloudinary_secure_url",
+            "document_type_id", "document_type", "keywords", "categories",
+            "average_rate", "num_rate", "num_favour_users", "created_date"
+        ]
+    ) for doc in documents]
+
+    return jsonify(documents_list)
+
+
+def api_documents():
+    status = request.args.get('status')
+    documents = get_documents(status=status)
+    documents_list = [doc.to_dict(
         fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
                 "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
                 "img_link_download", "cloudinary_secure_url",
                 "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "num_favour_users", "created_date"]) for doc
-        in
+                "categories", "average_rate", "num_rate", "num_favour_users", "created_date", "file_size"]) for doc in
         documents]
 
     return jsonify(documents_list)
@@ -40,25 +54,33 @@ def api_popular_new_documents():
         fields=["id", "title", "author", "description", "view_count", "status", "gem_cost", "discount",
                 "username", "cloud_link", "img_cloud_link", "file_link_download",
                 "img_link_download", "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc in popular_docs]
+                "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in popular_docs]
     new_list = [doc.to_dict(
         fields=["id", "title", "author", "description", "view_count", "status", "gem_cost", "discount",
                 "username", "cloud_link", "img_cloud_link", "file_link_download",
                 "img_link_download", "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc in new_docs]
+                "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in new_docs]
     data = {"popular": popular_list, "new": new_list}
     return jsonify(data)
 
 
 # "/documents/<id>" ['GET']
-def api_document_by_id(doc_id):
-    doc = get_document_by_id(doc_id)
+def api_document_by_id(id):
+    doc = get_document_by_id(id)
+    if doc == None:
+        return jsonify({"message": "Document does not exist"}), 404
+
     doc_info = doc.to_dict(
-        fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
-                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "cloudinary_secure_url",
-                "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "created_date"])
+        fields=[
+            "id", "title", "author", "description", "view_count", "captcha",
+            "status", "gem_cost", "discount", "username",
+            "cloudinary_image_secure_url", "cloud_link", "img_cloud_link",
+            "file_link_download", "img_link_download", "cloudinary_secure_url",
+            "document_type_id", "document_type", "keywords", "categories",
+            "average_rate", "num_rate", "num_favour_users", "created_date", "file_size"
+        ]
+
+    )
 
     return jsonify(doc_info)
 
@@ -68,7 +90,8 @@ def api_document_update(doc_id):
     status = request.json.get('status')
     if status == Status.REJECT.name:
         dao.reject_document(doc_id)
-        return jsonify({"status": 200})
+        return jsonify({"message": "Reject successfully"})
+
     description = request.json.get('description')
     gem_cost = request.json.get('gem_cost')
     access_token = request.headers.get('access_token')
@@ -130,7 +153,7 @@ def api_document_update(doc_id):
 
     dao.update_document(doc.id, cloud_link, img_cloud_link, file_link_download, img_link_download)
 
-    return jsonify({"status": 200})
+    return jsonify({"message": "Upload successfully"})
 
 
 # "/categories" ['GET']

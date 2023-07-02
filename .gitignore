@@ -5,22 +5,14 @@ venv
 env
 
 # python cache file
-/**/*/__pycache__
+/**/__pycache__
 
 # other environment files
-/**/*/.idea
+/**/.idea
 .vscode
 
 # session
-server/flask_session
-
-# other environment files
-.idea
-.vscode
-.idea/workspace.xml
-
-# session
-flask_session
+/**/flask_session
 
 package.json
 package-lock.json
