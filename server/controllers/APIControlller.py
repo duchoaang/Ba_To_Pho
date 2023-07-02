@@ -26,23 +26,10 @@ def api_documents():
             "cloudinary_image_secure_url", "cloud_link", "img_cloud_link",
             "file_link_download", "img_link_download", "cloudinary_secure_url",
             "document_type_id", "document_type", "keywords", "categories",
-            "average_rate", "num_rate", "num_favour_users", "created_date"
+            "average_rate", "num_rate", "num_favour_users", "created_date",
+            "file_size"
         ]
     ) for doc in documents]
-
-    return jsonify(documents_list)
-
-
-def api_documents():
-    status = request.args.get('status')
-    documents = get_documents(status=status)
-    documents_list = [doc.to_dict(
-        fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
-                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "cloudinary_secure_url",
-                "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "num_favour_users", "created_date", "file_size"]) for doc in
-        documents]
 
     return jsonify(documents_list)
 
@@ -77,7 +64,8 @@ def api_document_by_id(id):
             "cloudinary_image_secure_url", "cloud_link", "img_cloud_link",
             "file_link_download", "img_link_download", "cloudinary_secure_url",
             "document_type_id", "document_type", "keywords", "categories",
-            "average_rate", "num_rate", "num_favour_users", "created_date", "file_size"
+            "average_rate", "num_rate", "num_favour_users", "created_date",
+            "file_size"
         ]
 
     )
