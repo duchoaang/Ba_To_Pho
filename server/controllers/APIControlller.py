@@ -5,6 +5,7 @@ import cloudinary
 import dropbox
 import requests
 from flask import jsonify, request
+from pip._internal.utils.filesystem import file_size
 
 from server import app, utils
 from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users, \
@@ -25,22 +26,7 @@ def api_documents():
                 "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
                 "img_link_download", "cloudinary_secure_url",
                 "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc
-        in
-        documents]
-
-    return jsonify(documents_list)
-
-
-def api_documents():
-    status = request.args.get('status')
-    documents = get_documents(status=status)
-    documents_list = [doc.to_dict(
-        fields=["id", "title", "author", "description", "view_count", "captcha", "status", "gem_cost", "discount",
-                "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "cloudinary_secure_url",
-                "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate", "num_favour_users"]) for doc
+                "categories", "average_rate", "num_rate", "num_favour_users", "created_date"]) for doc
         in
         documents]
 
@@ -72,7 +58,7 @@ def api_document_by_id(doc_id):
                 "username", "cloudinary_image_secure_url", "cloud_link", "img_cloud_link", "file_link_download",
                 "img_link_download", "cloudinary_secure_url",
                 "document_type_id", "document_type", "keywords",
-                "categories", "average_rate", "num_rate"])
+                "categories", "average_rate", "num_rate", "created_date"])
 
     return jsonify(doc_info)
 
@@ -80,16 +66,12 @@ def api_document_by_id(doc_id):
 # "/documents/<id>" ['PATCH']
 def api_document_update(doc_id):
     status = request.json.get('status')
-    if status == Status.REJECT:
+    if status == Status.REJECT.name:
         dao.reject_document(doc_id)
         return jsonify({"status": 200})
     description = request.json.get('description')
     gem_cost = request.json.get('gem_cost')
     access_token = request.headers.get('access_token')
-    try:
-        dao.update_document_admin(doc_id, description, status, gem_cost)
-    except Exception as e:
-        print(str(e))
     doc = dao.get_document_by_id(doc_id)
     pdf_url = doc.cloudinary_secure_url
     with open(doc.cloudinary_public_id, "wb") as f:
@@ -119,9 +101,13 @@ def api_document_update(doc_id):
         # create download link
         cloud_link = shared_link.url
         file_link_download = cloud_link.replace('?dl=0', '?dl=1')
-
-    print(cloud_link, file_link_download)
-
+        metadata = dbx.files_get_metadata("/" + file_name)
+        file_size = round(metadata.size / (1024 ** 2), 2)
+    print(cloud_link, file_link_download, file_size)
+    try:
+        dao.update_document_admin(doc_id, description, status, gem_cost, file_size)
+    except Exception as e:
+        print(str(e))
     with open("image.png", "rb") as f:
         response = dbx.files_upload(f.read(), "/" + file_name_img)
         shared_links = dbx.sharing_list_shared_links(response.path_display).links
