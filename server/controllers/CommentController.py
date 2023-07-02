@@ -11,3 +11,8 @@ def add_comment():
     dao.add_comment(content, user_id, document_id)
     return jsonify({"status": 200})
 
+
+def remove_comment():
+    comment_id = requests.json.get('comment_id')
+    dao.del_comment(comment_id)
+    return jsonify({"status": 200})

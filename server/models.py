@@ -83,26 +83,28 @@ class User(BaseModel, UserMixin):
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
                             "discount", "cloud_link", "img_cloud_link", "file_link_download",
                             "img_link_download", "document_type_id", "document_type", "keywords",
-                            "categories", "average_rate", "num_rate", "num_favour_users"]) for doc in self.documents if
+                            "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
+                    self.documents if
                     doc.status == Status.ACCEPT]
             if 'wait_docs' in fields:
                 result['waitDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "status", "gem_cost",
                             "discount", "cloudinary_secure_url", "cloudinary_image_secure_url", "document_type_id",
-                            "document_type", "keywords", "categories"]) for doc in self.documents if
+                            "document_type", "keywords", "categories", "file_size"]) for doc in self.documents if
                     doc.status == Status.WAITING]
             if 'result_docs' in fields:
                 result['resultDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "status", "gem_cost",
                             "discount", "cloudinary_secure_url", "cloudinary_image_secure_url", "document_type_id",
-                            "document_type", "keywords", "categories"]) for doc in self.documents if
+                            "document_type", "keywords", "categories", "file_size"]) for doc in self.documents if
                     doc.status != Status.WAITING]
             if 'fav_docs' in fields:
                 result['favDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
                             "discount", "cloud_link", "img_cloud_link", "file_link_download",
                             "img_link_download", "document_type_id", "document_type", "keywords",
-                            "categories", "average_rate", "num_rate", "num_favour_users"]) for doc in self.favour_docs]
+                            "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
+                    self.favour_docs]
         return result
 
 
@@ -124,6 +126,7 @@ class Document(BaseModel):
     captcha = Column(String(25), nullable=False)
     discount = Column(Float, default=0)
     gem_cost = Column(Float, nullable=False, default=100)
+    file_size = Column(Float, nullable=False, default=0)
 
     # Link after confirm
     cloud_link = Column(Text, nullable=False)  # link view dropbox

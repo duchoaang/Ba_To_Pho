@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 
 from server import my_token, app, dao, login
 from server.dao import get_existed_user, add_user, get_user_by_email, confirm_user, check_login, get_user_by_id, \
-    add_user_form_google
+    add_user_form_google, update_user
 from server.models import UserRole
 from server.sendmail import send_email
 from server.my_token import generate_confirmation_token
@@ -253,3 +253,12 @@ def user_login_by_google():
     else:
         response_data = {'status': 404, 'message': "Email is not verified"}
         return jsonify(response_data)
+
+
+def user_update(id):
+    data = request.json.get('key')
+    fields = {'name': data.get('fullName'), 'bio': data.get('bio'), 'social_media': data.get('socialMedia'),
+              'address': data.get('address'), 'phone_number': data.get('phoneNumber')}
+    return jsonify(update_user(id, fields))
+
+
