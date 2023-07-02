@@ -203,7 +203,9 @@ def get_comment_by_doc(doc_id, is_active=None):
     comments = Comment.query.filter(Comment.document_id.__eq__(doc_id))
     if is_active:
         comments = comments.filter(Comment.is_active.__eq__(is_active))
+    comments = comments.orderBy(Comment.created_date.desc())
     return comments.all()
+
 
 def get_document_type_id_by_extension(extension):
     if extension == "pdf":

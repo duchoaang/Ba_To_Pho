@@ -234,8 +234,8 @@ class Comment(BaseModel):
 
     def to_dict(self, fields=None):
         result = super().to_dict(fields)
-        if 'user.username' in fields:
-            result['username'] = self.user.username
+        if 'user_name' in fields:
+            result['user_name'] = self.user.name
         if 'user_id' in fields:
             result['user_id'] = self.user.id
         return result
