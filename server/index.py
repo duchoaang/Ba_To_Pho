@@ -31,10 +31,11 @@ def user_load(user_id):
 def login():
     return render_template('login.html')
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def fe(path):
-    return render_template('fe-react.html')
+
+# @app.route('/', defaults={'path': ''})
+# @app.route('/<path:path>')
+# def fe(path):
+#     return render_template('fe-react.html')
 
 
 app.register_blueprint(user_bp, url_prefix='/users')
