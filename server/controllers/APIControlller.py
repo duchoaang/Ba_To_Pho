@@ -164,8 +164,8 @@ def api_keywords():
 
 
 def api_comments(document_id):
-    comments = get_comment_by_doc(document_id)
-    comment_list = [c.to_dict(fields=["id", "content", "user.username"]) for c in comments]
+    comments = get_comment_by_doc(document_id, is_active=True)
+    comment_list = [c.to_dict(fields=["id", "content", "user_name", "user_id", "created_date"]) for c in comments]
     print(comment_list)
     return jsonify(comment_list)
 
