@@ -411,25 +411,25 @@ const Header = () => {
 
                     <form onSubmit={handleSubmitLogin}>
                         <div className="mb-3 text-start">
-                            <label for="login-email" class="form-label">
+                            <label htmlFor="login-email" className="form-label">
                                 Tên người dùng hoặc email
                             </label>
                             <input
                                 onChange={(e) => setUserName(e.target.value)}
                                 type="text"
-                                class="form-control"
+                                className="form-control"
                                 id="login-email"
                                 placeholder="Tên tài khoản..."
                             />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="login-password" className="form-label">
                                 Mật khẩu
                             </label>
                             <input
                                 onChange={(e) => setUserPassword(e.target.value)}
                                 type="password"
-                                class="form-control"
+                                className="form-control"
                                 id="login-password"
                                 placeholder="Mật khẩu..."
                             />
@@ -444,7 +444,7 @@ const Header = () => {
                         <Button className="w-100 mt-3">ĐĂNG NHẬP</Button>
                     </form>
                     <p className="text-center mt-3">
-                        đây là lần đầu tiên của bạn?{' '}
+                        Đây là lần đầu tiên của bạn?&nbsp;
                         <b style={{ cursor: 'pointer' }} onClick={handleRegister}>
                             Đăng ký ngay
                         </b>
@@ -470,65 +470,65 @@ const Header = () => {
                     )}
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3 text-start">
-                            <label for="login-email" class="form-label">
+                            <label htmlFor="register-username" className="form-label">
                                 Tên người dùng của bạn
                             </label>
                             <input
                                 value={userName}
                                 type="text"
                                 onChange={(e) => setUserName(e.target.value)}
-                                class="form-control"
-                                id="login-email"
+                                className="form-control"
+                                id="register-username"
                                 placeholder="username"
                             />
                         </div>
                         <div className="mb-3 text-start">
-                            <label for="login-email" class="form-label">
+                            <label htmlFor="register-email" className="form-label">
                                 Email của bạn
                             </label>
                             <input
                                 value={userEmail}
                                 type="email"
                                 onChange={(e) => setUserEmail(e.target.value)}
-                                class="form-control"
-                                id="login-email"
+                                className="form-control"
+                                id="register-email"
                                 placeholder="name@example.com"
                             />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="register-password" className="form-label">
                                 Mật khẩu
                             </label>
                             <input
                                 value={userPassword}
                                 onChange={(e) => setUserPassword(e.target.value)}
                                 type="password"
-                                class="form-control"
-                                id="login-password"
+                                className="form-control"
+                                id="register-password"
                             />
                         </div>
                         <div className="text-start">
-                            <label for="login-password" class="form-label">
+                            <label htmlFor="register-confirm-password" className="form-label">
                                 Xác nhận mật khẩu
                             </label>
                             <input
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 type="password"
-                                class="form-control"
-                                id="login-ConfirmPassword"
+                                className="form-control"
+                                id="register-confirm-password"
                             />
                         </div>
                         <div className="d-flex justify-content-between mt-3">
                             <div>
-                                <label htmlFor="login-remember" style={{ marginRight: '10px' }}>
+                                <label htmlFor="acp-policy" style={{ marginRight: '10px' }}>
                                     Bạn đã đọc và đồng ý <Link to="/">điều khoản</Link> của Ba Tô Phở{' '}
                                 </label>
                                 <input
                                     onChange={() => setCheckbutton(!checkButton)}
                                     type="checkbox"
-                                    id="login-remember"
-                                    name="login-remember"
+                                    id="acp-policy"
+                                    name="acp-policy"
                                 />
                             </div>
                         </div>
@@ -542,7 +542,7 @@ const Header = () => {
                         </Button>
                     </form>
                     <p className="text-center mt-3" style={{ paddingBottom: '20px' }}>
-                        Bạn đã có tài khoản?
+                        Bạn đã có tài khoản?&nbsp;
                         <b style={{ cursor: 'pointer' }} onClick={handleLogin}>
                             Đăng nhập
                         </b>
@@ -588,7 +588,6 @@ const Header = () => {
                     </Link>
                     {user ? (
                         <>
-                            
                             {/* <UserController show={true}>
                                 <div className={cx('user_controller')}>
                                     <img
@@ -660,7 +659,7 @@ const Header = () => {
                                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                             >
-                                <Link style={{color:'black'}} to={`/profile/${infoUser.id}`}>
+                                <Link style={{ color: 'black' }} to={`/profile/${infoUser.id}`}>
                                     <MenuItem onClick={handleClose}>
                                         <Avatar /> Profile
                                     </MenuItem>
