@@ -6,12 +6,11 @@ import styles from './Detail.module.scss';
 import Button from '@mui/material/Button';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import Textarea from '@mui/joy/Textarea';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import CommentIcon from '@mui/icons-material/Comment';
 import Rating from '@mui/material/Rating';
 
 import SuggestSection from './layouts/Suggest';
+import CommentSection from './layouts/CommentSection';
 import InfoList from './components/InfoList';
 
 import request from '~/utils/request';
@@ -41,59 +40,6 @@ const Nav = () => (
     </nav>
 );
 
-const Comment = () => {
-    return (
-        <div className="d-flex p-2 mt-2 border rounded">
-            <span className="material-icons fs-1">portrait</span>
-            <div className="flex-fill">
-                <div className="d-flex justify-content-between">
-                    <span className="name">Quang Huy</span>
-                    <div className="d-flex g-2">
-                        <span>22:06 - 28/10/2022</span>
-                        <span>Trả lời</span>
-                        <span>Thích</span>
-                    </div>
-                </div>
-                <div className="cmt">visual studio 2012 sql server 2014 có chạy đc ko ạ</div>
-            </div>
-        </div>
-    );
-};
-
-const CommentHeader = () => {
-    return (
-        <div className={cx('comment', 'mt-3')}>
-            <h5>
-                <b>BÌNH LUẬN</b>
-            </h5>
-            <form>
-                <div className="d-flex">
-                    <span className="material-icons fs-1">portrait</span>
-                    <Textarea
-                        placeholder="Type something here…"
-                        minRows={3}
-                        sx={{
-                            width: '100%',
-                            flex: '1',
-                        }}
-                        endDecorator={
-                            <Button sx={{ marginLeft: 'auto' }} variant="contained" startIcon={<CommentIcon />}>
-                                BÌNH LUẬN
-                            </Button>
-                        }
-                    />
-                </div>
-            </form>
-            <div>
-                <Comment />
-                <Comment />
-                <Comment />
-                <Comment />
-            </div>
-        </div>
-    );
-};
-
 const Detail = () => {
     const [data, setData] = useState({
         title: '',
@@ -105,6 +51,10 @@ const Detail = () => {
         num_favour_users: 0,
         num_rate: 0,
         view_count: 0,
+        document_type: 'PDF',
+        created_date: '01-01-1970',
+        file_link_download: '',
+        file_size: 0,
     });
 
     const [favorite, setFavorite] = useState(false);
@@ -118,8 +68,11 @@ const Detail = () => {
                 navigate('/');
                 return;
             }
+            let d = new Date(res.created_date);
+            let date =
+                ('0' + d.getDate()).slice(-2) + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getFullYear();
 
-            setData({ ...data, ...res });
+            setData({ ...data, ...res, created_date: date });
         });
     }, [location]);
 
@@ -190,15 +143,15 @@ const Detail = () => {
                                                 title="Danh mục"
                                                 value={data.categories.map((c) => c.name).join(', ')}
                                             />
-                                            <InfoList title="Nhóm code" value="Code tham khảo" />
-                                            <InfoList title="Ngày đăng" value="29-12-2016" />
-                                            <InfoList title="Loại file" value="Full code" />
-                                            <InfoList title="Dung lượng" value="26.7 MB" />
+                                            <InfoList title="Ngày đăng" value={data.created_date} />
+                                            <InfoList title="Loại file" value={data.document_type} />
+                                            <InfoList title="Dung lượng" value={`${data.file_size} MB`} />
                                         </div>
                                         <Button
                                             className="float-end"
                                             variant="contained"
                                             startIcon={<FileDownloadIcon />}
+                                            href={data.file_link_download}
                                         >
                                             DOWNLOAD
                                         </Button>
@@ -212,7 +165,7 @@ const Detail = () => {
                         <p className={cx('description-text')}>{data.description}</p>
                     </div>
                     <SuggestSection />
-                    <CommentHeader />
+                    <CommentSection doc_id={location.pathname.split('/')[2]} />
                 </div>
                 <div className="col-md-4">
                     <section className="border border-warning"></section>

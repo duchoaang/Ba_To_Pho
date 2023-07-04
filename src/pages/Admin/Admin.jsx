@@ -1,6 +1,5 @@
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Input from '@mui/material/Input';
 import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState, useRef } from 'react';
 import request from '~/utils/request';
@@ -46,9 +45,10 @@ const DataTable = ({ inputTokenRef, setError }) => {
             width: 250,
             renderCell: (params) => {
                 const handleClickAction = (e) => {
-                    console.log(e.target.innerText);
-                    if (e.target.innerText === 'Reject') {
-                        request.patch(`api/documents/${params.id}`, { status: 'REJECT' });
+                    if (e.target.innerText.toUpperCase() === 'REJECT') {
+                        request.patch(`api/documents/${params.id}`, { status: 'REJECT' }).then(() => {
+                            setReload((prev) => !prev);
+                        });
                         return;
                     }
                     if (inputTokenRef.current.value === '') {
@@ -67,7 +67,6 @@ const DataTable = ({ inputTokenRef, setError }) => {
                             {
                                 headers: {
                                     access_token: inputTokenRef.current.value,
-                                    'Access-Control-Allow-Origin': '*',
                                 },
                             },
                         )
@@ -103,7 +102,7 @@ const DataTable = ({ inputTokenRef, setError }) => {
 
     return (
         <>
-            <div style={{ height: 'calc(100vh - 100px)', width: '100%' }}>
+            <div style={{ height: 'calc(100vh - 150px)', width: '100%' }}>
                 <DataGrid
                     rows={data}
                     columns={columns}

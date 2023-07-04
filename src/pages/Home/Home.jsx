@@ -1,13 +1,14 @@
 import styles from './Home.module.scss';
 import classNames from 'classnames/bind';
-import 'bootstrap/dist/css/bootstrap.min.css';
 const cx = classNames.bind(styles);
 import { useState, useEffect } from 'react';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
 import { Link } from 'react-router-dom';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
+// import Tabs from '@mui/material/Tabs';
+// import Tab from '@mui/material/Tab';
+// import Box from '@mui/material/Box';
+
+import request from '~/utils/request';
 
 const newDocs = [
     {
@@ -47,21 +48,10 @@ const Home = () => {
     
     const [popularDocs, setPopularDocs] = useState([])
     useEffect(() => {
-        fetch("http://localhost:5000/api/documents").then(
-            res => {
-                console.log(res)
-                return res.json()
-            }
-        ).then(
-            resData => {
-                setPopularDocs(resData)
-                console.log(resData)
-            }
-        ).catch(
-            error => console.log(error)
-        )
-        
-    }, [])
+        request.get('api/documents').then((res) => {
+            setPopularDocs(res);
+        });
+    }, []);
     const handleSetPopularCourse = () => {
         setPopularCourse(!popularCousre);
         setNewCourse(popularCousre);
@@ -83,12 +73,11 @@ const Home = () => {
     const [value, setValue] = useState('one');
 
     const handleChange = (event, newValue) => {
-      setValue(newValue);
-    }
+        setValue(newValue);
+    };
 
     return (
         <div className={cx('mainHome')}>
-             
             <div className={cx('banner')}>
                 <img src="src/assets/banner.png" alt="w-100" width={'75%'} />
             </div>
@@ -132,76 +121,73 @@ const Home = () => {
                 <div className={cx('content')}>
                     <div className={cx('content_left')}>
                         {popularCousre &&
-                            popularDocs.map((doc) => (
-                                <>
-                                    <div
-                                        className={cx('subItem')}
-                                        style={{ marginBottom: '20px', paddingLeft: '10px' }}
-                                    >
-                                        <span style={{ color: '#99a8ba' }} class="material-icons">
-                                            description
-                                        </span>
-                                        <h1>
-                                            <Link style={{ textDecoration: 'none', color: 'black' }} to="/Documents">
-                                                {doc.title}
-                                            </Link>
-                                        </h1>
-                                    </div>
-                                </>
+                            popularDocs.map((doc, index) => (
+                                <div
+                                    className={cx('subItem')}
+                                    style={{ marginBottom: '20px', paddingLeft: '10px' }}
+                                    key={index}
+                                >
+                                    <span style={{ color: '#99a8ba' }} className="material-icons">
+                                        description
+                                    </span>
+                                    <h1>
+                                        <Link style={{ textDecoration: 'none', color: 'black' }} to="/Documents">
+                                            {doc.title}
+                                        </Link>
+                                    </h1>
+                                </div>
                             ))}
                         {newCourse &&
-                            newDocs.map((doc) => (
-                                <>
-                                    <div
-                                        className={cx('subItem')}
-                                        style={{ marginBottom: '20px', paddingLeft: '10px' }}
-                                    >
-                                        <span style={{ color: '#99a8ba' }} class="material-icons">
-                                            description
-                                        </span>
-                                        <h1>
-                                            {' '}
-                                            <Link style={{ textDecoration: 'none', color: 'black' }} to="/Documents">
-                                                {doc.context}
-                                            </Link>
-                                        </h1>
-                                    </div>
-                                </>
+                            newDocs.map((doc, index) => (
+                                <div
+                                    className={cx('subItem')}
+                                    style={{ marginBottom: '20px', paddingLeft: '10px' }}
+                                    key={index}
+                                >
+                                    <span style={{ color: '#99a8ba' }} className="material-icons">
+                                        description
+                                    </span>
+                                    <h1>
+                                        {' '}
+                                        <Link style={{ textDecoration: 'none', color: 'black' }} to="/Documents">
+                                            {doc.context}
+                                        </Link>
+                                    </h1>
+                                </div>
                             ))}
                     </div>
                 </div>
                 <div className={cx('moreOption')}>
                     <h2 onClick={() => setCourse(!showCourse)} style={{ marginBottom: '20px' }}>
-                        <span class="material-icons">arrow_drop_down</span> Cho xem nhiều hơn
+                        <span className="material-icons">arrow_drop_down</span> Cho xem nhiều hơn
                     </h2>
                     {showCourse && (
                         <div className={cx('moreDocs')}>
                             <div className={cx('content')}>
                                 <div className={cx('content_left')}>
-                                    {moreDocs.map((doc) => (
-                                        <>
-                                            <div
-                                                className={cx('subItem')}
-                                                style={{ marginBottom: '20px', paddingLeft: '10px' }}
-                                            >
-                                                <span style={{ color: '#99a8ba' }} class="material-icons">
-                                                    description
-                                                </span>
-                                                <h1>
-                                                    {' '}
-                                                    <Link
-                                                        style={{ textDecoration: 'none', color: 'black' }}
-                                                        to="/Documents"
-                                                    >
-                                                        {doc.context}
-                                                    </Link>
-                                                </h1>
-                                            </div>
+                                    {moreDocs.map((doc, index) => (
+                                        <div
+                                            className={cx('subItem')}
+                                            style={{ marginBottom: '20px', paddingLeft: '10px' }}
+                                            key={index}
+                                        >
+                                            <span style={{ color: '#99a8ba' }} className="material-icons">
+                                                description
+                                            </span>
+                                            <h1>
+                                                {' '}
+                                                <Link
+                                                    style={{ textDecoration: 'none', color: 'black' }}
+                                                    to="/Documents"
+                                                >
+                                                    {doc.context}
+                                                </Link>
+                                            </h1>
+                                        </div>
 
-                                            {/* <div className={cx('content')} key={doc.id}>
-                                    <div className={cx('content_left')}></div>
-                                </div> */}
-                                        </>
+                                        //             {/* <div className={cx('content')} key={doc.id}>
+                                        //     <div className={cx('content_left')}></div>
+                                        // </div> */}
                                     ))}
                                 </div>
                             </div>
