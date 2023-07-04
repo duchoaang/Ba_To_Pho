@@ -6,12 +6,11 @@ import styles from './Detail.module.scss';
 import Button from '@mui/material/Button';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import Textarea from '@mui/joy/Textarea';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import CommentIcon from '@mui/icons-material/Comment';
 import Rating from '@mui/material/Rating';
 
 import SuggestSection from './layouts/Suggest';
+import CommentSection from './layouts/CommentSection';
 import InfoList from './components/InfoList';
 
 import request from '~/utils/request';
@@ -40,119 +39,6 @@ const Nav = () => (
         </ol>
     </nav>
 );
-
-const Comment = ({ userName, content, created_date, userId, cmtId }) => {
-    return (
-        <div className="d-flex p-2 mt-2 border rounded">
-            <span className="material-icons fs-1">portrait</span>
-            <div className="flex-fill">
-                <div className="d-flex justify-content-between">
-                    <Link to={`/profile/${userId}`}>
-                        <span className="name">{userName}</span>
-                    </Link>
-                    <div className="d-flex g-2">
-                        <span>
-                            {(() => {
-                                let d = new Date(created_date);
-                                return (
-                                    ('0' + d.getHours()).slice(-2) +
-                                    ':' +
-                                    ('0' + d.getMinutes()).slice(-2) +
-                                    ' - ' +
-                                    ('0' + d.getDate()).slice(-2) +
-                                    '/' +
-                                    ('0' + (d.getMonth() + 1)).slice(-2) +
-                                    '/' +
-                                    d.getFullYear()
-                                );
-                            })()}
-                        </span>
-                        <span>Trả lời</span>
-                        <span>Thích</span>
-                    </div>
-                </div>
-                <div className="content">{content}</div>
-            </div>
-        </div>
-    );
-};
-
-const CommentHeader = ({ doc_id }) => {
-    const SubmitComment = async (e) => {
-        e.preventDefault();
-
-        let userId = await request
-            .get('/current-user', { withCredentials: true })
-            .then((data) => (data.is_active ? data.id : ''));
-
-        if (userId === '') return;
-
-        request
-            .post('comments/add', {
-                content: e.target['comment'].value,
-                user_id: userId,
-                document_id: doc_id,
-            })
-            .then(() => {
-                e.target.reset();
-                setReload((prev) => !prev);
-            });
-    };
-
-    const [listComments, setListComments] = useState([]);
-    const [reload, setReload] = useState(false);
-
-    useEffect(() => {
-        request.get(`api/comments/${doc_id}`).then((data) => {
-            setListComments(data);
-        });
-    }, [reload]);
-
-    return (
-        <div className={cx('comment', 'mt-3')}>
-            <h5>
-                <b>BÌNH LUẬN</b>
-            </h5>
-            <form id="form-comment" name="form-comment" onSubmit={SubmitComment}>
-                <div className="d-flex">
-                    <span className="material-icons fs-1">portrait</span>
-                    <Textarea
-                        name="comment"
-                        required
-                        placeholder="Type something here…"
-                        minRows={3}
-                        sx={{
-                            width: '100%',
-                            flex: '1',
-                        }}
-                        endDecorator={
-                            <Button
-                                type="submit"
-                                form="form-comment"
-                                sx={{ marginLeft: 'auto' }}
-                                variant="contained"
-                                startIcon={<CommentIcon />}
-                            >
-                                BÌNH LUẬN
-                            </Button>
-                        }
-                    />
-                </div>
-            </form>
-            <div>
-                {listComments.map((cmt) => (
-                    <Comment
-                        userName={cmt.user_name}
-                        userId={cmt.user_id}
-                        content={cmt.content}
-                        created_date={cmt.created_date}
-                        cmtId={cmt.id}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-};
 
 const Detail = () => {
     const [data, setData] = useState({
@@ -279,7 +165,7 @@ const Detail = () => {
                         <p className={cx('description-text')}>{data.description}</p>
                     </div>
                     <SuggestSection />
-                    <CommentHeader doc_id={location.pathname.split('/')[2]} />
+                    <CommentSection doc_id={location.pathname.split('/')[2]} />
                 </div>
                 <div className="col-md-4">
                     <section className="border border-warning"></section>
