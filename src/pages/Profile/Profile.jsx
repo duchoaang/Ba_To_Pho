@@ -53,7 +53,7 @@ const Profile = () => {
     const [totalFavDocs, setTotalFavDocs] = useState('');
     const [totalUserDocs, setTotalUserDocs] = useState('');
     const [formInfoUser, setFormInfoUser] = useState({
-        id: decodeURIComponent(id),
+    
         fullName: '',
         bio: '',
         socialMedia: '',
@@ -62,7 +62,7 @@ const Profile = () => {
     });
     const decodeId = decodeURIComponent(id);
     const sendDataToServer = () => {
-        const url = "http://127.0.0.1:5000/users"; // Thay thế bằng URL thực tế của bạn
+        const url = `http://127.0.0.1:5000/users/${ decodeURIComponent(id)}`; // Thay thế bằng URL thực tế của bạn
         const data = { key: formInfoUser }; // Thay thế bằng dữ liệu thực tế bạn muốn gửi
         console.log("da gui")
         axios.patch(url, data)

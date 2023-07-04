@@ -43,6 +43,7 @@ const Home = () => {
     const [showCourse, setCourse] = useState(false);
     const [popularCousre, setPopularCourse] = useState(true);
     const [newCourse, setNewCourse] = useState(false);
+    const [downDocs, setDownDocs] = useState(false);
     
     const [popularDocs, setPopularDocs] = useState([])
     useEffect(() => {
@@ -64,12 +65,20 @@ const Home = () => {
     const handleSetPopularCourse = () => {
         setPopularCourse(!popularCousre);
         setNewCourse(popularCousre);
+        setDownDocs(!popularCousre);
     };
     const handleSetNewCourse = () => {
         setNewCourse(!newCourse);
-        console.log(123);
+        setDownDocs(newCourse);
         setPopularCourse(newCourse);
     };
+
+    const handleSetDownDocs = () =>{
+        setDownDocs(!downDocs);
+        setPopularCourse(downDocs);
+        setNewCourse(downDocs);
+
+    }
 
     const [value, setValue] = useState('one');
 
@@ -90,7 +99,7 @@ const Home = () => {
                         borderBottom: 'solid 2px ',
                         backgroundColor: popularCousre ? '#f5f5f5' : '',
                         transition: '1s',
-                        borderBottomColor: popularCousre ? '#0477d2' : '',
+                        borderBottom: popularCousre ? 'solid 4px #0477d2' : '',
                         // width: popularCousre ? '0' : '10px',
                     }}
                 >
@@ -106,6 +115,17 @@ const Home = () => {
                     }}
                 >
                     <h1 onClick={handleSetNewCourse}>Tài liệu mới nhất</h1>
+                </div>
+                <div
+                    className={cx('subHome_right')}
+                    style={{
+                        borderBottom: 'solid 2px ',
+                        backgroundColor: newCourse ? '#f5f5f5' : '',
+                        transition: 'border-bottom 0.5s',
+                        borderBottomColor: downDocs ? '#0477d2' : '',
+                    }}
+                >
+                    <h1 onClick={handleSetDownDocs}>Tài liệu tải nhiều</h1>
                 </div>
             </div>
             <ul className={cx('listItem')}>
@@ -189,19 +209,8 @@ const Home = () => {
                     )}
                 </div>
             </ul>
-             <Box sx={{ width: '100%' }}>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        textColor="secondary"
-        indicatorColor="secondary"
-        aria-label="secondary tabs example"
-      >
-        <Tab value="one" label="Item One" />
-        <Tab value="two" label="Item Two" />
-        <Tab value="three" label="Item Three" />
-      </Tabs>
-    </Box>
+            
+  
         </div>
     );
 };
