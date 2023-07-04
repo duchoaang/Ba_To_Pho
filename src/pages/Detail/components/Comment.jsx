@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 
-const Comment = ({ userName, content, created_date, userId, cmtId }) => {
+import { post } from '~/utils/request';
+
+const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) => {
     return (
         <div className="p-2 mt-2 border rounded">
             <span className="material-icons fs-1">portrait</span>
@@ -28,6 +30,17 @@ const Comment = ({ userName, content, created_date, userId, cmtId }) => {
                         </span>
                         <span>Trả lời</span>
                         <span>Thích</span>
+                        <span
+                            onClick={() => {
+                                post('comments/remove', {
+                                    comment_id: cmtId,
+                                }).then(() => {
+                                    setReload((prev) => !prev);
+                                });
+                            }}
+                        >
+                            Xoa
+                        </span>
                     </div>
                 </div>
                 <div>{content}</div>

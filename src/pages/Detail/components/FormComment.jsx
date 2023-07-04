@@ -2,30 +2,30 @@ import Button from '@mui/material/Button';
 import Textarea from '@mui/joy/Textarea';
 import CommentIcon from '@mui/icons-material/Comment';
 
-const FormComment = ({ setReload }) => {
+import { get, post } from '~/utils/request';
+
+const FormComment = ({ setReload, doc_id }) => {
     const SubmitComment = async (e) => {
         e.preventDefault();
-        if (localStorage.getItem('isAuthenticated') !== 'true') return;
+        // if (localStorage.getItem('isAuthenticated') !== 'true') return;
 
-        let userId = await request
-            .get('/current-user', { withCredentials: true })
-            .then((data) => (data.is_active ? data.id : ''));
+        let userId = await get('/current-user', { withCredentials: true }).then((data) =>
+            data.is_active ? data.id : '',
+        );
 
         if (userId === '') {
             console.log('Chua dang nhap');
             return;
         }
 
-        request
-            .post('comments/add', {
-                content: e.target['comment'].value,
-                user_id: userId,
-                document_id: doc_id,
-            })
-            .then(() => {
-                e.target.reset();
-                setReload((prev) => !prev);
-            });
+        post('comments/add', {
+            content: e.target['comment'].value,
+            user_id: userId,
+            document_id: doc_id,
+        }).then(() => {
+            e.target.reset();
+            setReload((prev) => !prev);
+        });
     };
 
     return (
@@ -35,6 +35,7 @@ const FormComment = ({ setReload }) => {
                 <Textarea
                     name="comment"
                     required
+                    pattern="\S(.*\S)?"
                     placeholder="Type something here…"
                     minRows={3}
                     sx={{

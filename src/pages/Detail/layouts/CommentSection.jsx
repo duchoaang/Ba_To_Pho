@@ -19,15 +19,17 @@ const CommentSection = ({ doc_id }) => {
             <h5>
                 <b>BÌNH LUẬN</b>
             </h5>
-            <FormComment setReload={setReload} />
+            <FormComment doc_id={doc_id} setReload={setReload} />
             <div>
-                {listComments.map((cmt) => (
+                {listComments.map((cmt, index) => (
                     <Comment
+                        key={index}
                         userName={cmt.user_name}
                         userId={cmt.user_id}
                         content={cmt.content}
                         created_date={cmt.created_date}
                         cmtId={cmt.id}
+                        setReload={setReload}
                     />
                 ))}
             </div>
