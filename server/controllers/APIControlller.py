@@ -23,8 +23,7 @@ def api_documents():
         fields=[
             "id", "title", "author", "description", "view_count", "captcha",
             "status", "gem_cost", "discount", "username",
-            "cloudinary_image_secure_url", "cloud_link", "img_cloud_link",
-            "file_link_download", "img_link_download", "cloudinary_secure_url",
+            "cloudinary_image_secure_url", "img_cloud_link", "img_link_download", "cloudinary_secure_url",
             "document_type_id", "document_type", "keywords", "categories",
             "average_rate", "num_rate", "num_favour_users", "created_date",
             "file_size"
@@ -39,13 +38,11 @@ def api_popular_new_documents():
     new_docs = get_new_documents(10)
     popular_list = [doc.to_dict(
         fields=["id", "title", "author", "description", "view_count", "status", "gem_cost", "discount",
-                "username", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "document_type_id", "document_type", "keywords",
+                "username", "img_cloud_link", "img_link_download", "document_type_id", "document_type", "keywords",
                 "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in popular_docs]
     new_list = [doc.to_dict(
         fields=["id", "title", "author", "description", "view_count", "status", "gem_cost", "discount",
-                "username", "cloud_link", "img_cloud_link", "file_link_download",
-                "img_link_download", "document_type_id", "document_type", "keywords",
+                "username", "img_cloud_link", "img_link_download", "document_type_id", "document_type", "keywords",
                 "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in new_docs]
     data = {"popular": popular_list, "new": new_list}
     return jsonify(data)
@@ -61,8 +58,8 @@ def api_document_by_id(id):
         fields=[
             "id", "title", "author", "description", "view_count", "captcha",
             "status", "gem_cost", "discount", "username",
-            "cloudinary_image_secure_url", "cloud_link", "img_cloud_link",
-            "file_link_download", "img_link_download", "cloudinary_secure_url",
+            "cloudinary_image_secure_url", "img_cloud_link",
+            "img_link_download", "cloudinary_secure_url",
             "document_type_id", "document_type", "keywords", "categories",
             "average_rate", "num_rate", "num_favour_users", "created_date",
             "file_size"

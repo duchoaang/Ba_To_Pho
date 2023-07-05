@@ -81,8 +81,8 @@ class User(BaseModel, UserMixin):
             if 'user_docs' in fields:
                 result['userDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
-                            "discount", "cloud_link", "img_cloud_link", "file_link_download",
-                            "img_link_download", "document_type_id", "document_type", "keywords",
+                            "discount", "img_cloud_link", "img_link_download", "document_type_id", "document_type",
+                            "keywords",
                             "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
                     self.documents if
                     doc.status == Status.ACCEPT]
@@ -95,14 +95,14 @@ class User(BaseModel, UserMixin):
             if 'result_docs' in fields:
                 result['resultDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "status", "gem_cost",
-                            "discount", "cloudinary_secure_url", "cloudinary_image_secure_url", "document_type_id",
+                            "discount", "img_cloud_link", "img_link_download", "cloudinary_secure_url",
+                            "cloudinary_image_secure_url", "document_type_id",
                             "document_type", "keywords", "categories", "file_size"]) for doc in self.documents if
                     doc.status != Status.WAITING]
             if 'fav_docs' in fields:
                 result['favDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
-                            "discount", "cloud_link", "img_cloud_link", "file_link_download",
-                            "img_link_download", "document_type_id", "document_type", "keywords",
+                            "discount", "img_cloud_link", "img_link_download", "document_type_id", "document_type", "keywords",
                             "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
                     self.favour_docs]
         return result
