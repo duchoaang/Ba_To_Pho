@@ -13,7 +13,7 @@ import SuggestSection from './layouts/Suggest';
 import CommentSection from './layouts/CommentSection';
 import InfoList from './components/InfoList';
 
-import request from '~/utils/request';
+import get from '~/utils/request/get';
 import Status from '~/utils/StatusCode';
 
 const cx = classNames.bind(styles);
@@ -63,7 +63,8 @@ const Detail = () => {
     const navigate = useNavigate();
     useEffect(() => {
         let id = location.pathname.split('/')[2];
-        request.get(`api/documents/${id}`).then((res) => {
+
+        get(`api/documents/${id}`).then((res) => {
             if (res.status === Status.NOT_FOUND) {
                 navigate('/');
                 return;

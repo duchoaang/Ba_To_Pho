@@ -1,0 +1,12 @@
+.wrapper {
+    border: 1px solid #dee2e6;
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.inner {
+    display: inline-block;
+    margin-left: 8px;
+    width: calc(100% - 48px);
+}

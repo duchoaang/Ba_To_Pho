@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 
 import Comment from '../components/Comment';
 import FormComment from '../components/FormComment';
-import request from '~/utils/request';
+import get from '~/utils/request/get';
 
 const CommentSection = ({ doc_id }) => {
     const [listComments, setListComments] = useState([]);
     const [reload, setReload] = useState(false);
 
     useEffect(() => {
-        request.get(`api/comments/${doc_id}`).then((data) => {
+        get(`api/comments/${doc_id}`).then((data) => {
             setListComments(data);
         });
     }, [reload]);

@@ -2,7 +2,8 @@ import Button from '@mui/material/Button';
 import Textarea from '@mui/joy/Textarea';
 import CommentIcon from '@mui/icons-material/Comment';
 
-import { get, post } from '~/utils/request';
+import get from '~/utils/request/get';
+import post from '~/utils/request/post';
 
 const FormComment = ({ setReload, doc_id }) => {
     const SubmitComment = async (e) => {

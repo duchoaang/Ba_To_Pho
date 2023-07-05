@@ -2,7 +2,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState, useRef } from 'react';
-import request from '~/utils/request';
+import get from '~/utils/request/get';
 
 const DataTable = ({ inputTokenRef, setError }) => {
     const [data, setData] = useState([]);
@@ -46,8 +46,14 @@ const DataTable = ({ inputTokenRef, setError }) => {
             renderCell: (params) => {
                 const handleClickAction = (e) => {
                     if (e.target.innerText.toUpperCase() === 'REJECT') {
-                        request.patch(`api/documents/${params.id}`, { status: 'REJECT' }).then(() => {
-                            setReload((prev) => !prev);
+                        import('~/utils/request').then((module) => {
+                            module
+                                .patch(`api/documents/${params.id}`, {
+                                    status: 'REJECT',
+                                })
+                                .then(() => {
+                                    setReload((prev) => !prev);
+                                });
                         });
                         return;
                     }
@@ -56,23 +62,25 @@ const DataTable = ({ inputTokenRef, setError }) => {
                         return;
                     }
 
-                    request
-                        .patch(
-                            `api/documents/${params.id}`,
-                            {
-                                status: 'ACCEPT',
-                                description: params.row.description,
-                                gem_cost: params.row.gem_cost - '0',
-                            },
-                            {
-                                headers: {
-                                    access_token: inputTokenRef.current.value,
+                    import('~/utils/request').then((module) => {
+                        module
+                            .patch(
+                                `api/documents/${params.id}`,
+                                {
+                                    status: 'ACCEPT',
+                                    description: params.row.description,
+                                    gem_cost: params.row.gem_cost - '0',
                                 },
-                            },
-                        )
-                        .then(() => {
-                            setReload((prev) => !prev);
-                        });
+                                {
+                                    headers: {
+                                        access_token: inputTokenRef.current.value,
+                                    },
+                                },
+                            )
+                            .then(() => {
+                                setReload((prev) => !prev);
+                            });
+                    });
                 };
 
                 return (
@@ -90,7 +98,7 @@ const DataTable = ({ inputTokenRef, setError }) => {
     ];
 
     useEffect(() => {
-        request.get('api/documents?status=WAITING').then((res) =>
+        get('api/documents?status=WAITING').then((res) =>
             setData(
                 res.map((doc) => ({
                     ...doc,
@@ -101,27 +109,25 @@ const DataTable = ({ inputTokenRef, setError }) => {
     }, [reload]);
 
     return (
-        <>
-            <div style={{ height: 'calc(100vh - 150px)', width: '100%' }}>
-                <DataGrid
-                    rows={data}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 5 },
-                        },
-                    }}
-                    getRowHeight={() => 'auto'}
-                    pageSizeOptions={[1, 5, 10]}
-                    getEstimatedRowHeight={() => 200}
-                    disableRowSelectionOnClick
-                    onRowSelectionModelChange={(newRowSelectionModel) => {
-                        setRowSelectionModel(newRowSelectionModel);
-                    }}
-                    rowSelectionModel={rowSelectionModel}
-                />
-            </div>
-        </>
+        <div style={{ height: 'calc(100vh - 150px)', width: '100%' }}>
+            <DataGrid
+                rows={data}
+                columns={columns}
+                initialState={{
+                    pagination: {
+                        paginationModel: { page: 0, pageSize: 5 },
+                    },
+                }}
+                getRowHeight={() => 'auto'}
+                pageSizeOptions={[1, 5, 10]}
+                getEstimatedRowHeight={() => 200}
+                disableRowSelectionOnClick
+                onRowSelectionModelChange={(newRowSelectionModel) => {
+                    setRowSelectionModel(newRowSelectionModel);
+                }}
+                rowSelectionModel={rowSelectionModel}
+            />
+        </div>
     );
 };
 
