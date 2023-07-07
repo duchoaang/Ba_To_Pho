@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 
 const Empty = lazy(() => import('./layout/Empty'));
+const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
 
 const Home = lazy(() => import('@pages/Home'));
 const Upload = lazy(() => import('@pages/Upload'));
@@ -14,18 +15,22 @@ const routes = [
     {
         path: '/',
         component: Home,
+        layout: DefaultLayout,
     },
     {
         path: '/upload',
         component: Upload,
+        layout: DefaultLayout,
     },
     {
         path: '/documents',
         component: Documents,
+        layout: DefaultLayout,
     },
     {
         path: '/documents/:id',
         component: Detail,
+        layout: DefaultLayout,
     },
     {
         path: '/admin/duyet-bai',
@@ -35,6 +40,7 @@ const routes = [
     {
         path: '/profile/:id',
         component: Profile,
+        layout: DefaultLayout,
     },
     {
         path: '*',
