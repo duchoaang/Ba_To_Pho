@@ -13,7 +13,34 @@ from wtforms import HiddenField
 
 from server.dao import get_user_by_id
 from server.models import UserRole, Document, User, Category, Rule
-from server import app, db
+from server import app, db, dao
+
+
+class MyAdminIndex(AdminIndexView):
+    @expose('/')
+    def index(self):
+        if current_user.is_authenticated and current_user.user_role == UserRole.ADMIN:
+            download_datas = dao.get_download_stats()
+            download_labels = [data.label for data in download_datas]
+            download_values = [data.downloads for data in download_datas]
+
+            download_cate_datas = dao.get_download_stats_by_cate()
+            download_cate_labels = [data.cate for data in download_cate_datas]
+            download_cate_values = [data.downloads for data in download_cate_datas]
+
+            upload_datas = dao.get_upload_stats()
+            upload_labels = [data.label for data in upload_datas]
+            upload_values = [data.downloads for data in upload_datas]
+
+            upload_cate_datas = dao.get_upload_stats_by_cate()
+            upload_cate_labels = [data.cate for data in upload_cate_datas]
+            upload_cate_values = [data.downloads for data in upload_cate_datas]
+            return self.render('admin/index.html', download_labels=download_labels, download_values=download_values,
+                               download_cate_labels=download_cate_labels, download_cate_values=download_cate_values,
+                               upload_labels=upload_labels, upload_values=upload_values,
+                               upload_cate_label=upload_cate_labels, upload_cate_values=upload_cate_values)
+        else:
+            return self.render('admin/index.html')
 
 
 class AdminModelView(ModelView):
@@ -122,7 +149,7 @@ class CategoryModelView(AdminModelView):
     form_columns = ["name", "category_parent", "category_children"]
 
 
-admin = Admin(app=app, name='batopho', template_mode='bootstrap4')
+admin = Admin(app=app, name='batopho', template_mode='bootstrap4', index_view=MyAdminIndex())
 admin.add_view(UserModelView(User, db.session))
 admin.add_view(DocumentModelView(Document, db.session))
 admin.add_view(RuleModelView(Rule, db.session))

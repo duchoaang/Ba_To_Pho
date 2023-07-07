@@ -102,7 +102,8 @@ class User(BaseModel, UserMixin):
             if 'fav_docs' in fields:
                 result['favDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
-                            "discount", "img_cloud_link", "img_link_download", "document_type_id", "document_type", "keywords",
+                            "discount", "img_cloud_link", "img_link_download", "document_type_id", "document_type",
+                            "keywords",
                             "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
                     self.favour_docs]
         return result
@@ -271,6 +272,14 @@ class Notification(BaseModel):
         return self.content
 
 
+class KeywordUserSearch(BaseModel):
+    keyword = Column(String(255), nullable=False)
+    search_date = Column(Boolean, default=datetime.now())
+
+    def __str__(self):
+        return self.keyword
+
+
 class Rule(BaseModel):
     name = Column(String(100), nullable=False)
     value = Column(Integer, nullable=False)
@@ -300,26 +309,29 @@ if __name__ == '__main__':
         db.session.add_all([dt1, dt2, dt3])
 
         d1 = Document(title='Cơ sở lập trình', description='Học lập trình cơ bản', author='Võ Thị B', captcha='xTz9Kp',
+                      status=Status.ACCEPT,
                       discount=0, gem_cost=100000, user=u1, document_type=dt1,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
                       file_link_download="LinkDownFileTaiWeb",
                       img_link_download="LinkDownImgTaiWeb",
                       cloudinary_public_id="ChuaCo",
-                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
+                      cloudinary_secure_url="",
+                      cloudinary_image_public_id="",
+                      cloudinary_image_secure_url="")
         d2 = Document(title='Toán cao cấp', description='Toán cao cấp', author='Nguyễn Văn A', captcha='xTz9Kp',
+                      status=Status.ACCEPT,
                       discount=50000, gem_cost=80000, user=u1, document_type=dt2,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
                       file_link_download="LinkDownFileTaiWeb",
                       img_link_download="LinkDownImgTaiWeb",
-                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
-                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
+                      cloudinary_public_id="",
+                      cloudinary_secure_url="",
+                      cloudinary_image_public_id="",
+                      cloudinary_image_secure_url="")
         d3 = Document(title='Nhập môn hướng đối tượng', description='Hướng đối tượng cho người mới bắt đầu',
+                      status=Status.ACCEPT,
                       author='Trần Thị C', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
@@ -335,6 +347,28 @@ if __name__ == '__main__':
         cmt1 = Comment(document=d1, user=u1, content="test1")
         cmt2 = Comment(document=d1, user=u1, content="test2")
         db.session.add_all([cmt1, cmt2])
+
+        dl_list1 = []
+        for i in range(0, 5):
+            dl_list1.append(UserDownloadDoc(user=u1, document=d1, gem_cost=5, created_date="2023-06-04 6:3:00"))
+            dl_list1.append(
+                UserDownloadDoc(user=u1, document=d1, gem_cost=5, created_date="2023-06-04 " + str(i) + ":00:00"))
+            dl_list1.append(UserDownloadDoc(user=u1, document=d2, gem_cost=5,
+                                            created_date="2023-06-04 " + str(12 - (i + 1)) + ":30:00"))
+
+        db.session.add_all(dl_list1)
+
+        dl_list2 = []
+        for i in range(0, 3):
+            dl_list2.append(UserDownloadDoc(user=u1, document=d2, gem_cost=5, created_date="2023-06-05 00:00:00"))
+            dl_list2.append(UserDownloadDoc(user=u1, document=d1, gem_cost=5, created_date="2023-06-05 00:00:00"))
+            dl_list2.append(UserDownloadDoc(user=u1, document=d3, gem_cost=5, created_date="2023-06-05 00:00:00"))
+        db.session.add_all(dl_list2)
+
+        dl_list3 = []
+        for i in range(0, 20):
+            dl_list3.append(UserDownloadDoc(user=u1, document=d3, gem_cost=5, created_date="2023-06-06 00:00:00"))
+        db.session.add_all(dl_list3)
 
         chuoi = """Tiểu thuyết, Tiểu thuyết tình cảm, Lãng mạn, Hình sự, Khoa học viễn tưởng,
         Lịch sử hư cấu, Phi hư cấu, Hồi ký, Tự truyện, Tiểu sử,
@@ -360,6 +394,10 @@ if __name__ == '__main__':
 
         u1.favour_docs.append(d1)
         u1.favour_docs.append(d2)
+
+        cate_list[0].documents.append(d1)
+        cate_list[1].documents.append(d1)
+        cate_list[2].documents.append(d1)
 
         r = Rule(name='waiting_time_confirm', value=30)
         db.session.add(r)

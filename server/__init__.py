@@ -36,6 +36,8 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 app.config['FLASK_ADMIN_SWATCH'] = 'lux'
+app.config['FLASK_ADMIN_FLUID_LAYOUT'] = True
+
 
 db = SQLAlchemy(app=app)
 mail.init_app(app)

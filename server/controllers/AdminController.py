@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from flask import request, render_template, flash, redirect, jsonify
 from flask_login import login_user
 
+from server import dao
 from server.dao import check_login, get_user_by_id, warn_user, send_notification
 from server.models import UserRole
 
@@ -28,3 +31,26 @@ def notice_to_user():
         if warning:
             warn_user(user_id)
         return jsonify({"status": 200, "msg": "success"})
+
+
+def get_stat_downloads():
+    if request.method == 'POST':
+        period = request.json.get('period')
+        start_time = request.json.get('start_time')
+        end_time = request.json.get('end_time')
+        download_datas = dao.get_download_stats(start_time, end_time, period)
+        if download_datas is None:
+            return jsonify({"status": 400})
+
+        download_labels = [data.label for data in download_datas]
+        download_values = [data.downloads for data in download_datas]
+
+        download_cate_datas = dao.get_download_stats_by_cate(start_time, end_time)
+        if download_cate_datas is None:
+            return jsonify({"status": 400})
+        download_cate_labels = [data.cate for data in download_cate_datas]
+        download_cate_values = [data.downloads for data in download_cate_datas]
+        return jsonify({"status": 200, "download_labels": download_labels, "download_values": download_values,
+                        "download_cate_labels": download_cate_labels, "download_cate_values": download_cate_values})
+    else:
+        return jsonify({"status": 404})
