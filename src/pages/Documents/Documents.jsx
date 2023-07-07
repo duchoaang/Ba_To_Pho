@@ -10,8 +10,6 @@ import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-
-
 const lists = [
     {
         id: 1,
@@ -105,11 +103,10 @@ const documents = [
     },
 ];
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 7;
 
 const handlePageClick = () => {};
 const Documents = () => {
-    
     const [listID, setListID] = useState('');
     const [typeID, setTypeID] = useState('');
     const [showList, setShowList] = useState(false);
@@ -123,7 +120,7 @@ const Documents = () => {
     useEffect(() => {
         setStart((numberPage - 1) * PAGE_SIZE);
     }, [numberPage]);
- 
+
     const handleChecklist = (checked, id) => {
         if (checked) {
             setUserChoice([...userChoice, id]);
@@ -137,11 +134,8 @@ const Documents = () => {
             .get('http://127.0.0.1:5000/api/categories')
             .then((response) => {
                 setListCategories(response.data);
-             
             })
-            .catch((error) => {
-          
-            });
+            .catch((error) => {});
         axios
             .get('http://127.0.0.1:5000/api/types')
             .then((response) => {
@@ -155,14 +149,11 @@ const Documents = () => {
             .get('http://127.0.0.1:5000/api/documents')
             .then((response) => {
                 setListDocs(response.data);
-                
             })
             .catch((error) => {
                 console.log('that bai');
             });
     }, []);
-
-   
 
     const handleShowList = () => {
         setShowList(!showList);
@@ -250,17 +241,20 @@ const Documents = () => {
                                 userChoice.every((v) => document.categories.map((cate) => cate.id).includes(v)) &&
                                 typeID === document.document_type_id && (
                                     <>
-                                    
                                         <div className={cx('item')} key={index}>
                                             <div className={cx('content__left')}>
-                                                <img src={document.img} alt="preview" width={170} />
+                                                {console.log(document)}
+                                                <img src={document.img_link_download} alt="preview" />
                                             </div>
                                             <div className={cx('content__right')}>
                                                 <div className={cx('content__right--title')}>
-                                                    <Link to="/Documents/1"><h1 style={{ color: '#3379b5' }}>{document.content}</h1></Link>
+                                                    <Link to={`/Documents/${document.id}`}>
+                                                        <h1 style={{ color: '#3379b5' }}>{document.title}</h1>
+                                                    </Link>
                                                 </div>
+
                                                 <div className={cx('content__right--main')}>
-                                                    <h1> {document.title}</h1>
+                                                    <h1> {document.description}</h1>
                                                 </div>
                                                 <div className={cx('content__right--option')}>
                                                     <button>
@@ -279,15 +273,19 @@ const Documents = () => {
                                                         </span>
                                                         <h1>3062</h1>
                                                     </button>
-                                                    <button type="button" class="btn btn-success">
-                                                        <span
-                                                            style={{ color: '#99a8ba', fontSize: '15px' }}
-                                                            class="material-icons"
-                                                        >
-                                                            description
-                                                        </span>
-                                                        Docs
-                                                    </button>
+                                                   <div className={cx('buttonDown')}>
+                                                   <Link to={`/Documents/${document.id}`}>
+                                                        <button type="button" >
+                                                            <span
+                                                                style={{ color: '#99a8ba', fontSize: '15px' }}
+                                                                class="material-icons"
+                                                            >
+                                                                description
+                                                            </span>
+                                                            Docs
+                                                        </button>
+                                                    </Link>
+                                                   </div>
                                                     <button type="button" class="btn btn-danger">
                                                         <span class="material-icons" style={{ fontSize: '15px' }}>
                                                             save_alt

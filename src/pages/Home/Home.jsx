@@ -79,7 +79,7 @@ const Home = () => {
     return (
         <div className={cx('mainHome')}>
             <div className={cx('banner')}>
-                <img src="src/assets/banner.png" alt="w-100" width={'75%'} />
+                <img src="src/assets/banner1.png" alt="w-100" />
             </div>
             <div className={cx('subHome')}>
                 <div
