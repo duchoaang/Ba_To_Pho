@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { lazy, useState } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Comment.module.scss';
@@ -15,6 +15,8 @@ const DeleteForeverIcon = lazy(() => import('@mui/icons-material/DeleteForever')
 
 const cx = classNames.bind(styles);
 const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) => {
+    const [like, setLike] = useState(false);
+
     const stringToColor = (string) => {
         let hash = 0;
         let i;
@@ -48,7 +50,7 @@ const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) 
                     <Link to={`/profile/${userId}`}>
                         <b className="name">{userName}</b>
                     </Link>
-                    <div className="d-flex g-2 float-end">
+                    <div className="d-flex align-items-center g-2 float-end">
                         <span>
                             {(() => {
                                 let d = new Date(created_date);
@@ -65,9 +67,17 @@ const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) 
                                 );
                             })()}
                         </span>
-                        <span>Trả lời</span>
-                        <IconButton color="primary" size="small">
-                            <ThumbUpOffAltIcon fontSize="inherit" />
+                        <IconButton size="small">
+                            <ReplyIcon fontSize="inherit" />
+                        </IconButton>
+                        <IconButton
+                            color="primary"
+                            size="small"
+                            onClick={() => {
+                                setLike((prev) => !prev);
+                            }}
+                        >
+                            {like ? <ThumbUpAltIcon fontSize="inherit" /> : <ThumbUpOffAltIcon fontSize="inherit" />}
                         </IconButton>
                         <IconButton
                             size="small"
