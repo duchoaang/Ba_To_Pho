@@ -1,3 +1,4 @@
+import os
 import secrets
 
 from flask import request, jsonify
@@ -10,26 +11,38 @@ import cloudinary.uploader
 
 
 def upload_cloudinary():
-    print(request.files)
     file = request.files.get('file')
-    image = request.files.get('image')
-    print(file.filename)
+    image = None
     extension = file.filename.split('.')[-1]
     dt_id = dao.get_document_type_id_by_extension(extension)
     if dt_id is None:
         return jsonify({"status": "404", "message": "File không đúng định dạng"})
-    filename = secrets.token_hex(10) + "_" + file.filename
-    res = cloudinary.uploader.upload(file, resource_type="raw", public_id=filename)  # luu file tren cloudinary
+    file_name = secrets.token_hex(10) + "_" + file.filename # token_tenfile.docx (CÓ EXTENSION)
+    file_name_without_extension = file_name.replace(f'.{extension}', "") # token_tenfile (0 CÓ EXTENSION)
+    res = cloudinary.uploader.upload(file, resource_type="raw", public_id=file_name)  # luu file tren cloudinary
     path = res['secure_url']  # link download
     download_path = res['public_id']
+
+    # Convert first page to PNG
+    try:
+        if extension == "pptx":
+            utils.save_file(file, file_name)
+            pdf_path = utils.convert_pptx_to_pdf(file_name)
+            os.remove(file_name)
+        elif extension == "docx":
+            utils.save_file(file, file_name)
+            pdf_path = utils.convert_docx_to_pdf(file_name_without_extension, file_name)
+        elif extension == "pdf":
+            utils.save_file(file, file_name)
+            pdf_path = os.path.abspath(file_name)
+        image = utils.convert_pdf_to_png(file_name_without_extension, pdf_path)
+    except Exception as e:
+        print("Lỗi" + str(e))
+
     res_img = cloudinary.uploader.upload(image, resource_type="auto")  # luu file tren cloudinary
     path_img = res_img['secure_url']  # link download
     download_path_img = res_img['public_id']
 
-    print(path, download_path)
-    print(file.filename)
-    print(path_img, download_path_img)
-    print(image.filename)
     u_id = User.query.first().id
     title = request.form.get('title')
     author = request.form.get('author')

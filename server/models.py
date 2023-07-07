@@ -343,7 +343,7 @@ if __name__ == '__main__':
         Kinh tế học, Môi trường, Thủ công, Chế tạo, Giáo dục, Gia đình,
         Sân khấu, Âm nhạc, Nghệ thuật biểu diễn, Văn học Mỹ,
         Văn học Anh, Văn học Pháp, Ma quái, Huyền bí, Huyền thoại,
-        Thiếu niên, Thanh thiếu niên, Hội hoạ, Kiến trúc, Truyện tranh, Manga"""
+        Thiếu niên, Thanh thiếu niên, Hội hoạ, Kiến trúc, Truyện tranh, Manga, Giả tưởng"""
 
         ket_qua = [x.strip() for x in chuoi.split(",")]
 

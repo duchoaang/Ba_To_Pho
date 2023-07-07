@@ -91,7 +91,6 @@ def api_document_update(doc_id):
     if status == Status.REJECT.name:
         dao.reject_document(doc_id)
         return jsonify({"message": "Reject successfully"})
-
     description = request.json.get('description')
     gem_cost = request.json.get('gem_cost')
     access_token = request.headers.get('access_token')
