@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 // import Tab from '@mui/material/Tab';
 // import Box from '@mui/material/Box';
 
-import request from '~/utils/request';
+import get from '~/utils/request/get';
 
 const newDocs = [
     {
@@ -48,7 +48,7 @@ const Home = () => {
     
     const [popularDocs, setPopularDocs] = useState([])
     useEffect(() => {
-        request.get('api/documents').then((res) => {
+        get('api/documents').then((res) => {
             setPopularDocs(res);
         });
     }, []);
@@ -131,7 +131,7 @@ const Home = () => {
                                         description
                                     </span>
                                     <h1>
-                                        <Link style={{ textDecoration: 'none', color: 'black' }} to="/Documents">
+                                        <Link style={{ textDecoration: 'none', color: 'black' }} to="/documents">
                                             {doc.title}
                                         </Link>
                                     </h1>
@@ -148,8 +148,7 @@ const Home = () => {
                                         description
                                     </span>
                                     <h1>
-                                        {' '}
-                                        <Link style={{ textDecoration: 'none', color: 'black' }} to="/Documents">
+                                        <Link style={{ textDecoration: 'none', color: 'black' }} to="/documents">
                                             {doc.context}
                                         </Link>
                                     </h1>
@@ -175,10 +174,9 @@ const Home = () => {
                                                 description
                                             </span>
                                             <h1>
-                                                {' '}
                                                 <Link
                                                     style={{ textDecoration: 'none', color: 'black' }}
-                                                    to="/Documents"
+                                                    to="/documents"
                                                 >
                                                     {doc.context}
                                                 </Link>

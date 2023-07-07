@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Upload.module.scss';
 import Button from '@mui/material/Button';
 import ClearIcon from '@mui/icons-material/Clear';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-import request from '~/utils/request';
+import get from '~/utils/request/get';
+import post from '~/utils/request/post';
 
 const cx = classNames.bind(styles);
 
@@ -45,7 +45,7 @@ const Upload = () => {
     };
 
     useEffect(() => {
-        request.get('api/categories').then((data) => setCategories(data));
+        get('api/categories').then((data) => setCategories(data));
     }, []);
 
     const handleSubmit = (e) => {
@@ -71,7 +71,7 @@ const Upload = () => {
             }
         });
 
-        request.post('documents/upload', data).then((res) => {
+        post('documents/upload', data).then((res) => {
             if (res.status === '200') {
                 alert('Upload tài liệu thành công');
                 setFormData(INIT_FORM_DATA);

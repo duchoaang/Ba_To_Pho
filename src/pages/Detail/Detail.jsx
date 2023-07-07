@@ -13,7 +13,7 @@ import SuggestSection from './layouts/Suggest';
 import CommentSection from './layouts/CommentSection';
 import InfoList from './components/InfoList';
 
-import request from '~/utils/request';
+import get from '~/utils/request/get';
 import Status from '~/utils/StatusCode';
 
 const cx = classNames.bind(styles);
@@ -43,7 +43,7 @@ const Nav = () => (
 const Detail = () => {
     const [data, setData] = useState({
         title: '',
-        cloudinary_image_secure_url: '/src/assets/docImg.jpg',
+        img_link_download: '/src/assets/docImg.jpg',
         gem_cost: 0,
         categories: [],
         description: '',
@@ -63,7 +63,8 @@ const Detail = () => {
     const navigate = useNavigate();
     useEffect(() => {
         let id = location.pathname.split('/')[2];
-        request.get(`api/documents/${id}`).then((res) => {
+
+        get(`api/documents/${id}`).then((res) => {
             if (res.status === Status.NOT_FOUND) {
                 navigate('/');
                 return;
@@ -84,7 +85,7 @@ const Detail = () => {
                     <div className="info">
                         <div className={cx('doc-info', 'row')}>
                             <div className="col-md-4 border rounded p-2">
-                                <img src={data.cloudinary_image_secure_url} className="w-100" alt="" />
+                                <img src={data.img_link_download} className="w-100" alt="" />
                             </div>
                             <div className={cx('doc-details', 'col-md-8')}>
                                 <div>

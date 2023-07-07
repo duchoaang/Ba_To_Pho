@@ -1,27 +1,27 @@
+import { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { routes } from '~/routes';
-import DefaultLayout from './layout/DefaultLayout';
+import Loading from '@pages/Loading';
 
 const App = () => (
     <div id="App" className="vw-100 overflow-hidden">
-        <Routes>
-            {routes.map((route, index) => {
-                const Layout = route.layout ? route.layout : DefaultLayout;
-                return (
+        <Suspense fallback={<Loading />}>
+            <Routes>
+                {routes.map((route, index) => (
                     <Route
                         key={index}
                         path={route.path}
                         element={
-                            <Layout>
+                            <route.layout>
                                 <route.component />
-                            </Layout>
+                            </route.layout>
                         }
                     />
-                );
-            })}
-        </Routes>
+                ))}
+            </Routes>
+        </Suspense>
     </div>
 );
 

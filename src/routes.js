@@ -1,28 +1,36 @@
-import Empty from './layout/Empty';
+import { lazy } from 'react';
 
-import Home from '@pages/Home';
-import Upload from '@pages/Upload';
-import Documents from '@pages/Documents';
-import Detail from '@pages/Detail';
-import Admin from '@pages/Admin';
-import Profile from '@pages/Profile';
+const Empty = lazy(() => import('./layout/Empty'));
+const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
+
+const Home = lazy(() => import('@pages/Home'));
+const Upload = lazy(() => import('@pages/Upload'));
+const Documents = lazy(() => import('@pages/Documents'));
+const Detail = lazy(() => import('@pages/Detail'));
+const Admin = lazy(() => import('@pages/Admin'));
+const Profile = lazy(() => import('@pages/Profile'));
+const Error = lazy(() => import('@pages/Error'));
 
 const routes = [
     {
         path: '/',
         component: Home,
+        layout: DefaultLayout,
     },
     {
         path: '/upload',
         component: Upload,
+        layout: DefaultLayout,
     },
     {
         path: '/documents',
         component: Documents,
+        layout: DefaultLayout,
     },
     {
         path: '/documents/:id',
         component: Detail,
+        layout: DefaultLayout,
     },
     {
         path: '/admin/duyet-bai',
@@ -32,6 +40,12 @@ const routes = [
     {
         path: '/profile/:id',
         component: Profile,
+        layout: DefaultLayout,
+    },
+    {
+        path: '*',
+        component: Error,
+        layout: Empty,
     },
 ];
 
