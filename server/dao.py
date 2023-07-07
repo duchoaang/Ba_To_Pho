@@ -199,8 +199,12 @@ def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, c
         db.session.commit()
 
 
-def get_comment_by_doc(doc_id):
-    return Comment.query.filter(Comment.document_id.__eq__(doc_id)).all()
+def get_comment_by_doc(doc_id, is_active=None):
+    comments = Comment.query.filter(Comment.document_id.__eq__(doc_id))
+    if is_active:
+        comments = comments.filter(Comment.is_active.__eq__(is_active))
+    comments = comments.order_by(Comment.created_date.desc())
+    return comments.all()
 
 
 def get_document_type_id_by_extension(extension):
@@ -238,10 +242,10 @@ def add_comment(content, user_id, document_id):
     db.session.commit()
 
 
-def remove_comment(comment_id):
+def del_comment(comment_id):
     comment = Comment.query.get(comment_id)
     if comment:
-        db.session.delete(comment)
+        comment.is_active = False
         db.session.commit()
 
 
@@ -297,3 +301,26 @@ def reject_document(doc_id):
         db.session.commit()
         return True
     return False
+
+
+def update_user(user_id, fields):
+    user = User.query.get(user_id)
+    try:
+        if user:
+            if fields["name"] is not None and fields["name"].strip():
+                user.name = fields["name"]
+            if fields["bio"] is not None and fields["bio"].strip():
+                user.bio = fields["bio"]
+            if fields["social_media"] is not None and fields["social_media"].strip():
+                user.social_media = fields["social_media"]
+            if fields["address"] is not None and fields["address"].strip():
+                user.address = fields["address"]
+            if fields["phone_number"] is not None and fields["phone_number"].strip():
+                user.phone_number = fields["phone_number"]
+            db.session.commit()
+            return {"status": 200, "msg": "success"}
+        else:
+            return {"status": 404, "msg": "not found"}
+    except Exception as e:
+        db.session.rollback()
+        return {"status": 400, "msg": str(e)}

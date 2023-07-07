@@ -81,8 +81,8 @@ class User(BaseModel, UserMixin):
             if 'user_docs' in fields:
                 result['userDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
-                            "discount", "cloud_link", "img_cloud_link", "file_link_download",
-                            "img_link_download", "document_type_id", "document_type", "keywords",
+                            "discount", "img_cloud_link", "img_link_download", "document_type_id", "document_type",
+                            "keywords",
                             "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
                     self.documents if
                     doc.status == Status.ACCEPT]
@@ -95,14 +95,14 @@ class User(BaseModel, UserMixin):
             if 'result_docs' in fields:
                 result['resultDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "status", "gem_cost",
-                            "discount", "cloudinary_secure_url", "cloudinary_image_secure_url", "document_type_id",
+                            "discount", "img_cloud_link", "img_link_download", "cloudinary_secure_url",
+                            "cloudinary_image_secure_url", "document_type_id",
                             "document_type", "keywords", "categories", "file_size"]) for doc in self.documents if
                     doc.status != Status.WAITING]
             if 'fav_docs' in fields:
                 result['favDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
-                            "discount", "cloud_link", "img_cloud_link", "file_link_download",
-                            "img_link_download", "document_type_id", "document_type", "keywords",
+                            "discount", "img_cloud_link", "img_link_download", "document_type_id", "document_type", "keywords",
                             "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
                     self.favour_docs]
         return result
@@ -234,8 +234,10 @@ class Comment(BaseModel):
 
     def to_dict(self, fields=None):
         result = super().to_dict(fields)
-        if 'user.username' in fields:
-            result['username'] = self.user.username
+        if 'user_name' in fields:
+            result['user_name'] = self.user.name
+        if 'user_id' in fields:
+            result['user_id'] = self.user.id
         return result
 
 
@@ -329,6 +331,10 @@ if __name__ == '__main__':
                       cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
 
         db.session.add_all([d1, d2, d3])
+
+        cmt1 = Comment(document=d1, user=u1, content="test1")
+        cmt2 = Comment(document=d1, user=u1, content="test2")
+        db.session.add_all([cmt1, cmt2])
 
         chuoi = """Tiểu thuyết, Tiểu thuyết tình cảm, Lãng mạn, Hình sự, Khoa học viễn tưởng,
         Lịch sử hư cấu, Phi hư cấu, Hồi ký, Tự truyện, Tiểu sử,
