@@ -17,8 +17,8 @@ def upload_cloudinary():
     dt_id = dao.get_document_type_id_by_extension(extension)
     if dt_id is None:
         return jsonify({"status": "404", "message": "File không đúng định dạng"})
-    file_name = secrets.token_hex(10) + "_" + file.filename # token_tenfile.docx (CÓ EXTENSION)
-    file_name_without_extension = file_name.replace(f'.{extension}', "") # token_tenfile (0 CÓ EXTENSION)
+    file_name = secrets.token_hex(10) + "_" + file.filename  # token_tenfile.docx (CÓ EXTENSION)
+    file_name_without_extension = file_name.replace(f'.{extension}', "")  # token_tenfile (0 CÓ EXTENSION)
     res = cloudinary.uploader.upload(file, resource_type="raw", public_id=file_name)  # luu file tren cloudinary
     path = res['secure_url']  # link download
     download_path = res['public_id']
@@ -27,11 +27,10 @@ def upload_cloudinary():
     try:
         if extension == "pptx":
             utils.save_file(file, file_name)
-            pdf_path = utils.convert_pptx_to_pdf(file_name)
-            os.remove(file_name)
+            pdf_path = utils.convert_pptx_to_pdf(file_name, file_name_without_extension)
         elif extension == "docx":
             utils.save_file(file, file_name)
-            pdf_path = utils.convert_docx_to_pdf(file_name_without_extension, file_name)
+            pdf_path = utils.convert_docx_to_pdf(file_name,file_name_without_extension)
         elif extension == "pdf":
             utils.save_file(file, file_name)
             pdf_path = os.path.abspath(file_name)
@@ -61,5 +60,6 @@ def upload_cloudinary():
     keywords = [utils.strip_accents(k.lower()) for k in kw]
 
     add_no_accept_document(fields, categories, keywords, download_path, path, download_path_img, path_img)
+    os.remove(image)
+    os.remove(file)
     return jsonify({"status": "200", "message": "success"})
-
