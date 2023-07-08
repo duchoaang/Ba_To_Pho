@@ -137,6 +137,7 @@ const Header = () => {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setUser(false);
     };
 
     // lay thong tin user google
@@ -583,11 +584,11 @@ const Header = () => {
                     <button className="btn"></button>
                 </div>
                 <div className={cx('actions')}>
-                    <Link to="/upload">
-                        <Button className="me-5 btn btn-warning border">Tải lên</Button>
-                    </Link>
                     {user ? (
                         <>
+                            <Link to="/upload">
+                                <Button className="me-5 btn btn-warning border">Tải lên</Button>
+                            </Link>
                             {/* <UserController show={true}>
                                 <div className={cx('user_controller')}>
                                     <img
