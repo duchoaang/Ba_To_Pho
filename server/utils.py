@@ -1,5 +1,6 @@
 import hashlib
 from pdf2image import convert_from_path
+
 import os
 import unicodedata
 import aspose.slides as slides
@@ -12,7 +13,6 @@ def hash_text(plain_text):
 
 def strip_accents(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
-
 
 # Save file
 def save_file(file, file_name):
