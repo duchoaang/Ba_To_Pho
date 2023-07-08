@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 const cx = classnames.bind(styles);
 const Input = () => {
     const [inputValue, setInputValue] = useState('');
+    const [showResult, setShowResult] = useState(false);
     const [resultsList, setResultsList] = useState([]);
 
     useEffect(() => {
@@ -23,16 +24,20 @@ const Input = () => {
           
                 setResultsList(results);
             });
+        if(inputValue.length > 0) {
+            setShowResult(true);
+        }
+
     }, [inputValue]);
     const handleChangeInput = (value) => {
         setInputValue(value);
-        console.log(inputValue)
-        console.log(resultsList)
+        
         
     };
 
     const handleClickResult = (value) => {
-        alert('Click result ' + value.content);
+        setShowResult(false);
+        setInputValue('');
     };
     return (
         <>
@@ -45,12 +50,14 @@ const Input = () => {
                     onChange={(e) => handleChangeInput(e.target.value)}
                 />
                 <div className={cx('results_list')}>
-               {    
-                resultsList.map((result, id) =>{
-                    return <Link className={cx('result')} to="/" key={id} 
-                        onClick={() => handleClickResult(result)}
-                    >{result.title} </Link>
-                })
+               {showResult && 
+                    resultsList.map((result, id) =>{
+                        return <Link className={cx('result')} to={`/Documents/${result.id}`} key={id} 
+                            onClick={handleClickResult}
+                        >{result.title} </Link>
+                    })
+             
+               
                }
             </div>
             </div>
