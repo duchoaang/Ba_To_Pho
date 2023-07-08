@@ -81,8 +81,8 @@ class User(BaseModel, UserMixin):
             if 'user_docs' in fields:
                 result['userDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
-                            "discount", "cloud_link", "img_cloud_link", "file_link_download",
-                            "img_link_download", "document_type_id", "document_type", "keywords",
+                            "discount", "img_cloud_link", "img_link_download", "document_type_id", "document_type",
+                            "keywords",
                             "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
                     self.documents if
                     doc.status == Status.ACCEPT]
@@ -95,14 +95,14 @@ class User(BaseModel, UserMixin):
             if 'result_docs' in fields:
                 result['resultDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "status", "gem_cost",
-                            "discount", "cloudinary_secure_url", "cloudinary_image_secure_url", "document_type_id",
+                            "discount", "img_cloud_link", "img_link_download", "cloudinary_secure_url",
+                            "cloudinary_image_secure_url", "document_type_id",
                             "document_type", "keywords", "categories", "file_size"]) for doc in self.documents if
                     doc.status != Status.WAITING]
             if 'fav_docs' in fields:
                 result['favDocs'] = [doc.to_dict(
                     fields=["id", "title", "owner", "content", "view_count", "captcha", "status", "gem_cost",
-                            "discount", "cloud_link", "img_cloud_link", "file_link_download",
-                            "img_link_download", "document_type_id", "document_type", "keywords",
+                            "discount", "img_cloud_link", "img_link_download", "document_type_id", "document_type", "keywords",
                             "categories", "average_rate", "num_rate", "num_favour_users", "file_size"]) for doc in
                     self.favour_docs]
         return result
@@ -349,7 +349,7 @@ if __name__ == '__main__':
         Kinh tế học, Môi trường, Thủ công, Chế tạo, Giáo dục, Gia đình,
         Sân khấu, Âm nhạc, Nghệ thuật biểu diễn, Văn học Mỹ,
         Văn học Anh, Văn học Pháp, Ma quái, Huyền bí, Huyền thoại,
-        Thiếu niên, Thanh thiếu niên, Hội hoạ, Kiến trúc, Truyện tranh, Manga"""
+        Thiếu niên, Thanh thiếu niên, Hội hoạ, Kiến trúc, Truyện tranh, Manga, Giả tưởng"""
 
         ket_qua = [x.strip() for x in chuoi.split(",")]
 

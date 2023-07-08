@@ -1,14 +1,7 @@
 import hashlib
-import io
-import tempfile
-from urllib import request
+from pdf2image import convert_from_path
 
-import dropbox
-from dropbox.exceptions import AuthError
-from dropbox.oauth import DropboxOAuth2FlowNoRedirect
-from flask import jsonify
-
-from server import app, db, APP_KEY, APP_SECRET
+import os
 import unicodedata
 
 
@@ -16,27 +9,29 @@ def hash_text(plain_text):
     return hashlib.md5(plain_text.encode()).hexdigest()
 
 
-def get_dropbox_client():
-    auth_flow = DropboxOAuth2FlowNoRedirect(APP_KEY, APP_SECRET)
-
-    authorize_url = auth_flow.start()
-    print("1. Go to: " + authorize_url)
-    print("2. Click \"Allow\" (you might have to log in first).")
-    print("3. Copy the authorization code.")
-    auth_code = input("Enter the authorization code here: ").strip()
-
-    try:
-        oauth_result = auth_flow.finish(auth_code)
-    except Exception as e:
-        print('Error: %s' % (e,))
-        exit(1)
-
-    with dropbox.Dropbox(oauth2_access_token=oauth_result.access_token) as dbx:
-        dbx.users_get_current_account()
-        print("Successfully set up client!")
-
-    return dbx
-
-
 def strip_accents(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+
+
+# SAVE FILE (FileStorage) vào thư mục của project
+# file: file kiểu FileStorage nhận từ frontend
+# file_name: là tên file có extension đóng vai trò là path
+def save_file(file, file_name):
+    file.seek(0)
+    # hàm save cần truyền vào path nơi lưu file, ở đây truyền file_name sẽ lưu vào thư mục của project
+    file.save(file_name)
+
+
+# Convert PDF to PNG
+def convert_pdf_to_png(file_name, temp_pdf_path):
+    # dùng file lưu tạm để lấy trang đầu tiên thành image
+    file = os.path.abspath(r"poppler-23.05.0\Library\bin")
+    try:
+        images = convert_from_path(temp_pdf_path, poppler_path=file, first_page=1, last_page=1)
+    except Exception as e:
+        print("Lỗi: " + str(e))
+    image_path = f'{file_name}.png'
+    images[0].save(image_path, "PNG")
+    # Xóa file lưu tạm
+    os.remove(temp_pdf_path)
+    return image_path
