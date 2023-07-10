@@ -36,7 +36,7 @@ def get_documents(title=None, category_ids=None, type_ids=None, created_date=Non
 
 
 def get_popular_documents(limit=None):
-    d = Document.query.outerjoin(Document.downloads).group_by(Document.id).order_by(
+    d = Document.query.join(Document.downloads).group_by(Document.id).order_by(
         func.count(Document.downloads).desc())
     if limit:
         d = d.limit(limit)

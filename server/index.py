@@ -7,7 +7,7 @@ from fileinput import filename
 import cloudinary
 import dropbox
 import requests
-from flask import request, render_template, jsonify
+from flask import request, render_template, send_from_directory, jsonify
 from sqlalchemy import event
 
 from server import app, login, dao, admin, utils
@@ -36,7 +36,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/')
+@app.route('/excel')
 def test():
     df = pd.read_excel(r'D:\PersonalFolder\Desktop\tailieu.xlsx', sheet_name='Sheet1')
 
@@ -103,6 +103,10 @@ def test():
 @app.route('/<path:path>')
 def fe(path):
     return render_template('fe-react.html')
+
+@app.route('/assets/<path:path>')
+def send_assets(path):
+    return send_from_directory('assets', path)
 
 
 app.register_blueprint(user_bp, url_prefix='/users')
