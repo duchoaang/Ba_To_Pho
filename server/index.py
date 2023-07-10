@@ -99,14 +99,17 @@ def test():
     return "ok"
 
 
+'''
+    TODO: assets -> static folder
+'''
 @app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+# @app.route('/<path:path>')
 def fe(path):
-    return render_template('fe-react.html')
+    return app.send_static_file('index.html')
 
-@app.route('/assets/<path:path>')
+@app.route('/src/assets/<path:path>')
 def send_assets(path):
-    return send_from_directory('assets', path)
+    return send_from_directory('static/img', path)
 
 
 app.register_blueprint(user_bp, url_prefix='/users')

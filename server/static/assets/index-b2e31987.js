@@ -1,0 +1,1 @@
+import{j as e,L as r}from"./index-a17772b3.js";const s=()=>e.jsxs("div",{className:"vw-100 vh-100 d-flex flex-column align-items-center justify-content-center fz-1",children:[e.jsx("h1",{children:"Page does not exist"}),e.jsxs("h4",{children:["Click ",e.jsx(r,{to:"/",children:"here "}),"to go back Home"]})]}),n=s;export{n as default};
