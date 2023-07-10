@@ -16,3 +16,6 @@ env
 
 package.json
 package-lock.json
+
+.env.shared
+.env.secret
