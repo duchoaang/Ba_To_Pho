@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -7,45 +8,46 @@ from flask_cors import CORS
 from flask_mail import Mail
 from flask_session import Session
 import cloudinary
+from config import config
 
 app = Flask(__name__)
 CORS(app, origins="http://localhost:3000", supports_credentials=True)
 
-app.secret_key = '689567gh$^^&*#%^&*^&%^*DFGH^&*&*^*'
-app.config['SECURITY_PASSWORD_SALT'] = 'test_test'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:%s@localhost/batopho?charset=utf8mb4' % quote("Admin@123")
+app.secret_key = config['SECRET_KEY']
+app.config['SECURITY_PASSWORD_SALT'] = config['SECURITY_PASSWORD_SALT']
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{config['DATABASE_USER']}:{quote(config['DATABASE_PASSWORD'])}@{config['DATABASE_HOST']}/{config['DATABASE_NAME']}?charset=utf8mb4"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['PAGE_SIZE'] = 8  # chỉnh số trang hiển thị product
-app.config['COMMENT_SIZE'] = 8
-app.config['PAGE_INF'] = 9999
-app.config['USER_TEMP_KEY'] = 'user_temp'
+app.config['PAGE_SIZE'] = config['PAGE_SIZE']
+app.config['COMMENT_SIZE'] = config['COMMENT_SIZE']
+app.config['PAGE_INF'] = config['PAGE_INF']
+app.config['USER_TEMP_KEY'] = config['USER_TEMP_KEY']
 
 mail = Mail()
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'tailieubatopho@gmail.com'
-app.config['MAIL_PASSWORD'] = 'hvtmwxzzhsqngefz'
-app.config['MAIL_DEFAULT_SENDER'] = 'tailieubatopho@gmail.com'
+app.config['MAIL_SERVER'] = config['MAIL_SERVER']
+app.config['MAIL_PORT'] = config['MAIL_PORT']
+app.config['MAIL_USE_SSL'] = config['MAIL_USE_SSL']
+app.config['MAIL_USERNAME'] = config['MAIL_USERNAME']
+app.config['MAIL_PASSWORD'] = config['MAIL_PASSWORD']
+app.config['MAIL_DEFAULT_SENDER'] = config['MAIL_DEFAULT_SENDER']
 
-app.config['SESSION_COOKIE_SAMESITE'] = 'None'
-app.config['SESSION_COOKIE_SECURE'] = True
-
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
+app.config['SESSION_COOKIE_SAMESITE'] = config.get('SESSION_COOKIE_SAMESITE')
+app.config['SESSION_COOKIE_SECURE'] = config.get('SESSION_COOKIE_SECURE')
+app.config["SESSION_PERMANENT"] = config.get('SESSION_PERMANENT')
+app.config["SESSION_TYPE"] = config.get('SESSION_TYPE')
 Session(app)
 
-app.config['FLASK_ADMIN_SWATCH'] = 'lux'
+app.config['FLASK_ADMIN_SWATCH'] = config.get('FLASK_ADMIN_SWATCH')
+app.config['FLASK_ADMIN_FLUID_LAYOUT'] = config.get('FLASK_ADMIN_FLUID_LAYOUT')
 
 db = SQLAlchemy(app=app)
 mail.init_app(app)
 login = LoginManager(app=app)
 
 cloudinary.config(
-    cloud_name="dhffue7d7",
-    api_key="215425482852391",
-    api_secret="a9xaGBMJr7KgKhJa-1RpSpx_AmU"
+    cloud_name=config.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=config.get('CLOUDINARY_API_KEY'),
+    api_secret=config.get('CLOUDINARY_API_SECRET')
 )
 
-APP_KEY = 'youh9irihpuik2f'
-APP_SECRET = 'ymejn6mc6q60hvs'
+APP_KEY = config.get('APP_KEY')
+APP_SECRET = config.get('APP_SECRET')

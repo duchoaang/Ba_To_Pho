@@ -36,7 +36,8 @@ def get_documents(title=None, category_ids=None, type_ids=None, created_date=Non
 
 
 def get_popular_documents(limit=None):
-    d = Document.query.outerjoin(Document.downloads).group_by(Document.id).order_by(func.count(Document.downloads).desc())
+    d = Document.query.join(Document.downloads).group_by(Document.id).order_by(
+        func.count(Document.downloads).desc())
     if limit:
         d = d.limit(limit)
     return d.all()
@@ -159,6 +160,44 @@ def add_keyword(name):
     kw = Keyword(name=name)
     db.session.add(kw)
     db.session.commit()
+
+
+def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, cloudinary_secure_url,
+                           cloudinary_image_public_id, cloudinary_image_secure_url):
+    with db.session.no_autoflush:
+        doc = Document(title=fields['title'], author=fields['author'], description=fields['description'],
+                       user_id=fields['user_id'], document_type_id=fields['document_type_id'])
+
+        doc.captcha = "AFB2QD1"
+        doc.gem_cost = 100
+
+        doc.cloud_link = "a"
+        doc.img_cloud_link = "b"
+
+        doc.file_link_download = "c"
+        doc.img_link_download = "d"
+
+        doc.cloudinary_secure_url = cloudinary_secure_url
+        doc.cloudinary_public_id = cloudinary_public_id
+
+        doc.cloudinary_image_public_id = cloudinary_image_public_id
+        doc.cloudinary_image_secure_url = cloudinary_image_secure_url
+
+        for cate in categories:
+            c = Category.query.get(cate)
+            if c:
+                doc.categories.append(c)
+        for key in keywords:
+            kw = get_keyword_by_name(key)
+            if kw:
+                doc.keywords.append(kw)
+            else:
+                add_keyword(key)
+                kw = get_keyword_by_name(key)
+                doc.keywords.append(kw)
+
+        db.session.add(doc)
+        db.session.commit()
 
 
 def add_no_accept_document(fields, categories, keywords, cloudinary_public_id, cloudinary_secure_url,
@@ -324,3 +363,84 @@ def update_user(user_id, fields):
     except Exception as e:
         db.session.rollback()
         return {"status": 400, "msg": str(e)}
+
+
+def get_download_stats(start_time=None, end_time=None, period='day'):
+    if period == 'hour':
+        date_trunc = func.date_format(UserDownloadDoc.created_date, '%H %giờ %d-%m-%Y')
+    elif period == 'day':
+        date_trunc = func.date_format(UserDownloadDoc.created_date, '%d-%m-%Y')
+    elif period == 'month':
+        date_trunc = func.date_format(UserDownloadDoc.created_date, '%m-%Y')
+    elif period == 'year':
+        date_trunc = func.date_format(UserDownloadDoc.created_date, '%Y')
+    else:
+        return False
+
+    query = db.session.query(date_trunc.label('label'), func.count(UserDownloadDoc.id).label('downloads'))
+    if start_time:
+        query = query.filter(UserDownloadDoc.created_date >= start_time)
+    if start_time:
+        query = query.filter(UserDownloadDoc.created_date <= end_time)
+    query = query.group_by('label').order_by('label')
+
+    return query.all()
+
+
+def get_download_stats_by_cate(start_time=None, end_time=None):
+    query = db.session.query(Category.id, Category.name.label('cate'),
+                             func.count(UserDownloadDoc.id).label('downloads')). \
+        join(Document, UserDownloadDoc.document_id == Document.id). \
+        join(Document_Category, Document.id == Document_Category.document_id). \
+        join(Category, Document_Category.category_id == Category.id)
+    if start_time:
+        query = query.filter(UserDownloadDoc.created_date >= start_time)
+    if start_time:
+        query = query.filter(UserDownloadDoc.created_date <= end_time)
+    query = query.group_by(Category.id).order_by('downloads')
+    return query.all()
+
+
+def get_upload_stats(start_time=None, end_time=None, period='day'):
+    if period == 'hour':
+        date_trunc = func.date_format(Document.updated_date, '%H %giờ %d-%m-%Y')
+    elif period == 'day':
+        date_trunc = func.date_format(Document.updated_date, '%d-%m-%Y')
+    elif period == 'month':
+        date_trunc = func.date_format(Document.updated_date, '%m-%Y')
+    elif period == 'year':
+        date_trunc = func.date_format(Document.updated_date, '%Y')
+    else:
+        return False
+
+    query = db.session.query(date_trunc.label('label'), func.count(Document.id).label('downloads')).filter(
+        Document.status.__eq__(Status.ACCEPT.name))
+    if start_time:
+        query = query.filter(Document.updated_date >= start_time)
+    if start_time:
+        query = query.filter(Document.updated_date <= end_time)
+    query = query.group_by('label').order_by('label')
+    return query.all()
+
+
+def get_upload_stats_by_cate(start_time=None, end_time=None):
+    query = db.session.query(Category.id, Category.name.label('cate'),
+                             func.count(Document.id).label('downloads')). \
+        join(Document_Category, Category.id == Document_Category.category_id). \
+        join(Document, Document_Category.document_id == Document.id)
+    if start_time:
+        query = query.filter(Document.updated_date >= start_time)
+    if start_time:
+        query = query.filter(Document.updated_date <= end_time)
+    query = query.group_by(Category.id).order_by('downloads')
+    return query.all()
+
+
+if __name__ == '__main__':
+    with app.app_context():
+        period = 'hour'
+
+        results = get_upload_stats()
+
+        for result in results:
+            print(result)

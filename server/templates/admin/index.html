@@ -1,8 +1,144 @@
 {% extends 'admin/base.html' %}
 
-
 {% block body %}
 {% if current_user.is_authenticated and current_user.user_role.value == 1 %}
+<h3 class="m-0">Hello {{current_user.name}},</h3>
+<small class="text-muted">Let check your stats!</small>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#download">Download</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#upload">Upload</a>
+    </li>
+</ul>
+<div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade active show" id="download">
+        <div class="p-3 bg-light my-4 mx-5">
+            <h5>Thống kê lượt download</h5>
+            <div class="bs-component">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <div class="form-group">
+                            <label for="chartDownloadPeriod">Period *</label>
+                            <select required class="form-control" id="chartDownloadPeriod">
+                                <option value="hour">Giờ</option>
+                                <option selected value="day">Ngày</option>
+                                <option value="month">Tháng</option>
+                                <option value="year">Năm</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-group">
+                            <label for="chartDownloadStartTime">Thời gian từ</label>
+                            <input type="date" class="form-control" id="chartDownloadStartTime"
+                                   placeholder="Thời gian bắt đầu">
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-group">
+                            <label for="chartDownloadEndTime">Thời gian từ</label>
+                            <input type="date" class="form-control" id="chartDownloadEndTime"
+                                   placeholder="Thời gian bắt đầu">
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-group">
+
+                            <label for="chartDownloadBtnReset"></label>
+                            <input onclick="resetChartDownload()" id="chartDownloadBtnReset" type="button" value="Reset"
+                                   class="mt-auto btn btn-outline-primary form-control"/>
+                            </input>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-group">
+                            <label for="chartDownloadBtnSubmit"></label>
+                            <input onclick="submitChartDownload()" id="chartDownloadBtnSubmit" type="button"
+                                   value="Submit"
+                                   class="mt-auto btn btn-primary form-control"/>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+            <div class="d-flex">
+                <div class="col-8">
+                    <canvas id="chartDownloads"></canvas>
+                </div>
+                <div class="col-4">
+                    <canvas id="chartCateDownloads"></canvas>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="upload">
+        <div class="p-3 bg-light my-4 mx-5">
+            <h5>Thống kê lượt download</h5>
+            <div class="bs-component">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <div class="form-group">
+                            <label for="chartDownloadPeriod">Period *</label>
+                            <select required class="form-control" id="chartUploadPeriod">
+                                <option value="hour">Giờ</option>
+                                <option selected value="day">Ngày</option>
+                                <option value="month">Tháng</option>
+                                <option value="year">Năm</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-group">
+                            <label for="chartDownloadStartTime">Thời gian từ</label>
+                            <input type="date" class="form-control" id="chartUploadStartTime"
+                                   placeholder="Thời gian bắt đầu">
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-group">
+                            <label for="chartDownloadEndTime">Thời gian từ</label>
+                            <input type="date" class="form-control" id="chartUploadEndTime"
+                                   placeholder="Thời gian bắt đầu">
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-group">
+
+                            <label for="chartDownloadBtnReset"></label>
+                            <input onclick="resetChartDownload()" id="chartUploadBtnReset" type="button" value="Reset"
+                                   class="mt-auto btn btn-outline-primary form-control"/>
+                            </input>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-group">
+                            <label for="chartDownloadBtnSubmit"></label>
+                            <input onclick="submitChartDownload()" id="chartUploadBtnSubmit" type="button"
+                                   value="Submit"
+                                   class="mt-auto btn btn-primary form-control"/>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+            <div class="d-flex">
+                <div class="col-8">
+                    <canvas id="chartUploads"></canvas>
+                </div>
+                <div class="col-4">
+                    <canvas id="chartCateUploads"></canvas>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
 {% else %}
 <div class="p-3 justify-content-center d-flex">
     <form action="/admin/login" method="post" class="row g-3 bg-dark text-white m-3 p-4 shadow-sm w-75">
@@ -20,4 +156,34 @@
     </form>
 </div>
 {% endif %}
+
+{% endblock %}
+
+{% block tail %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% if current_user.is_authenticated and current_user.user_role.value == 1 %}
+<script>
+        window.onload = function() {
+            download_values = {{download_values}}
+            download_labels = JSON.parse('{{ download_labels|tojson }}');
+            drawDownloadChart(download_values,download_labels,"chartDownloads", "Lượt tải", "bar")
+
+            download_cate_values = {{download_cate_values}}
+            download_cate_labels = JSON.parse('{{ download_cate_labels|tojson }}');
+            drawDownloadCategoryChart(download_cate_values,download_cate_labels,"chartCateDownloads", "Lượt tải", "doughnut")
+
+            upload_values = {{upload_values}}
+            upload_labels = JSON.parse('{{ upload_labels|tojson }}');
+            drawDownloadChart(upload_values,upload_labels,"chartUploads", "Lượt đăng", "bar")
+
+
+        }
+
+
+
+</script>
+{% else %}
+{% endif %}
+<script src="{{ url_for('static', filename='js/admin/chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin/stat.js') }}"></script>
 {% endblock %}
