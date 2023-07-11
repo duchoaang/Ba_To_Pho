@@ -14,7 +14,7 @@ const Input = () => {
         get('http://127.0.0.1:5000/api/documents')
            
             .then((json) => {
-             console.log(json);
+            
                 const results = json.filter((docs) => {
                     return (
                         inputValue &&

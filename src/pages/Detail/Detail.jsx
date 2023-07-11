@@ -16,6 +16,7 @@ import InfoList from './components/InfoList';
 import get from '~/utils/request/get';
 import post from '~/utils/request/post';
 import Status from '~/utils/StatusCode';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -57,7 +58,23 @@ const Detail = () => {
         file_link_download: '',
         file_size: 0,
     });
+    const [user, setUser] = useState(false);
+    const [infoUser, setInfoUser] = useState('');
+    useEffect(() => {
+        get('current-user', { withCredentials: true }).then((response) => {
+            if (response.is_active === true) {
+                setUser(true);
 
+                setInfoUser({
+                    id: response.id,
+                    username: response.username,
+                    avatar: response.avatar,
+                });
+            }
+        });
+    }, [user]);
+    
+    // console.log(user);
     const [favorite, setFavorite] = useState(false);
 
     const location = useLocation();
@@ -77,6 +94,26 @@ const Detail = () => {
             setData({ ...data, ...res, created_date: date });
         });
     }, [location]);
+    console.log(user)
+    const handleDownDocs = (idDocs) => {
+        if(user == true){
+            console.log(idDocs);
+            post('api/documents/download', {
+                idUser: infoUser.id,
+                idDocs: idDocs
+            })
+                .then((response) => {
+                   
+                })
+                .catch((error) => {
+                   
+                    console.log('Error');
+                });
+        }
+        else{
+            alert('Please')
+        }
+    }
 
     return (
         <div className="container">
@@ -180,7 +217,7 @@ const Detail = () => {
                                             className="float-end"
                                             variant="contained"
                                             startIcon={<FileDownloadIcon />}
-                                            href={data.file_link_download}
+                                            onClick={() => handleDownDocs(data.id)}
                                         >
                                             DOWNLOAD
                                         </Button>
