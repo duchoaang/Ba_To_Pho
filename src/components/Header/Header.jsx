@@ -13,7 +13,7 @@ import { useGoogleLogin, googleLogout } from '@react-oauth/google';
 import GoogleButton from 'react-google-button';
 const cx = classNames.bind(styles);
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faL, faUser } from '@fortawesome/free-solid-svg-icons';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -24,7 +24,8 @@ import IconButton from '@mui/material/IconButton';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-// import UserController from '@/UserController';
+import get from '~/utils/request/get';
+import post from '~/utils/request/post';
 
 import 'boxicons';
 const MENU_ITEM = [
@@ -137,13 +138,14 @@ const Header = () => {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setUser(false)
     };
 
     // lay thong tin user google
     useEffect(() => {
         if (userGoogle != null) {
             axios
-                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
+            .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
                     headers: {
                         Authorization: `Bearer ${user.access_token}`,
                         Accept: 'application/json',
@@ -160,17 +162,14 @@ const Header = () => {
     // gui thong tin user google len server
     useEffect(() => {
         if (formDataLoginGoogle) {
-            axios
-                .post('http://127.0.0.1:5000/users/loginGoogle', formDataLoginGoogle, { withCredentials: true })
+            post('users/loginGoogle', formDataLoginGoogle, { withCredentials: true })
                 .then((response) => {
                     setUser(true);
-
                     setInfoUserGoogle({
-                        id: response.data.id,
-                        name: response.data.name,
-                        avatar: response.data.avatar,
+                        id: response.id,
+                        name: response.name,
+                        avatar: response.avatar,
                     });
-
                     setShowModal(false);
                     setLoginFailed(false);
                 })
@@ -182,14 +181,14 @@ const Header = () => {
     }, [formDataLoginGoogle]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:5000/current-user', { withCredentials: true }).then((response) => {
-            if (response.data.is_active === true) {
+        get('current-user', { withCredentials: true }).then((response) => {
+            if (response.is_active === true) {
                 setUser(true);
 
                 setInfoUser({
-                    id: response.data.id,
-                    username: response.data.username,
-                    avatar: response.data.avatar,
+                    id: response.id,
+                    username: response.username,
+                    avatar: response.avatar,
                 });
             }
         });
@@ -273,14 +272,12 @@ const Header = () => {
         let prevConfirmEmail = confirmEmail;
         if (confirmEmail === true && prevConfirmEmail === true) {
             const timer = setInterval(() => {
-                fetch('http://127.0.0.1:5000/users/confirm-status/', {
-                    method: 'GET',
+                get('users/confirm-status/', {
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     credentials: 'include',
                 })
-                    .then((response) => response.json())
                     .then((data) => {
                         if (data.status === 200) {
                             clearInterval(timer);
@@ -306,15 +303,14 @@ const Header = () => {
             setShowLoading(true);
             setErrorMessage(false);
             // setShowRegister(false)
-            fetch('http://127.0.0.1:5000/users/register', {
-                method: 'POST',
+           post('users/register', formData, {
+             
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify(formData),
+                
             })
-                .then((response) => response.json())
                 .then((data) => {
                     if (data.status === 200) {
                         setShowRegister(false);
@@ -336,15 +332,14 @@ const Header = () => {
     // dang nhap
     const handleSubmitLogin = (e) => {
         e.preventDefault();
-        axios
-            .post('http://127.0.0.1:5000/users/login', formDataLogin, { withCredentials: true })
+        post('users/login', formDataLogin, { withCredentials: true })
             .then((response) => {
                 setUser(true);
                 // console.log(response.data);
                 setInfoUser({
-                    id: response.data.id,
-                    username: response.data.username,
-                    avatar: response.data.avatar,
+                    id: response.id,
+                    username: response.username,
+                    avatar: response.avatar,
                 });
                 setShowModal(false);
                 setLoginFailed(false);
@@ -375,8 +370,7 @@ const Header = () => {
         setShowLoading(false);
     };
     const handleLogout = () => {
-        axios
-            .post('http://127.0.0.1:5000/users/logout', infoUser.id, { withCredentials: true })
+        post('users/logout', infoUser.id, { withCredentials: true })
             .then((response) => {})
             .catch((error) => {});
         setUser(false);
@@ -550,15 +544,6 @@ const Header = () => {
                 </div>
             </ModalWrapper>
 
-            {/* {<ModalWrapper show={true}>
-                <div className={cx('modal-inner')}>
-                    <h1>Kiểm tra email của bạn để xác nhận tài khoản {countdown}</h1>
-                    <AlertConfirmEmail/>
-                    <span className={cx('cancel', 'material-icons')} onClick={handleCancel}>
-                        cancel
-                    </span>
-                </div>
-            </ModalWrapper>} */}
             {confirmEmail && <AlertConfirmEmail />}
 
             <header className={cx('wrapper')}>
@@ -568,16 +553,10 @@ const Header = () => {
                     </Link>
                 </div>
                 <div className={cx('input', 'd-flex align-items-center')} style={{ height: '40%' }}>
-                    <select className="form-select">
-                        <option value="1">Các tài liệu</option>
-                        <option value="2">Câu hỏi</option>
-                        <option value="3">Giáo sư</option>
-                    </select>
+                   
                     <div className={cx('search')}>
                         <Input placeholder="12123123" />
-                        <span className="material-icons" onClick={() => setShowAlertConfirmEmail(true)}>
-                            search
-                        </span>
+                        
                     </div>
 
                     <button className="btn"></button>
@@ -588,26 +567,6 @@ const Header = () => {
                     </Link>
                     {user ? (
                         <>
-                            {/* <UserController show={true}>
-                                <div className={cx('user_controller')}>
-                                    <img
-                                        onClick={handleLogout}
-                                        className={cx('user_avatar')}
-                                        src={infoUser.avatar}
-                                        alt=""
-                                    />
-                                    <div className={cx('menu_controller')}>
-                                        <div className={cx('c_profile')}>
-                                            <FontAwesomeIcon icon={faUser} />
-                                            <h1>
-                                                <Link style={{ color: 'black' }} to={`/profile/${infoUser.id}`}>
-                                                    Profile
-                                                </Link>
-                                            </h1>
-                                        </div>
-                                    </div>
-                                </div>
-                            </UserController> */}
                             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                                 <Tooltip title="Account settings">
                                     <IconButton

@@ -7,194 +7,126 @@ import { Link } from 'react-router-dom';
 // import Tabs from '@mui/material/Tabs';
 // import Tab from '@mui/material/Tab';
 // import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { CardActionArea } from '@mui/material';
 
 import get from '~/utils/request/get';
 
-const newDocs = [
-    {
-        id: 1,
-        context: 'Tai lieu 4',
-    },
-    {
-        id: 2,
-        context: 'Tai lieu 5',
-    },
-    {
-        id: 3,
-        context: 'Tai lieu 6',
-    },
-];
-
-const moreDocs = [
-    {
-        id: 7,
-        context: 'Tai lieu 7',
-    },
-    {
-        id: 8,
-        context: 'Tai lieu 8',
-    },
-    {
-        id: 9,
-        context: 'Tai lieu 9',
-    },
-];
-
 const Home = () => {
     const [showCourse, setCourse] = useState(false);
-    const [popularCousre, setPopularCourse] = useState(true);
-    const [newCourse, setNewCourse] = useState(false);
+
+    const [newDocs, setNewDocs] = useState([]);
     const [downDocs, setDownDocs] = useState(false);
-    
-    const [popularDocs, setPopularDocs] = useState([])
+
+    const [popularDocs, setPopularDocs] = useState([]);
     useEffect(() => {
-        get('api/documents').then((res) => {
-            setPopularDocs(res);
+        get('api/popular-new-documents').then((res) => {
+            setNewDocs(res.new);
+            setPopularDocs(res.popular);
         });
     }, []);
-    const handleSetPopularCourse = () => {
-        setPopularCourse(!popularCousre);
-        setNewCourse(popularCousre);
-        setDownDocs(!popularCousre);
-    };
-    const handleSetNewCourse = () => {
-        setNewCourse(!newCourse);
-        setDownDocs(newCourse);
-        setPopularCourse(newCourse);
-    };
-
-    const handleSetDownDocs = () =>{
-        setDownDocs(!downDocs);
-        setPopularCourse(downDocs);
-        setNewCourse(downDocs);
-
-    }
-
-    const [value, setValue] = useState('one');
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
 
     return (
         <div className={cx('mainHome')}>
             <div className={cx('banner')}>
                 <img src="src/assets/banner1.png" alt="w-100" />
             </div>
-            <div className={cx('subHome')}>
-                <div
-                    className={cx('subHome_left')}
-                    style={{
-                        borderBottom: 'solid 2px ',
-                        backgroundColor: popularCousre ? '#f5f5f5' : '',
-                        transition: '1s',
-                        borderBottom: popularCousre ? 'solid 4px #0477d2' : '',
-                        // width: popularCousre ? '0' : '10px',
-                    }}
-                >
-                    <h1 onClick={handleSetPopularCourse}>Tài liệu phổ biến</h1>
+
+            <div className={cx('ScrollList_docs')}>
+                <div className={cx('titleDocs')}>
+                    <h1>Tài liệu phổ biến</h1>
                 </div>
-                <div
-                    className={cx('subHome_right')}
-                    style={{
-                        borderBottom: 'solid 2px ',
-                        backgroundColor: newCourse ? '#f5f5f5' : '',
-                        transition: 'border-bottom 0.5s',
-                        borderBottomColor: newCourse ? '#0477d2' : '',
-                    }}
-                >
-                    <h1 onClick={handleSetNewCourse}>Tài liệu mới nhất</h1>
-                </div>
-                <div
-                    className={cx('subHome_right')}
-                    style={{
-                        borderBottom: 'solid 2px ',
-                        backgroundColor: newCourse ? '#f5f5f5' : '',
-                        transition: 'border-bottom 0.5s',
-                        borderBottomColor: downDocs ? '#0477d2' : '',
-                    }}
-                >
-                    <h1 onClick={handleSetDownDocs}>Tài liệu tải nhiều</h1>
+                <div className={cx('cardDocs')}>
+                    {console.log(popularDocs)}
+                    {true &&
+                        popularDocs.slice(0, 4).map((docs) => (
+                            <>
+                                <Card
+                                    className={cx('subCard')}
+                                    sx={{ width: '20%', height: '350px', position: 'relative' }}
+                                >
+                                    <Link to={`/Documents/${docs.id}`}>
+                                        <CardActionArea>
+                                            <CardMedia
+                                                component="img"
+                                                alt="green iguana"
+                                                height="100"
+                                                image={docs.img_link_download}
+                                            />
+                                            <CardContent>
+                                                <Typography
+                                                    style={{ height: '70px' }}
+                                                    gutterBottom
+                                                    variant="h5"
+                                                    component="div"
+                                                >
+                                                    {docs.title}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {docs.description.slice(0, 100)}...
+                                                </Typography>
+                                            </CardContent>
+                                        </CardActionArea>
+                                    </Link>
+                                    <CardActions style={{ position: 'absolute', bottom: '0px' }}>
+                                        {/* <Button size="small">Share</Button> */}
+                                        <Button size="small">Xem chi tiết</Button>
+                                    </CardActions>
+                                </Card>
+                            </>
+                        ))}
                 </div>
             </div>
-            <ul className={cx('listItem')}>
-                <div className={cx('content')}>
-                    <div className={cx('content_left')}>
-                        {popularCousre &&
-                            popularDocs.map((doc, index) => (
-                                <div
-                                    className={cx('subItem')}
-                                    style={{ marginBottom: '20px', paddingLeft: '10px' }}
-                                    key={index}
-                                >
-                                    <span style={{ color: '#99a8ba' }} className="material-icons">
-                                        description
-                                    </span>
-                                    <h1>
-                                        <Link style={{ textDecoration: 'none', color: 'black' }} to="/documents">
-                                            {doc.title}
-                                        </Link>
-                                    </h1>
-                                </div>
-                            ))}
-                        {newCourse &&
-                            newDocs.map((doc, index) => (
-                                <div
-                                    className={cx('subItem')}
-                                    style={{ marginBottom: '20px', paddingLeft: '10px' }}
-                                    key={index}
-                                >
-                                    <span style={{ color: '#99a8ba' }} className="material-icons">
-                                        description
-                                    </span>
-                                    <h1>
-                                        <Link style={{ textDecoration: 'none', color: 'black' }} to="/documents">
-                                            {doc.context}
-                                        </Link>
-                                    </h1>
-                                </div>
-                            ))}
-                    </div>
+            <div className={cx('ScrollList_docs')}>
+                <div className={cx('titleDocs')}>
+                    <h1>Tài liệu mới nhất</h1>
                 </div>
-                <div className={cx('moreOption')}>
-                    <h2 onClick={() => setCourse(!showCourse)} style={{ marginBottom: '20px' }}>
-                        <span className="material-icons">arrow_drop_down</span> Cho xem nhiều hơn
-                    </h2>
-                    {showCourse && (
-                        <div className={cx('moreDocs')}>
-                            <div className={cx('content')}>
-                                <div className={cx('content_left')}>
-                                    {moreDocs.map((doc, index) => (
-                                        <div
-                                            className={cx('subItem')}
-                                            style={{ marginBottom: '20px', paddingLeft: '10px' }}
-                                            key={index}
-                                        >
-                                            <span style={{ color: '#99a8ba' }} className="material-icons">
-                                                description
-                                            </span>
-                                            <h1>
-                                                <Link
-                                                    style={{ textDecoration: 'none', color: 'black' }}
-                                                    to="/documents"
+                <div className={cx('cardDocs')}>
+                    {console.log(popularDocs)}
+                    {true &&
+                        newDocs.slice(0, 4).map((docs) => (
+                            <>
+                                <Card
+                                    className={cx('subCard')}
+                                    sx={{ width: '20%', height: '350px', position: 'relative' }}
+                                >
+                                    <Link to={`/Documents/${docs.id}`}>
+                                        <CardActionArea>
+                                            <CardMedia
+                                                component="img"
+                                                alt="green iguana"
+                                                height="100"
+                                                image={docs.img_link_download}
+                                            />
+                                            <CardContent>
+                                                <Typography
+                                                    style={{ height: '70px' }}
+                                                    gutterBottom
+                                                    variant="h5"
+                                                    component="div"
                                                 >
-                                                    {doc.context}
-                                                </Link>
-                                            </h1>
-                                        </div>
-
-                                        //             {/* <div className={cx('content')} key={doc.id}>
-                                        //     <div className={cx('content_left')}></div>
-                                        // </div> */}
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                                                    {docs.title}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {docs.description.slice(0, 100)}...
+                                                </Typography>
+                                            </CardContent>
+                                        </CardActionArea>
+                                    </Link>
+                                    <CardActions style={{ position: 'absolute', bottom: '0px' }}>
+                                        {/* <Button size="small">Share</Button> */}
+                                        <Button size="small">Xem chi tiết</Button>
+                                    </CardActions>
+                                </Card>
+                            </>
+                        ))}
                 </div>
-            </ul>
-            
-  
+            </div>
         </div>
     );
 };

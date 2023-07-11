@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import classnames from 'classnames/bind';
 import styles from './Input.module.scss';
 import { Link } from 'react-router-dom';
+import get from '~/utils/request/get';
+import post from '~/utils/request/post';
 const cx = classnames.bind(styles);
 const Input = () => {
     const [inputValue, setInputValue] = useState('');
@@ -9,8 +11,8 @@ const Input = () => {
     const [resultsList, setResultsList] = useState([]);
 
     useEffect(() => {
-        fetch('http://127.0.0.1:5000/api/documents')
-            .then((response) => response.json())
+        get('http://127.0.0.1:5000/api/documents')
+           
             .then((json) => {
              console.log(json);
                 const results = json.filter((docs) => {
@@ -49,6 +51,9 @@ const Input = () => {
                     value={inputValue}
                     onChange={(e) => handleChangeInput(e.target.value)}
                 />
+                <span className="material-icons">
+                            search
+                        </span>
                 <div className={cx('results_list')}>
                {showResult && 
                     resultsList.map((result, id) =>{
