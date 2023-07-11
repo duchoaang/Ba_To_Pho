@@ -1,21 +1,20 @@
-import requests
-from flask import jsonify
+from flask import jsonify, request
 from flask_login import current_user
 
 from server import dao
 
 
 def rate():
-    document_id = requests.json.get('document_id')
-    number_star = requests.json.get('number_star')
-    user_id = requests.json.get('user_id')
+    document_id = request.json.get('document_id')
+    number_star = request.json.get('number_star')
+    user_id = request.json.get('user_id')
     dao.rate_document(document_id, number_star, user_id)
     return jsonify({"status": 200})
 
 
 def favour():
-    document_id = requests.json.get('document_id')
-    user_id = requests.json.get('user_id')
+    document_id = request.json.get('document_id')
+    user_id = request.json.get('user_id')
     dao.favour(document_id, user_id)
     return jsonify({"status": 200})
 
