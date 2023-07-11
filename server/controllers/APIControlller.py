@@ -7,12 +7,10 @@ import requests
 from flask import jsonify, request
 from flask_login import current_user, logout_user
 
-from server import app, utils
+from server import app, utils, dao
 from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users, \
     get_document_by_id, get_popular_documents, get_new_documents
 from server.models import Status
-from server import dao
-
 
 # -------------- "/api" ------------------
 
@@ -179,13 +177,13 @@ def api_users():
 
 def get_link_download():
     if current_user and current_user.is_authenticated:
-        user_id = request.json.get('user_id')
-        document_id = request.json.get('document_id')
+        user_id = request.json.get('idUser')
+        document_id = request.json.get('idDocs')
         if user_id and document_id and current_user.id == user_id:
             result = dao.download_document(document_id, user_id)
             return jsonify(result)
         else:
-            return jsonify({"status": 400, "msg": "invalid information"})
+            return jsonify({"status": 404, "msg": "not found"})
     else:
         return jsonify({"status": 401, "msg": "unauthorized"})
 

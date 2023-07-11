@@ -11,4 +11,5 @@ api_bp.route('/categories', methods=['GET'])(api_categories)
 api_bp.route('/types', methods=['GET'])(api_document_types)
 api_bp.route('/keywords', methods=['GET'])(api_keywords)
 api_bp.route('/comments/<document_id>', methods=['GET'])(api_comments)
-api_bp.route('/documents/download', methods=['POST'])(get_link_download())
+api_bp.route('/documents/download', methods=['POST'])(get_link_download)
+

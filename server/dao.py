@@ -355,7 +355,7 @@ def download_document(doc_id, user_id):
             db.session.commit()
             return {"status": 200, "msg": "success", "download_link": doc.file_link_download}
         else:
-            return {"status": 403, "msg": "not enough gems"}
+            return {"status": 400, "msg": "not enough gems"}
     else:
         return {"status": 404, "msg": "not found"}
 

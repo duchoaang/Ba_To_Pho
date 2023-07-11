@@ -58,3 +58,4 @@ app.register_blueprint(site_bp, url_prefix='/')
 
 if __name__ == '__main__':
     app.run(debug=True)
+
