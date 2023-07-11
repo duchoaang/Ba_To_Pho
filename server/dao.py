@@ -306,10 +306,10 @@ def rate_document(doc_id, number_star, user_id):
 def favour(doc_id, user_id):
     fav = FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
     if fav:
-        return False
+        db.session.delete(fav)
     else:
         fav = FavourList(document_id=doc_id, user_id=user_id)
-    db.session.add(fav)
+        db.session.add(fav)
     db.session.commit()
     return True
 
@@ -340,6 +340,24 @@ def reject_document(doc_id):
         db.session.commit()
         return True
     return False
+
+
+def download_document(doc_id, user_id):
+    doc = Document.query.get(doc_id)
+    user = User.query.get(user_id)
+    if doc and user:
+        doc_gem = doc.gem_cost
+        user_gem = user.gem
+        if user_gem >= doc_gem:
+            user.gem = user.gem - doc_gem
+            udd = UserDownloadDoc(document_id=doc_id, user_id=user_id, gem_cost=doc.gem_cost)
+            db.session.add(udd)
+            db.session.commit()
+            return {"status": 200, "msg": "success", "download_link": doc.file_link_download}
+        else:
+            return {"status": 400, "msg": "not enough gems"}
+    else:
+        return {"status": 404, "msg": "not found"}
 
 
 def update_user(user_id, fields):
@@ -380,7 +398,7 @@ def get_download_stats(start_time=None, end_time=None, period='day'):
     query = db.session.query(date_trunc.label('label'), func.count(UserDownloadDoc.id).label('downloads'))
     if start_time:
         query = query.filter(UserDownloadDoc.created_date >= start_time)
-    if start_time:
+    if end_time:
         query = query.filter(UserDownloadDoc.created_date <= end_time)
     query = query.group_by('label').order_by('label')
 
@@ -395,7 +413,7 @@ def get_download_stats_by_cate(start_time=None, end_time=None):
         join(Category, Document_Category.category_id == Category.id)
     if start_time:
         query = query.filter(UserDownloadDoc.created_date >= start_time)
-    if start_time:
+    if end_time:
         query = query.filter(UserDownloadDoc.created_date <= end_time)
     query = query.group_by(Category.id).order_by('downloads')
     return query.all()
@@ -413,11 +431,11 @@ def get_upload_stats(start_time=None, end_time=None, period='day'):
     else:
         return False
 
-    query = db.session.query(date_trunc.label('label'), func.count(Document.id).label('downloads')).filter(
+    query = db.session.query(date_trunc.label('label'), func.count(Document.id).label('uploads')).filter(
         Document.status.__eq__(Status.ACCEPT.name))
     if start_time:
         query = query.filter(Document.updated_date >= start_time)
-    if start_time:
+    if end_time:
         query = query.filter(Document.updated_date <= end_time)
     query = query.group_by('label').order_by('label')
     return query.all()
@@ -425,22 +443,49 @@ def get_upload_stats(start_time=None, end_time=None, period='day'):
 
 def get_upload_stats_by_cate(start_time=None, end_time=None):
     query = db.session.query(Category.id, Category.name.label('cate'),
-                             func.count(Document.id).label('downloads')). \
+                             func.count(Document.id).label('uploads')). \
         join(Document_Category, Category.id == Document_Category.category_id). \
         join(Document, Document_Category.document_id == Document.id)
     if start_time:
         query = query.filter(Document.updated_date >= start_time)
-    if start_time:
+    if end_time:
         query = query.filter(Document.updated_date <= end_time)
-    query = query.group_by(Category.id).order_by('downloads')
+    query = query.group_by(Category.id).order_by('uploads')
     return query.all()
+
+
+def get_conversion_rate_by_category():
+    subquery = db.session.query(UserDownloadDoc.document_id, func.count(UserDownloadDoc.id).label('downloads')) \
+        .group_by(UserDownloadDoc.document_id).subquery()
+
+    query = db.session.query(Category.id, Category.name.label('cate'),
+                             func.sum(subquery.c.downloads).label('downloads'),
+                             func.sum(Document.view_count).label('views')) \
+        .join(Document_Category, Document_Category.category_id == Category.id) \
+        .join(Document, Document.id == Document_Category.document_id) \
+        .outerjoin(subquery, subquery.c.document_id == Document.id) \
+        .group_by(Category.id)
+    datas = query.all()
+    if datas:
+        results = []
+        for data in datas:
+            cate_id, cate_name, downloads_count, views_count = data
+            if views_count == 0:
+                conversion_rate = 0
+            else:
+                conversion_rate = (downloads_count / views_count) * 100
+            result = {"cate": cate_name, "conversion_rate": conversion_rate}
+            results.append(result)
+        return results
+    return []
+
 
 
 if __name__ == '__main__':
     with app.app_context():
         period = 'hour'
 
-        results = get_upload_stats()
+        results = get_conversion_rate_by_category()
 
         for result in results:
-            print(result)
+            print(result.get('cate'))

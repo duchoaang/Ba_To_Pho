@@ -309,7 +309,7 @@ if __name__ == '__main__':
         db.session.add_all([dt1, dt2, dt3])
 
         d1 = Document(title='Cơ sở lập trình', description='Học lập trình cơ bản', author='Võ Thị B', captcha='xTz9Kp',
-                      status=Status.ACCEPT,
+                      status=Status.ACCEPT, view_count=100,
                       discount=0, gem_cost=100000, user=u1, document_type=dt1,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
@@ -320,7 +320,7 @@ if __name__ == '__main__':
                       cloudinary_image_public_id="",
                       cloudinary_image_secure_url="")
         d2 = Document(title='Toán cao cấp', description='Toán cao cấp', author='Nguyễn Văn A', captcha='xTz9Kp',
-                      status=Status.ACCEPT,
+                      status=Status.ACCEPT, view_count=50,
                       discount=50000, gem_cost=80000, user=u1, document_type=dt2,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
@@ -331,7 +331,7 @@ if __name__ == '__main__':
                       cloudinary_image_public_id="",
                       cloudinary_image_secure_url="")
         d3 = Document(title='Nhập môn hướng đối tượng', description='Hướng đối tượng cho người mới bắt đầu',
-                      status=Status.ACCEPT,
+                      status=Status.ACCEPT, view_count=20,
                       author='Trần Thị C', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
                       cloud_link="LinkFileSauConfirm",
                       img_cloud_link="LinkImgSauConfirm",
@@ -397,6 +397,7 @@ if __name__ == '__main__':
 
         cate_list[0].documents.append(d1)
         cate_list[1].documents.append(d1)
+        cate_list[1].documents.append(d2)
         cate_list[2].documents.append(d1)
 
         r = Rule(name='waiting_time_confirm', value=30)
