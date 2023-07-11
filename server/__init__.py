@@ -10,8 +10,8 @@ from flask_session import Session
 import cloudinary
 from .config import config
 
-app = Flask(__name__, static_url_path="/")
-CORS(app, origins="http://localhost:3000", supports_credentials=True)
+app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000", "http://tailieubtp.com"], supports_credentials=True)
 
 app.secret_key = config['SECRET_KEY']
 app.config['SECURITY_PASSWORD_SALT'] = config['SECURITY_PASSWORD_SALT']

@@ -30,15 +30,21 @@ class MyAdminIndex(AdminIndexView):
 
             upload_datas = dao.get_upload_stats()
             upload_labels = [data.label for data in upload_datas]
-            upload_values = [data.downloads for data in upload_datas]
+            upload_values = [data.uploads for data in upload_datas]
 
             upload_cate_datas = dao.get_upload_stats_by_cate()
             upload_cate_labels = [data.cate for data in upload_cate_datas]
-            upload_cate_values = [data.downloads for data in upload_cate_datas]
+            upload_cate_values = [data.uploads for data in upload_cate_datas]
+
+            conversion_rate_datas = dao.get_conversion_rate_by_category()
+            conversion_rate_labels = [data.get('cate') for data in conversion_rate_datas]
+            conversion_rate_values = [data.get('conversion_rate') for data in conversion_rate_datas]
             return self.render('admin/index.html', download_labels=download_labels, download_values=download_values,
                                download_cate_labels=download_cate_labels, download_cate_values=download_cate_values,
                                upload_labels=upload_labels, upload_values=upload_values,
-                               upload_cate_label=upload_cate_labels, upload_cate_values=upload_cate_values)
+                               upload_cate_labels=upload_cate_labels, upload_cate_values=upload_cate_values,
+                               conversion_rate_labels=conversion_rate_labels,
+                               conversion_rate_values=conversion_rate_values)
         else:
             return self.render('admin/index.html')
 
