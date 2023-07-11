@@ -138,7 +138,7 @@ const Header = () => {
     };
     const handleClose = () => {
         setAnchorEl(null);
-        setUser(false)
+        setUser(false);
     };
 
     // lay thong tin user google
@@ -562,11 +562,31 @@ const Header = () => {
                     <button className="btn"></button>
                 </div>
                 <div className={cx('actions')}>
-                    <Link to="/upload">
-                        <Button className="me-5 btn btn-warning border">Tải lên</Button>
-                    </Link>
                     {user ? (
                         <>
+                            <Link to="/upload">
+                                <Button className="me-5 btn btn-warning border">Tải lên</Button>
+                            </Link>
+                            {/* <UserController show={true}>
+                                <div className={cx('user_controller')}>
+                                    <img
+                                        onClick={handleLogout}
+                                        className={cx('user_avatar')}
+                                        src={infoUser.avatar}
+                                        alt=""
+                                    />
+                                    <div className={cx('menu_controller')}>
+                                        <div className={cx('c_profile')}>
+                                            <FontAwesomeIcon icon={faUser} />
+                                            <h1>
+                                                <Link style={{ color: 'black' }} to={`/profile/${infoUser.id}`}>
+                                                    Profile
+                                                </Link>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </UserController> */}
                             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                                 <Tooltip title="Account settings">
                                     <IconButton

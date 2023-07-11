@@ -213,7 +213,10 @@ const Upload = () => {
                         </Button>
                     </div>
                 </InputGroup>
-                <InputGroup title="File tài liệu" info="">
+                <InputGroup
+                    title="File tài liệu"
+                    info="Hoàn thành đầy đủ thông tin giúp code của bạn được nhiều người biết đến và có thứ hạng cao trên kết quả tìm kiếm"
+                >
                     <input
                         name="file"
                         id="file"
@@ -223,24 +226,24 @@ const Upload = () => {
                         required
                     />
                 </InputGroup>
-                <InputGroup
-                    title="Hình ảnh về tài liệu"
-                    info="Hoàn thành đầy đủ thông tin giúp code của bạn được nhiều người biết đến và có thứ hạng cao trên kết quả tìm kiếm"
-                >
-                    <label htmlFor="image" className={cx('label-inp-img')}>
-                        <span className="material-icons">add_circle</span>
-                        Thêm ảnh...
-                    </label>
-                    <input
-                        name="image"
-                        id="image"
-                        type="file"
-                        accept="image/*"
-                        hidden
-                        onChange={handleFileChange}
-                        required
-                    />
-                </InputGroup>
+                {/* <InputGroup */}
+                {/*     title="Hình ảnh về tài liệu" */}
+                {/* info="Hoàn thành đầy đủ thông tin giúp code của bạn được nhiều người biết đến và có thứ hạng cao trên kết quả tìm kiếm" */}
+                {/* > */}
+                {/*     <label htmlFor="image" className={cx('label-inp-img')}> */}
+                {/*         <span className="material-icons">add_circle</span> */}
+                {/*         Thêm ảnh... */}
+                {/*     </label> */}
+                {/*     <input */}
+                {/*         name="image" */}
+                {/*         id="image" */}
+                {/*         type="file" */}
+                {/*         accept="image/*" */}
+                {/*         hidden */}
+                {/*         onChange={handleFileChange} */}
+                {/*         required */}
+                {/*     /> */}
+                {/* </InputGroup> */}
             </section>
             <section className="border border-primary-subtle bg-info">
                 <div className="d-flex align-items-center">
