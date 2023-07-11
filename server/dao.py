@@ -306,10 +306,10 @@ def rate_document(doc_id, number_star, user_id):
 def favour(doc_id, user_id):
     fav = FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
     if fav:
-        return False
+        db.session.delete(fav)
     else:
         fav = FavourList(document_id=doc_id, user_id=user_id)
-    db.session.add(fav)
+        db.session.add(fav)
     db.session.commit()
     return True
 
@@ -340,6 +340,24 @@ def reject_document(doc_id):
         db.session.commit()
         return True
     return False
+
+
+def download_document(doc_id, user_id):
+    doc = Document.query.get(doc_id)
+    user = User.query.get(user_id)
+    if doc and user:
+        doc_gem = doc.gem_cost
+        user_gem = user.gem
+        if user_gem >= doc_gem:
+            user.gem = user.gem - doc_gem
+            udd = UserDownloadDoc(document_id=doc_id, user_id=user_id, gem_cost=doc.gem_cost)
+            db.session.add(udd)
+            db.session.commit()
+            return {"status": 200, "msg": "success", "download_link": doc.file_link_download}
+        else:
+            return {"status": 403, "msg": "not enough gems"}
+    else:
+        return {"status": 404, "msg": "not found"}
 
 
 def update_user(user_id, fields):
@@ -460,6 +478,7 @@ def get_conversion_rate_by_category():
             results.append(result)
         return results
     return []
+
 
 
 if __name__ == '__main__':
