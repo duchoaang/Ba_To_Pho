@@ -6,10 +6,13 @@
 <small class="text-muted">Let check your stats!</small>
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#download">Download</a>
+        <a class="nav-link active" data-toggle="tab" href="#download">Lượt tải</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#upload">Upload</a>
+    <li onclick="clickStatUpload()" class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#upload">Lượt đăng</a>
+    </li>
+    <li onclick="clickStatConversionRate()" class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#conversionRate">Tỷ lệ chuyển đổi</a>
     </li>
 </ul>
 <div id="myTabContent" class="tab-content">
@@ -76,12 +79,12 @@
     </div>
     <div class="tab-pane fade" id="upload">
         <div class="p-3 bg-light my-4 mx-5">
-            <h5>Thống kê lượt download</h5>
+            <h5>Thống kê lượt Uploads</h5>
             <div class="bs-component">
                 <ul class="nav nav-pills">
                     <li class="nav-item">
                         <div class="form-group">
-                            <label for="chartDownloadPeriod">Period *</label>
+                            <label for="chartUploadPeriod">Period *</label>
                             <select required class="form-control" id="chartUploadPeriod">
                                 <option value="hour">Giờ</option>
                                 <option selected value="day">Ngày</option>
@@ -92,14 +95,14 @@
                     </li>
                     <li class="nav-item">
                         <div class="form-group">
-                            <label for="chartDownloadStartTime">Thời gian từ</label>
+                            <label for="chartUploadStartTime">Thời gian từ</label>
                             <input type="date" class="form-control" id="chartUploadStartTime"
                                    placeholder="Thời gian bắt đầu">
                         </div>
                     </li>
                     <li class="nav-item">
                         <div class="form-group">
-                            <label for="chartDownloadEndTime">Thời gian từ</label>
+                            <label for="chartUploadEndTime">Thời gian từ</label>
                             <input type="date" class="form-control" id="chartUploadEndTime"
                                    placeholder="Thời gian bắt đầu">
                         </div>
@@ -107,16 +110,16 @@
                     <li class="nav-item">
                         <div class="form-group">
 
-                            <label for="chartDownloadBtnReset"></label>
-                            <input onclick="resetChartDownload()" id="chartUploadBtnReset" type="button" value="Reset"
+                            <label for="chartUploadBtnReset"></label>
+                            <input onclick="resetChartUpload()" id="chartUploadBtnReset" type="button" value="Reset"
                                    class="mt-auto btn btn-outline-primary form-control"/>
                             </input>
                         </div>
                     </li>
                     <li class="nav-item">
                         <div class="form-group">
-                            <label for="chartDownloadBtnSubmit"></label>
-                            <input onclick="submitChartDownload()" id="chartUploadBtnSubmit" type="button"
+                            <label for="chartUploadBtnSubmit"></label>
+                            <input onclick="submitChartUpload()" id="chartUploadBtnSubmit" type="button"
                                    value="Submit"
                                    class="mt-auto btn btn-primary form-control"/>
                         </div>
@@ -131,6 +134,16 @@
                 <div class="col-4">
                     <canvas id="chartCateUploads"></canvas>
 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="conversionRate">
+        <div class="p-3 bg-light my-4 mx-5">
+            <h5>Thống kê tỉ lệ chuyển đổi giữa view với download</h5>
+            <div class="d-flex">
+                <div class="col-12">
+                    <canvas id="chartConversionRate"></canvas>
                 </div>
             </div>
         </div>
@@ -166,24 +179,36 @@
         window.onload = function() {
             download_values = {{download_values}}
             download_labels = JSON.parse('{{ download_labels|tojson }}');
-            drawDownloadChart(download_values,download_labels,"chartDownloads", "Lượt tải", "bar")
+            drawBasicChart(download_values,download_labels,"chartDownloads", "Lượt tải", "bar")
 
             download_cate_values = {{download_cate_values}}
             download_cate_labels = JSON.parse('{{ download_cate_labels|tojson }}');
-            drawDownloadCategoryChart(download_cate_values,download_cate_labels,"chartCateDownloads", "Lượt tải", "doughnut")
+            drawBasicChart(download_cate_values,download_cate_labels,"chartCateDownloads", "Lượt tải", "doughnut")
+        }
 
-            upload_values = {{upload_values}}
-            upload_labels = JSON.parse('{{ upload_labels|tojson }}');
-            drawDownloadChart(upload_values,upload_labels,"chartUploads", "Lượt đăng", "bar")
+        function clickStatUpload() {
+                upload_values = {{upload_values}}
+                upload_labels = JSON.parse('{{ upload_labels|tojson }}');
+                drawBasicChart(upload_values,upload_labels,"chartUploads", "Lượt đăng", "bar")
 
+                upload_cate_values = JSON.parse('{{upload_cate_values|tojson}}');
+                upload_cate_labels = JSON.parse('{{ upload_cate_labels|tojson }}');
+                drawBasicChart(upload_cate_values, upload_cate_labels, "chartCateUploads", "Lượt đăng", "doughnut")
+            }
 
+        function clickStatConversionRate() {
+                conversion_rate_values = JSON.parse('{{conversion_rate_values|tojson}}');
+                conversion_rate_labels = JSON.parse('{{ conversion_rate_labels|tojson }}');
+                drawBasicChart(conversion_rate_values,conversion_rate_labels,"chartConversionRate", "%", "bar")
         }
 
 
 
+
 </script>
-{% else %}
-{% endif %}
+
 <script src="{{ url_for('static', filename='js/admin/chart.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin/stat.js') }}"></script>
+{% else %}
+{% endif %}
 {% endblock %}
