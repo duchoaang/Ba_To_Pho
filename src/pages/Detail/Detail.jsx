@@ -14,6 +14,7 @@ import CommentSection from './layouts/CommentSection';
 import InfoList from './components/InfoList';
 
 import get from '~/utils/request/get';
+import post from '~/utils/request/post';
 import Status from '~/utils/StatusCode';
 
 const cx = classNames.bind(styles);
@@ -66,7 +67,7 @@ const Detail = () => {
 
         get(`api/documents/${id}`).then((res) => {
             if (res.status === Status.NOT_FOUND) {
-                navigate('/');
+                navigate('/error');
                 return;
             }
             let d = new Date(res.created_date);
@@ -97,14 +98,27 @@ const Detail = () => {
                                             <Rating
                                                 precision={0.5}
                                                 value={data.average_rate}
-                                                onChange={(_, newValue) => {
-                                                    setData({
-                                                        ...data,
-                                                        average_rate:
-                                                            (data.average_rate * data.num_rate + newValue) /
-                                                            (data.num_rate + 1),
-                                                        num_rate: data.num_rate + 1,
+                                                onChange={async (_, newValue) => {
+                                                    let userId = await get('/current-user', {
+                                                        withCredentials: true,
+                                                    }).then((data) => (data.is_active ? data.id : ''));
+
+                                                    if (userId === '') {
+                                                        console.log('Chua dang nhap');
+                                                        return;
+                                                    }
+                                                    post('rate', {
+                                                        user_id: userId,
+                                                        document_id: location.pathname.split('/')[2],
+                                                        number_star: newValue,
                                                     });
+                                                    // setData({
+                                                    //     ...data,
+                                                    //     average_rate:
+                                                    //         (data.average_rate * data.num_rate + newValue) /
+                                                    //         (data.num_rate + 1),
+                                                    //     num_rate: data.num_rate + 1,
+                                                    // });
                                                 }}
                                             />
                                             <span>{data.num_rate} Đánh giá</span>
@@ -130,8 +144,22 @@ const Detail = () => {
                                             variant="outlined"
                                             color="error"
                                             startIcon={favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                                            onClick={() => {
-                                                setFavorite((prev) => !prev);
+                                            onClick={async () => {
+                                                let userId = await get('/current-user', { withCredentials: true }).then(
+                                                    (data) => (data.is_active ? data.id : ''),
+                                                );
+
+                                                if (userId === '') {
+                                                    console.log('Chua dang nhap');
+                                                    return;
+                                                }
+
+                                                post('favour', {
+                                                    user_id: userId,
+                                                    document_id: location.pathname.split('/')[2],
+                                                }).then(() => {
+                                                    setFavorite((prev) => !prev);
+                                                });
                                             }}
                                         >
                                             {favorite ? 'BỎ YÊU THÍCH' : 'YÊU THÍCH'}

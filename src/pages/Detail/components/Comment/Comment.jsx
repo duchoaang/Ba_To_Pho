@@ -7,16 +7,11 @@ import Avatar from '@mui/material/Avatar';
 
 import post from '~/utils/request/post';
 
-const ReplyIcon = lazy(() => import('@mui/icons-material/Reply'));
 const IconButton = lazy(() => import('@mui/material/IconButton'));
-const ThumbUpAltIcon = lazy(() => import('@mui/icons-material/ThumbUpAlt'));
-const ThumbUpOffAltIcon = lazy(() => import('@mui/icons-material/ThumbUpOffAlt'));
 const DeleteForeverIcon = lazy(() => import('@mui/icons-material/DeleteForever'));
 
 const cx = classNames.bind(styles);
 const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) => {
-    const [like, setLike] = useState(false);
-
     const stringToColor = (string) => {
         let hash = 0;
         let i;
@@ -67,18 +62,6 @@ const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) 
                                 );
                             })()}
                         </span>
-                        <IconButton size="small">
-                            <ReplyIcon fontSize="inherit" />
-                        </IconButton>
-                        <IconButton
-                            color="primary"
-                            size="small"
-                            onClick={() => {
-                                setLike((prev) => !prev);
-                            }}
-                        >
-                            {like ? <ThumbUpAltIcon fontSize="inherit" /> : <ThumbUpOffAltIcon fontSize="inherit" />}
-                        </IconButton>
                         <IconButton
                             size="small"
                             onClick={() => {
