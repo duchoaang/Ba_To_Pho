@@ -27,14 +27,6 @@ def get_user_info(id):
     return jsonify(user_info)
 
 
-def get_current_user(id):
-    user = dao.get_user_by_id(id)
-    user_info = user.to_dict(
-        fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media",
-                "address", "gem", "warn_time", "user_docs", "wait_docs", "result_docs", "fav_docs"])
-    return jsonify(user_info)
-
-
 def get_current_user():
     if current_user.is_authenticated:
         data = current_user.to_dict(fields=["id", "username", "name", "gender", "avatar", "is_active", "bio", "gem"])
