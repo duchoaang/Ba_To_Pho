@@ -16,7 +16,6 @@ import InfoList from './components/InfoList';
 import get from '~/utils/request/get';
 import post from '~/utils/request/post';
 import Status from '~/utils/StatusCode';
-import { faL } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -57,7 +56,7 @@ const Detail = () => {
         created_date: '01-01-1970',
         file_link_download: '',
         file_size: 0,
-        is_favorite: false,
+        is_favour: false,
     });
     const [user, setUser] = useState(false);
     const [infoUser, setInfoUser] = useState('');
@@ -98,7 +97,7 @@ const Detail = () => {
     useEffect(() => {
         let id = location.pathname.split('/')[2];
 
-        get(`api/documents/${id}`).then((res) => {
+        get(`api/documents/${id}`, { withCredentials: true }).then((res) => {
             if (res.status === Status.NOT_FOUND) {
                 navigate('/error');
                 return;
@@ -108,7 +107,7 @@ const Detail = () => {
                 ('0' + d.getDate()).slice(-2) + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getFullYear();
 
             setData({ ...data, ...res, created_date: date });
-            setFavorite(res.is_favorite);
+            setFavorite(res.is_favour);
         });
     }, [location]);
 
