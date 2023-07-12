@@ -59,37 +59,26 @@ const Detail = () => {
         is_favour: false,
     });
     const [user, setUser] = useState(false);
-    const [infoUser, setInfoUser] = useState('');
-    useEffect(() => {
-        checkLoginUser();
-    }, []);
+    const [infoUser, setInfoUser] = useState([]);
+    // useEffect(() => {
+    //    checkLoginUser();
+    // }, [user])
     const checkLoginUser = () => {
-        return new Promise((resolve, reject) => {
-            get('current-user', { withCredentials: true })
-                .then((response) => {
-                    if (response.is_active === true) {
-                        setUser(true);
-
-                        setInfoUser({
-                            id: response.id,
-                            username: response.username,
-                            avatar: response.avatar,
-                        });
-
-                        resolve(true); // Giải quyết Promise với giá trị true nếu đăng nhập thành công
-                    } else {
-                        setUser(false);
-                        setInfoUser({});
-
-                        resolve(false); // Giải quyết Promise với giá trị false nếu chưa đăng nhập
-                    }
-                })
-                .catch((error) => {
-                    reject(error); // Từ chối Promise nếu xảy ra lỗi
+        get('current-user', { withCredentials: true }).then((response) => {
+            if (response.is_active === true) {
+                setUser(true);
+                setInfoUser({
+                    id: response.id,
+                    username: response.username,
+                    avatar: response.avatar,
                 });
+            } else {
+                setUser(false);
+                setInfoUser([]);
+            }
         });
     };
-
+    // console.log(user);
     const [favorite, setFavorite] = useState(false);
 
     const location = useLocation();
@@ -112,6 +101,8 @@ const Detail = () => {
     }, [location]);
 
     const handleDownDocs = (idDocs) => {
+        console.log(123);
+        checkLoginUser();
         try {
             console.log(idDocs);
             post(
@@ -123,6 +114,7 @@ const Detail = () => {
                 { withCredentials: true },
             )
                 .then((response) => {
+                    console.log(response);
                     if (response.status === 200) {
                         const url = response.download_link;
                         const link = document.createElement('a');
