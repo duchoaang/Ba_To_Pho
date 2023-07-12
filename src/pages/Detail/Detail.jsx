@@ -57,22 +57,39 @@ const Detail = () => {
         created_date: '01-01-1970',
         file_link_download: '',
         file_size: 0,
+        is_favorite: false,
     });
     const [user, setUser] = useState(false);
     const [infoUser, setInfoUser] = useState('');
     useEffect(() => {
-        get('current-user', { withCredentials: true }).then((response) => {
-            if (response.is_active === true) {
-                setUser(true);
+        checkLoginUser();
+    }, []);
+    const checkLoginUser = () => {
+        return new Promise((resolve, reject) => {
+            get('current-user', { withCredentials: true })
+                .then((response) => {
+                    if (response.is_active === true) {
+                        setUser(true);
 
-                setInfoUser({
-                    id: response.id,
-                    username: response.username,
-                    avatar: response.avatar,
+                        setInfoUser({
+                            id: response.id,
+                            username: response.username,
+                            avatar: response.avatar,
+                        });
+
+                        resolve(true); // Giải quyết Promise với giá trị true nếu đăng nhập thành công
+                    } else {
+                        setUser(false);
+                        setInfoUser({});
+
+                        resolve(false); // Giải quyết Promise với giá trị false nếu chưa đăng nhập
+                    }
+                })
+                .catch((error) => {
+                    reject(error); // Từ chối Promise nếu xảy ra lỗi
                 });
-            }
         });
-    }, [user]);
+    };
 
     const [favorite, setFavorite] = useState(false);
 
@@ -91,22 +108,42 @@ const Detail = () => {
                 ('0' + d.getDate()).slice(-2) + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getFullYear();
 
             setData({ ...data, ...res, created_date: date });
+            setFavorite(res.is_favorite);
         });
     }, [location]);
 
     const handleDownDocs = (idDocs) => {
-        if (user == true) {
+        try {
             console.log(idDocs);
-            post('api/documents/download', {
-                idUser: infoUser.id,
-                idDocs: idDocs,
-            })
-                .then((response) => {})
+            post(
+                'api/documents/download',
+                {
+                    idUser: infoUser.id,
+                    idDocs: idDocs,
+                },
+                { withCredentials: true },
+            )
+                .then((response) => {
+                    if (response.status === 200) {
+                        const url = response.download_link;
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = 'file_name.ext'; // Đặt tên tệp tin và định dạng mở rộng tùy ý
+                        link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
+                        link.click();
+                    } else if (response.status === 400) {
+                        alert('Gem của bạn không đủ để tải');
+                    } else if (response.status === 404) {
+                        alert('Không tìm thấy user/documents');
+                    } else if (response.status === 401) {
+                        alert('Bạn chưa đăng nhập');
+                    }
+                })
                 .catch((error) => {
-                    console.log('Error');
+                    console.log('Error:', error);
                 });
-        } else {
-            alert('Please');
+        } catch (error) {
+            console.log('Error:', error);
         }
     };
 
