@@ -314,7 +314,7 @@ def favour(doc_id, user_id):
 
 
 def get_favour(doc_id, user_id):
-    return FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
+    return FavourList.query.filter(and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
 
 
 def get_users():
