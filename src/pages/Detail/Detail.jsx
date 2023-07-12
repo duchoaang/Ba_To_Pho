@@ -73,8 +73,7 @@ const Detail = () => {
             }
         });
     }, [user]);
-    
-    // console.log(user);
+
     const [favorite, setFavorite] = useState(false);
 
     const location = useLocation();
@@ -94,26 +93,22 @@ const Detail = () => {
             setData({ ...data, ...res, created_date: date });
         });
     }, [location]);
-    console.log(user)
+
     const handleDownDocs = (idDocs) => {
-        if(user == true){
+        if (user == true) {
             console.log(idDocs);
             post('api/documents/download', {
                 idUser: infoUser.id,
-                idDocs: idDocs
+                idDocs: idDocs,
             })
-                .then((response) => {
-                   
-                })
+                .then((response) => {})
                 .catch((error) => {
-                   
                     console.log('Error');
                 });
+        } else {
+            alert('Please');
         }
-        else{
-            alert('Please')
-        }
-    }
+    };
 
     return (
         <div className="container">
@@ -148,14 +143,13 @@ const Detail = () => {
                                                         user_id: userId,
                                                         document_id: location.pathname.split('/')[2],
                                                         number_star: newValue,
+                                                    }).then(() => {
+                                                        let id = location.pathname.split('/')[2];
+
+                                                        get(`api/documents/${id}`).then((res) => {
+                                                            setData({ ...data, average_rate: res.average_rate });
+                                                        });
                                                     });
-                                                    // setData({
-                                                    //     ...data,
-                                                    //     average_rate:
-                                                    //         (data.average_rate * data.num_rate + newValue) /
-                                                    //         (data.num_rate + 1),
-                                                    //     num_rate: data.num_rate + 1,
-                                                    // });
                                                 }}
                                             />
                                             <span>{data.num_rate} Đánh giá</span>
@@ -187,7 +181,7 @@ const Detail = () => {
                                                 );
 
                                                 if (userId === '') {
-                                                    console.log('Chua dang nhap');
+                                                    alert('Bạn chưa đăng nhập!');
                                                     return;
                                                 }
 
