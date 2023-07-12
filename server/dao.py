@@ -299,7 +299,7 @@ def rate_document(doc_id, number_star, user_id):
         rate.number_star = number_star
     else:
         rate = Rate(document_id=doc_id, number_star=number_star, user_id=user_id)
-    db.session.add(rate)
+        db.session.add(rate)
     db.session.commit()
 
 
@@ -311,7 +311,10 @@ def favour(doc_id, user_id):
         fav = FavourList(document_id=doc_id, user_id=user_id)
         db.session.add(fav)
     db.session.commit()
-    return True
+
+
+def get_favour(doc_id, user_id):
+    return FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
 
 
 def get_users():
@@ -349,11 +352,16 @@ def download_document(doc_id, user_id):
         doc_gem = doc.gem_cost
         user_gem = user.gem
         if user_gem >= doc_gem:
-            user.gem = user.gem - doc_gem
-            udd = UserDownloadDoc(document_id=doc_id, user_id=user_id, gem_cost=doc.gem_cost)
-            db.session.add(udd)
-            db.session.commit()
-            return {"status": 200, "msg": "success", "download_link": doc.file_link_download}
+            try:
+                user.gem = user.gem - doc_gem
+                udd = UserDownloadDoc(document_id=doc_id, user_id=user_id, gem_cost=doc.gem_cost)
+                db.session.add(udd)
+                db.session.commit()
+                return {"status": 200, "msg": "success", "download_link": doc.file_link_download}
+            except Exception as e:
+                db.session.rollback()
+                print(str(e))
+                return {"status": 500, "msg": "error"}
         else:
             return {"status": 400, "msg": "not enough gems"}
     else:
