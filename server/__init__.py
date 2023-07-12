@@ -10,7 +10,7 @@ from flask_session import Session
 import cloudinary
 from .config import config
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/")
 CORS(app, origins=["http://localhost:3000", "http://tailieubtp.com", "https://tailieubtp.com"], supports_credentials=True)
 
 app.secret_key = config['SECRET_KEY']
