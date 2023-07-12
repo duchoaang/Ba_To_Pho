@@ -192,7 +192,7 @@ const Header = () => {
                 });
             }
         });
-    }, [user]);
+    }, []);
 
     const AlertConfirmEmailSucess = () => {
         Swal.fire({
