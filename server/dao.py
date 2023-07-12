@@ -304,7 +304,7 @@ def rate_document(doc_id, number_star, user_id):
 
 
 def favour(doc_id, user_id):
-    fav = FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
+    fav = FavourList.query.filter(and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
     if fav:
         db.session.delete(fav)
     else:
