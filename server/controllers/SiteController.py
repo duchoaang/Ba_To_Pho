@@ -1,3 +1,4 @@
+import requests
 from flask import jsonify, request
 from flask_login import current_user
 
@@ -33,3 +34,22 @@ def get_current_user():
         data["is_authenticated"] = True
         return jsonify(data)
     return jsonify({"is_authenticated": False})
+
+
+def verify_recaptcha():
+    token = request.json.get("token")
+
+    url = "https://www.google.com/recaptcha/api/siteverify"
+    params = {
+        "secret": "6LdUEyInAAAAAEG2aeUPzW5v9OBXTZuSYF1g5RE6",
+        "response": token
+    }
+
+    response = requests.post(url, params=params)
+    result = response.json()
+
+    if result["success"]:
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "message": "Xác thực reCAPTCHA không thành công."})
+

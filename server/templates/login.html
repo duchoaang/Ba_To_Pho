@@ -18,5 +18,52 @@
     </form>
 </div>
 
+<script>
+
+    async function verifyRecaptcha() {
+        try {
+            const token = await grecaptcha.execute('6LdUEyInAAAAAOQWgCQaHuZbzYQAXB_n0YnVZHOT', { action: 'submit' });
+
+            const data = {
+                token: token
+            };
+
+            const response = await fetch('/verify-recaptcha', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
+    async function login() {
+        try {
+            var success = await verifyRecaptcha();
+
+            if (success) {
+                const form = document.getElementById("form-login");
+                form.submit();
+            } else {
+                alert("Xác minh không thành công");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Xác minh không thành công");
+        }
+    }
+</script>
 
 {% endblock %}

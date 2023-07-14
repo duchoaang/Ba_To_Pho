@@ -1,5 +1,11 @@
 {% extends 'admin/base.html' %}
 
+{% block head_tail %}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+{% endblock %}
+
+
 {% block body %}
 {% if current_user.is_authenticated and current_user.user_role.value == 1 %}
 <h3 class="m-0">Hello {{current_user.name}},</h3>
@@ -154,7 +160,7 @@
 
 {% else %}
 <div class="p-3 justify-content-center d-flex">
-    <form action="/admin/login" method="post" class="row g-3 bg-dark text-white m-3 p-4 shadow-sm w-75">
+    <form id="form-login" action="/admin/login" method="post" class="row g-3 bg-dark text-white m-3 p-4 shadow-sm w-75">
         <div class="col-md-12">
             <label for="username" class="form-label">Username</label>
             <input type="text" name="username" class="form-control" id="username">
@@ -164,7 +170,10 @@
             <input type="password" name="password" class="form-control" id="password">
         </div>
         <div class="col-12 mt-4 d-flex justify-content-center">
-            <button type="submit" class="btn btn-primary w-100">Sign in</button>
+            <div class="g-recaptcha" data-sitekey="6LdUEyInAAAAAOQWgCQaHuZbzYQAXB_n0YnVZHOT"></div>
+        </div>
+        <div class="col-12 mt-4 d-flex justify-content-center">
+            <button type="button" onclick="login()" class="btn btn-primary w-100">Sign in</button>
         </div>
     </form>
 </div>
@@ -205,10 +214,58 @@
 
 
 
+
 </script>
 
 <script src="{{ url_for('static', filename='js/admin/chart.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin/stat.js') }}"></script>
 {% else %}
+<script>
+
+    async function verifyRecaptcha() {
+        try {
+            const token = grecaptcha.getResponse();
+
+            const data = {
+                token: token
+            };
+
+            const response = await fetch('/verify-recaptcha', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
+    async function login() {
+        try {
+            var success = await verifyRecaptcha();
+
+            if (success) {
+                const form = document.getElementById("form-login");
+                form.submit();
+            } else {
+                alert("Xác minh không thành công");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Xác minh không thành công");
+        }
+    }
+</script>
 {% endif %}
 {% endblock %}
