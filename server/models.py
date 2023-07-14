@@ -71,6 +71,7 @@ class User(BaseModel, UserMixin):
     rates = relationship("Rate", backref="user", lazy=True)
     downloads = relationship("UserDownloadDoc", backref="user", lazy=True)
     notifications = relationship("Notification", backref="user", lazy=True)
+    search_keywords = relationship("KeywordUserSearch", backref="user", lazy=True)
 
     def __str__(self):
         return self.name
@@ -274,6 +275,7 @@ class Notification(BaseModel):
 
 class KeywordUserSearch(BaseModel):
     keyword = Column(String(255), nullable=False)
+    user_id = Column(String(36), ForeignKey(User.id), nullable=False)
     search_date = Column(Boolean, default=datetime.now())
 
     def __str__(self):

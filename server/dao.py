@@ -391,6 +391,17 @@ def update_user(user_id, fields):
         return {"status": 400, "msg": str(e)}
 
 
+def save_keyword_search_by_user(user_id, keywords):
+    u = User.query.get(user_id)
+    if u:
+        k = KeywordUserSearch(user_id=user_id, keyword=keywords)
+        db.session.add(k)
+        db.session.commit()
+        return {"success": True, "msg": "Success"}, 200
+    else:
+        return {"success": False, "msg": "Not found"}, 404
+
+
 def get_download_stats(start_time=None, end_time=None, period='day'):
     if period == 'hour':
         date_trunc = func.date_format(UserDownloadDoc.created_date, '%H %giờ %d-%m-%Y')

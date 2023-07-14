@@ -53,3 +53,10 @@ def verify_recaptcha():
     else:
         return jsonify({"success": False, "message": "Xác thực reCAPTCHA không thành công."})
 
+
+def save_keywords():
+    keywords = request.json.get('keywords')
+    user_id = request.json.get('user_id')
+
+    response, status_code = dao.save_keyword_search_by_user(user_id, keywords)
+    return jsonify(response), status_code
