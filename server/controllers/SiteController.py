@@ -58,5 +58,5 @@ def save_keywords():
     keywords = request.json.get('keywords')
     user_id = request.json.get('user_id')
 
-    response, status_code = dao.save_keyword_search_by_user(user_id, keywords)
+    response, status_code = dao.save_keyword_search_by_user(user_id, keywords.strip().lower())
     return jsonify(response), status_code
