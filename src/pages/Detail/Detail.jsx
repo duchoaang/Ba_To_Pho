@@ -12,6 +12,7 @@ import Rating from '@mui/material/Rating';
 import SuggestSection from './layouts/Suggest';
 import CommentSection from './layouts/CommentSection';
 import InfoList from './components/InfoList';
+import Captcha from '@/Captcha';
 
 import get from '~/utils/request/get';
 import post from '~/utils/request/post';
@@ -60,9 +61,17 @@ const Detail = () => {
     });
     const [user, setUser] = useState(false);
     const [infoUser, setInfoUser] = useState([]);
-    // useEffect(() => {
-    //    checkLoginUser();
-    // }, [user])
+    const [openCaptcha, setOpenCaptcha] = useState(false);
+
+    const handleVerified = (value) => {
+        post('verify-recaptcha', { token: value }).then((res) => {
+            setOpenCaptcha(false);
+
+            if (res.success) handleDownDocs(data.id);
+            else alert(res.message);
+        });
+    };
+
     const checkLoginUser = () => {
         get('current-user', { withCredentials: true }).then((response) => {
             if (response.is_active === true) {
@@ -78,7 +87,6 @@ const Detail = () => {
             }
         });
     };
-    // console.log(user);
     const [favorite, setFavorite] = useState(false);
 
     const location = useLocation();
@@ -101,7 +109,6 @@ const Detail = () => {
     }, [location]);
 
     const handleDownDocs = (idDocs) => {
-        console.log(123);
         checkLoginUser();
         try {
             console.log(idDocs);
@@ -239,10 +246,13 @@ const Detail = () => {
                                             className="float-end"
                                             variant="contained"
                                             startIcon={<FileDownloadIcon />}
-                                            onClick={() => handleDownDocs(data.id)}
+                                            onClick={() => {
+                                                setOpenCaptcha(true);
+                                            }}
                                         >
                                             DOWNLOAD
                                         </Button>
+                                        <Captcha open={openCaptcha} onVerified={handleVerified} />
                                     </div>
                                     <hr />
                                 </div>
