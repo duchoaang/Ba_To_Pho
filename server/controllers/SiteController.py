@@ -41,7 +41,7 @@ def verify_recaptcha():
 
     url = "https://www.google.com/recaptcha/api/siteverify"
     params = {
-        "secret": "6LdUEyInAAAAAEG2aeUPzW5v9OBXTZuSYF1g5RE6",
+        "secret": "6Lc6fCMnAAAAADED65lZ8s3XFnZ64qSzwx5_3Olt",
         "response": token
     }
 

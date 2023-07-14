@@ -13,7 +13,7 @@
             <input type="password" name="password" class="form-control" id="password">
         </div>
         <div class="col-12">
-            <button type="submit" class="btn btn-primary">Sign in</button>
+            <button type="button" onclick="login" class="btn btn-primary">Sign in</button>
         </div>
     </form>
 </div>
@@ -22,7 +22,7 @@
 
     async function verifyRecaptcha() {
         try {
-            const token = await grecaptcha.execute('6LdUEyInAAAAAOQWgCQaHuZbzYQAXB_n0YnVZHOT', { action: 'submit' });
+            const token = grecaptcha.getResponse();
 
             const data = {
                 token: token
