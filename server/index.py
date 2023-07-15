@@ -36,16 +36,11 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
 '''
     TODO: assets -> static folder
 '''
 @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
+@app.route('/<path:path>')
 def fe(path):
     return app.send_static_file('index.html')
 
