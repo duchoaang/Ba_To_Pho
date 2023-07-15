@@ -299,19 +299,22 @@ def rate_document(doc_id, number_star, user_id):
         rate.number_star = number_star
     else:
         rate = Rate(document_id=doc_id, number_star=number_star, user_id=user_id)
-    db.session.add(rate)
+        db.session.add(rate)
     db.session.commit()
 
 
 def favour(doc_id, user_id):
-    fav = FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
+    fav = FavourList.query.filter(and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
     if fav:
         db.session.delete(fav)
     else:
         fav = FavourList(document_id=doc_id, user_id=user_id)
         db.session.add(fav)
     db.session.commit()
-    return True
+
+
+def get_favour(doc_id, user_id):
+    return FavourList.query.filter(and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
 
 
 def get_users():
@@ -349,11 +352,16 @@ def download_document(doc_id, user_id):
         doc_gem = doc.gem_cost
         user_gem = user.gem
         if user_gem >= doc_gem:
-            user.gem = user.gem - doc_gem
-            udd = UserDownloadDoc(document_id=doc_id, user_id=user_id, gem_cost=doc.gem_cost)
-            db.session.add(udd)
-            db.session.commit()
-            return {"status": 200, "msg": "success", "download_link": doc.file_link_download}
+            try:
+                user.gem = user.gem - doc_gem
+                udd = UserDownloadDoc(document_id=doc_id, user_id=user_id, gem_cost=doc.gem_cost)
+                db.session.add(udd)
+                db.session.commit()
+                return {"status": 200, "msg": "success", "download_link": doc.file_link_download}
+            except Exception as e:
+                db.session.rollback()
+                print(str(e))
+                return {"status": 500, "msg": "error"}
         else:
             return {"status": 400, "msg": "not enough gems"}
     else:
@@ -381,6 +389,17 @@ def update_user(user_id, fields):
     except Exception as e:
         db.session.rollback()
         return {"status": 400, "msg": str(e)}
+
+
+def save_keyword_search_by_user(user_id, keywords):
+    u = User.query.get(user_id)
+    if u:
+        k = KeywordUserSearch(user_id=user_id, keyword=keywords)
+        db.session.add(k)
+        db.session.commit()
+        return {"success": True, "msg": "Success"}, 200
+    else:
+        return {"success": False, "msg": "Not found"}, 404
 
 
 def get_download_stats(start_time=None, end_time=None, period='day'):
@@ -454,6 +473,52 @@ def get_upload_stats_by_cate(start_time=None, end_time=None):
     return query.all()
 
 
+def get_view_stats_by_cate(start_time=None, end_time=None):
+    query = db.session.query(Category.id, Category.name.label('cate'),
+                             func.sum(Document.view_count).label('views')). \
+        join(Document_Category, Category.id == Document_Category.category_id). \
+        join(Document, Document_Category.document_id == Document.id)
+    if start_time:
+        query = query.filter(Document.created_date >= start_time)
+    if end_time:
+        query = query.filter(Document.created_date <= end_time)
+    query = query.group_by(Category.id).order_by('views')
+    return query.all()
+
+
+def get_new_user_stats_by_date(start_time=None, end_time=None, period='day'):
+    if period == 'hour':
+        date_trunc = func.date_format(User.date_joined, '%H %giờ %d-%m-%Y')
+    elif period == 'day':
+        date_trunc = func.date_format(User.date_joined, '%d-%m-%Y')
+    elif period == 'month':
+        date_trunc = func.date_format(User.date_joined, '%m-%Y')
+    elif period == 'year':
+        date_trunc = func.date_format(User.date_joined, '%Y')
+    else:
+        return False
+
+    query = db.session.query(date_trunc.label('label'), func.sum(User.id).label('users_count'))
+    if start_time:
+        query = query.filter(User.date_joined >= start_time)
+    if end_time:
+        query = query.filter(User.date_joined <= end_time)
+    query = query.group_by(User.date_joined)
+    return query.all()
+
+
+def get_top_ten_most_favourite(start_time=None, end_time=None):
+    query = db.session.query(Document.id, Document.title.label('doc'), Document.img_link_download.label('image'),
+                             func.sum(FavourList.id).label('famous')). \
+        join(FavourList, Document.id == FavourList.document_id)
+    if start_time:
+        query = query.filter(Document.created_date >= start_time)
+    if end_time:
+        query = query.filter(Document.created_date <= end_time)
+    query = query.group_by(Document.id).order_by(db.desc('famous')).limit(10)
+    return query.all()
+
+
 def get_conversion_rate_by_category():
     subquery = db.session.query(UserDownloadDoc.document_id, func.count(UserDownloadDoc.id).label('downloads')) \
         .group_by(UserDownloadDoc.document_id).subquery()
@@ -480,12 +545,11 @@ def get_conversion_rate_by_category():
     return []
 
 
-
 if __name__ == '__main__':
     with app.app_context():
         period = 'hour'
 
-        results = get_conversion_rate_by_category()
+        results = get_new_user_stats_by_date(None,None,'day')
 
         for result in results:
-            print(result.get('cate'))
+            print(result)

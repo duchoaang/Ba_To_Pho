@@ -71,6 +71,7 @@ class User(BaseModel, UserMixin):
     rates = relationship("Rate", backref="user", lazy=True)
     downloads = relationship("UserDownloadDoc", backref="user", lazy=True)
     notifications = relationship("Notification", backref="user", lazy=True)
+    search_keywords = relationship("KeywordUserSearch", backref="user", lazy=True)
 
     def __str__(self):
         return self.name
@@ -274,6 +275,7 @@ class Notification(BaseModel):
 
 class KeywordUserSearch(BaseModel):
     keyword = Column(String(255), nullable=False)
+    user_id = Column(String(36), ForeignKey(User.id), nullable=False)
     search_date = Column(Boolean, default=datetime.now())
 
     def __str__(self):
@@ -301,7 +303,16 @@ if __name__ == '__main__':
         u1 = User(username='u1', password=hash_text(p), password2=hash_text(p2), name='user',
                   phone_number='0987654321', gender=1,
                   dob=datetime(2002, 2, 2), email="user1@gmail.com", gem=500000)
-        db.session.add_all([admin, u1])
+        u2 = User(username='u2', password=hash_text(p), password2=hash_text(p2), name='user',
+                  phone_number='0987654321', gender=1,
+                  dob=datetime(2002, 2, 2), email="user2@gmail.com", gem=500000)
+        u3 = User(username='u3', password=hash_text(p), password2=hash_text(p2), name='user',
+                  phone_number='0987654321', gender=0,
+                  dob=datetime(2002, 2, 2), email="user3@gmail.com", gem=500000)
+        u4 = User(username='u4', password=hash_text(p), password2=hash_text(p2), name='user',
+                  phone_number='0987654321', gender=0,
+                  dob=datetime(2002, 2, 2), email="user4@gmail.com", gem=500000)
+        db.session.add_all([admin, u1, u2, u3, u4])
 
         dt1 = DocumentType(name='PDF')
         dt2 = DocumentType(name='Word')
@@ -342,7 +353,32 @@ if __name__ == '__main__':
                       cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
                       cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
 
-        db.session.add_all([d1, d2, d3])
+        d4 = Document(title='Nhập môn tin học', description='Nhập môn cho người mới bắt đầu',
+                      status=Status.ACCEPT, view_count=20,
+                      author='Trần Văn D', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
+                      cloud_link="LinkFileSauConfirm",
+                      img_cloud_link="LinkImgSauConfirm",
+                      file_link_download="LinkDownFileTaiWeb",
+                      img_link_download="LinkDownImgTaiWeb",
+                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
+
+        d5 = Document(title='Kiến trúc máy tính', description='Nhập môn cho người mới bắt đầu',
+                      status=Status.ACCEPT, view_count=20,
+                      author='Võ Văn E', captcha='xTz9Kp', discount=0, gem_cost=200000, user=u1, document_type=dt1,
+                      cloud_link="LinkFileSauConfirm",
+                      img_cloud_link="LinkImgSauConfirm",
+                      file_link_download="LinkDownFileTaiWeb",
+                      img_link_download="LinkDownImgTaiWeb",
+                      cloudinary_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_public_id="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2",
+                      cloudinary_image_secure_url="https://drive.google.com/drive/folders/1SZIhCIrm9bqvsuwN4PkaWtbY6MIWNKX2")
+
+
+        db.session.add_all([d1, d2, d3, d4, d5])
 
         cmt1 = Comment(document=d1, user=u1, content="test1")
         cmt2 = Comment(document=d1, user=u1, content="test2")
@@ -394,6 +430,12 @@ if __name__ == '__main__':
 
         u1.favour_docs.append(d1)
         u1.favour_docs.append(d2)
+        u2.favour_docs.append(d2)
+        u3.favour_docs.append(d2)
+        u1.favour_docs.append(d3)
+        u2.favour_docs.append(d3)
+        u3.favour_docs.append(d3)
+        u4.favour_docs.append(d3)
 
         cate_list[0].documents.append(d1)
         cate_list[1].documents.append(d1)

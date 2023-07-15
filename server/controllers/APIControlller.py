@@ -64,9 +64,11 @@ def api_document_by_id(id):
             "average_rate", "num_rate", "num_favour_users", "created_date",
             "file_size"
         ]
-
     )
-
+    if current_user.is_authenticated and dao.get_favour(id, current_user.id):
+        doc_info["is_favour"] = True
+    else:
+        doc_info["is_favour"] = False
     return jsonify(doc_info)
 
 
@@ -176,11 +178,12 @@ def api_users():
 
 
 def get_link_download():
-    if current_user and current_user.is_authenticated:
+    if current_user.is_authenticated:
         user_id = request.json.get('idUser')
         document_id = request.json.get('idDocs')
         if user_id and document_id and current_user.id == user_id:
             result = dao.download_document(document_id, user_id)
+            print(result)
             return jsonify(result)
         else:
             return jsonify({"status": 404, "msg": "not found"})

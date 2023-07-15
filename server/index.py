@@ -36,6 +36,11 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 '''
     TODO: assets -> static folder
 '''
@@ -48,6 +53,9 @@ def fe(path):
 def send_assets(path):
     return send_from_directory('static/img', path)
 
+@app.route('/search')
+def search():
+    return render_template('search.html')
 
 app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(admin_bp, url_prefix='/admin')
