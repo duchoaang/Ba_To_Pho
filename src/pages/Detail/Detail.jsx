@@ -12,11 +12,11 @@ import Rating from '@mui/material/Rating';
 import SuggestSection from './layouts/Suggest';
 import CommentSection from './layouts/CommentSection';
 import InfoList from './components/InfoList';
+import Captcha from '@/Captcha';
 
 import get from '~/utils/request/get';
 import post from '~/utils/request/post';
 import Status from '~/utils/StatusCode';
-import { faL } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -57,31 +57,36 @@ const Detail = () => {
         created_date: '01-01-1970',
         file_link_download: '',
         file_size: 0,
+        is_favour: false,
     });
     const [user, setUser] = useState(false);
     const [infoUser, setInfoUser] = useState([]);
-    // useEffect(() => {
-    //    checkLoginUser();
-    // }, [user])
+    const [openCaptcha, setOpenCaptcha] = useState(false);
+
+    const handleVerified = (value) => {
+        post('verify-recaptcha', { token: value }).then((res) => {
+            setOpenCaptcha(false);
+
+            if (res.success) handleDownDocs(data.id);
+            else alert(res.message);
+        });
+    };
+
     const checkLoginUser = () => {
-          get('current-user', { withCredentials: true })
-            .then((response) => {
-              if (response.is_active === true) {
+        get('current-user', { withCredentials: true }).then((response) => {
+            if (response.is_active === true) {
                 setUser(true);
                 setInfoUser({
-                  id: response.id,
-                  username: response.username,
-                  avatar: response.avatar,
+                    id: response.id,
+                    username: response.username,
+                    avatar: response.avatar,
                 });
-    
-              } else {
+            } else {
                 setUser(false);
                 setInfoUser([]);
-               
-              }
-            })
-        }
-    // console.log(user);
+            }
+        });
+    };
     const [favorite, setFavorite] = useState(false);
 
     const location = useLocation();
@@ -89,7 +94,7 @@ const Detail = () => {
     useEffect(() => {
         let id = location.pathname.split('/')[2];
 
-        get(`api/documents/${id}`).then((res) => {
+        get(`api/documents/${id}`, { withCredentials: true }).then((res) => {
             if (res.status === Status.NOT_FOUND) {
                 navigate('/error');
                 return;
@@ -99,46 +104,46 @@ const Detail = () => {
                 ('0' + d.getDate()).slice(-2) + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getFullYear();
 
             setData({ ...data, ...res, created_date: date });
+            setFavorite(res.is_favour);
         });
     }, [location]);
-    
+
     const handleDownDocs = (idDocs) => {
-        console.log(123);
-        checkLoginUser()
+        checkLoginUser();
         try {
             console.log(idDocs);
-            post('api/documents/download', {
-              idUser: infoUser.id,
-              idDocs: idDocs,
-            },  { withCredentials: true })
-              .then((response) => {
-                console.log(response)
-                if(response.status === 200){
-                    const url = response.download_link
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'file_name.ext'; // Đặt tên tệp tin và định dạng mở rộng tùy ý
-                    link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
-                    link.click();
-                }
-                else if(response.status === 400 ){
-                    alert("Gem của bạn không đủ để tải")
-                }
-                else if(response.status === 404){
-                    alert("Không tìm thấy user/documents")
-                }
-                else if(response.status === 401){
-                    alert("Bạn chưa đăng nhập")
-                }
-              })
-              .catch((error) => {
-                console.log('Error:', error);
-              });
+            post(
+                'api/documents/download',
+                {
+                    idUser: infoUser.id,
+                    idDocs: idDocs,
+                },
+                { withCredentials: true },
+            )
+                .then((response) => {
+                    console.log(response);
+                    if (response.status === 200) {
+                        const url = response.download_link;
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = 'file_name.ext'; // Đặt tên tệp tin và định dạng mở rộng tùy ý
+                        link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
+                        link.click();
+                    } else if (response.status === 400) {
+                        alert('Gem của bạn không đủ để tải');
+                    } else if (response.status === 404) {
+                        alert('Không tìm thấy user/documents');
+                    } else if (response.status === 401) {
+                        alert('Bạn chưa đăng nhập');
+                    }
+                })
+                .catch((error) => {
+                    console.log('Error:', error);
+                });
         } catch (error) {
-          console.log('Error:', error);
+            console.log('Error:', error);
         }
-      };
-    
+    };
 
     return (
         <div className="container">
@@ -173,14 +178,13 @@ const Detail = () => {
                                                         user_id: userId,
                                                         document_id: location.pathname.split('/')[2],
                                                         number_star: newValue,
+                                                    }).then(() => {
+                                                        let id = location.pathname.split('/')[2];
+
+                                                        get(`api/documents/${id}`).then((res) => {
+                                                            setData({ ...data, average_rate: res.average_rate });
+                                                        });
                                                     });
-                                                    // setData({
-                                                    //     ...data,
-                                                    //     average_rate:
-                                                    //         (data.average_rate * data.num_rate + newValue) /
-                                                    //         (data.num_rate + 1),
-                                                    //     num_rate: data.num_rate + 1,
-                                                    // });
                                                 }}
                                             />
                                             <span>{data.num_rate} Đánh giá</span>
@@ -212,7 +216,7 @@ const Detail = () => {
                                                 );
 
                                                 if (userId === '') {
-                                                    console.log('Chua dang nhap');
+                                                    alert('Bạn chưa đăng nhập!');
                                                     return;
                                                 }
 
@@ -242,10 +246,13 @@ const Detail = () => {
                                             className="float-end"
                                             variant="contained"
                                             startIcon={<FileDownloadIcon />}
-                                            onClick={() => handleDownDocs(data.id)}
+                                            onClick={() => {
+                                                setOpenCaptcha(true);
+                                            }}
                                         >
                                             DOWNLOAD
                                         </Button>
+                                        <Captcha open={openCaptcha} onVerified={handleVerified} />
                                     </div>
                                     <hr />
                                 </div>

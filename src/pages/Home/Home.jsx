@@ -44,42 +44,40 @@ const Home = () => {
                 <div className={cx('cardDocs')}>
                   
                     {true &&
-                        popularDocs.slice(0, 4).map((docs,index) => (
-                            <>
-
-                                <Card key ={index}
-                                    className={cx('subCard')}
-                                    sx={{ width: '20%', height: '350px', position: 'relative' }}
-                                >
-                                    <Link to={`/Documents/${docs.id}`}>
-                                        <CardActionArea>
-                                            <CardMedia
-                                                component="img"
-                                                alt="green iguana"
-                                                height="100"
-                                                image={docs.img_link_download}
-                                            />
-                                            <CardContent>
-                                                <Typography
-                                                    style={{ height: '70px' }}
-                                                    gutterBottom
-                                                    variant="h5"
-                                                    component="div"
-                                                >
-                                                    {docs.title}
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    {docs.description.slice(0, 100)}...
-                                                </Typography>
-                                            </CardContent>
-                                        </CardActionArea>
-                                    </Link>
-                                    <CardActions style={{ position: 'absolute', bottom: '0px' }}>
-                                        {/* <Button size="small">Share</Button> */}
-                                        <Button size="small">Xem chi tiết</Button>
-                                    </CardActions>
-                                </Card>
-                            </>
+                        popularDocs.slice(0, 4).map((docs, index) => (
+                            <Card
+                                key={index}
+                                className={cx('subCard')}
+                                sx={{ width: '20%', height: '350px', position: 'relative' }}
+                            >
+                                <Link to={`/Documents/${docs.id}`}>
+                                    <CardActionArea>
+                                        <CardMedia
+                                            component="img"
+                                            alt="green iguana"
+                                            height="100"
+                                            image={docs.img_link_download}
+                                        />
+                                        <CardContent>
+                                            <Typography
+                                                style={{ height: '70px' }}
+                                                gutterBottom
+                                                variant="h5"
+                                                component="div"
+                                            >
+                                                {docs.title}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                {docs.description.slice(0, 100)}...
+                                            </Typography>
+                                        </CardContent>
+                                    </CardActionArea>
+                                </Link>
+                                <CardActions style={{ position: 'absolute', bottom: '0px' }}>
+                                    {/* <Button size="small">Share</Button> */}
+                                    <Button size="small">Xem chi tiết</Button>
+                                </CardActions>
+                            </Card>
                         ))}
                 </div>
             </div>
