@@ -304,7 +304,7 @@ def rate_document(doc_id, number_star, user_id):
 
 
 def favour(doc_id, user_id):
-    fav = FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
+    fav = FavourList.query.filter(and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
     if fav:
         db.session.delete(fav)
     else:
@@ -314,7 +314,7 @@ def favour(doc_id, user_id):
 
 
 def get_favour(doc_id, user_id):
-    return FavourList.query.filter(and_(Rate.document_id.__eq__(doc_id), Rate.user_id.__eq__(user_id))).first()
+    return FavourList.query.filter(and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
 
 
 def get_users():
@@ -389,6 +389,17 @@ def update_user(user_id, fields):
     except Exception as e:
         db.session.rollback()
         return {"status": 400, "msg": str(e)}
+
+
+def save_keyword_search_by_user(user_id, keywords):
+    u = User.query.get(user_id)
+    if u:
+        k = KeywordUserSearch(user_id=user_id, keyword=keywords)
+        db.session.add(k)
+        db.session.commit()
+        return {"success": True, "msg": "Success"}, 200
+    else:
+        return {"success": False, "msg": "Not found"}, 404
 
 
 def get_download_stats(start_time=None, end_time=None, period='day'):

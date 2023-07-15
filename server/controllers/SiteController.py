@@ -1,3 +1,4 @@
+import requests
 from flask import jsonify, request
 from flask_login import current_user
 
@@ -33,3 +34,29 @@ def get_current_user():
         data["is_authenticated"] = True
         return jsonify(data)
     return jsonify({"is_authenticated": False})
+
+
+def verify_recaptcha():
+    token = request.json.get("token")
+
+    url = "https://www.google.com/recaptcha/api/siteverify"
+    params = {
+        "secret": "6Lc6fCMnAAAAADED65lZ8s3XFnZ64qSzwx5_3Olt",
+        "response": token
+    }
+
+    response = requests.post(url, params=params)
+    result = response.json()
+
+    if result["success"]:
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "message": "Xác thực reCAPTCHA không thành công."})
+
+
+def save_keywords():
+    keywords = request.json.get('keywords')
+    user_id = request.json.get('user_id')
+
+    response, status_code = dao.save_keyword_search_by_user(user_id, keywords.strip().lower())
+    return jsonify(response), status_code

@@ -13,10 +13,57 @@
             <input type="password" name="password" class="form-control" id="password">
         </div>
         <div class="col-12">
-            <button type="submit" class="btn btn-primary">Sign in</button>
+            <button type="button" onclick="login" class="btn btn-primary">Sign in</button>
         </div>
     </form>
 </div>
 
+<script>
+
+    async function verifyRecaptcha() {
+        try {
+            const token = grecaptcha.getResponse();
+
+            const data = {
+                token: token
+            };
+
+            const response = await fetch('/verify-recaptcha', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
+    async function login() {
+        try {
+            var success = await verifyRecaptcha();
+
+            if (success) {
+                const form = document.getElementById("form-login");
+                form.submit();
+            } else {
+                alert("Xác minh không thành công");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Xác minh không thành công");
+        }
+    }
+</script>
 
 {% endblock %}
