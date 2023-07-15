@@ -54,3 +54,26 @@ def get_stat_downloads():
                         "download_cate_labels": download_cate_labels, "download_cate_values": download_cate_values})
     else:
         return jsonify({"status": 404})
+
+
+def get_stat_uploads():
+    if request.method == 'POST':
+        period = request.json.get('period')
+        start_time = request.json.get('start_time')
+        end_time = request.json.get('end_time')
+        upload_datas = dao.get_upload_stats(start_time, end_time, period)
+        if upload_datas is None:
+            return jsonify({"status": 400})
+
+        upload_labels = [data.label for data in upload_datas]
+        upload_values = [data.uploads for data in upload_datas]
+
+        upload_cate_datas = dao.get_upload_stats_by_cate(start_time, end_time)
+        if upload_cate_datas is None:
+            return jsonify({"status": 400})
+        upload_cate_labels = [data.cate for data in upload_cate_datas]
+        upload_cate_values = [data.uploads for data in upload_cate_datas]
+        return jsonify({"status": 200, "upload_labels": upload_labels, "upload_values": upload_values,
+                        "upload_cate_labels": upload_cate_labels, "upload_cate_values": upload_cate_values})
+    else:
+        return jsonify({"status": 404})

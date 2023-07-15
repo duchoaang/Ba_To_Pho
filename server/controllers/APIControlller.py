@@ -5,12 +5,12 @@ import cloudinary
 import dropbox
 import requests
 from flask import jsonify, request
-from server import app, utils
+from flask_login import current_user, logout_user
+
+from server import app, utils, dao
 from server.dao import get_documents, get_categories, get_document_types, get_keywords, get_comment_by_doc, get_users, \
     get_document_by_id, get_popular_documents, get_new_documents
 from server.models import Status
-from server import dao
-
 
 # -------------- "/api" ------------------
 
@@ -64,9 +64,11 @@ def api_document_by_id(id):
             "average_rate", "num_rate", "num_favour_users", "created_date",
             "file_size"
         ]
-
     )
-
+    if current_user.is_authenticated and dao.get_favour(id, current_user.id):
+        doc_info["is_favour"] = True
+    else:
+        doc_info["is_favour"] = False
     return jsonify(doc_info)
 
 
@@ -173,3 +175,18 @@ def api_users():
         fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media",
                 "address", "gem", "warn_time"]) for u in users]
     return jsonify(user_list)
+
+
+def get_link_download():
+    if current_user.is_authenticated:
+        user_id = request.json.get('idUser')
+        document_id = request.json.get('idDocs')
+        if user_id and document_id and current_user.id == user_id:
+            result = dao.download_document(document_id, user_id)
+            print(result)
+            return jsonify(result)
+        else:
+            return jsonify({"status": 404, "msg": "not found"})
+    else:
+        return jsonify({"status": 401, "msg": "unauthorized"})
+
