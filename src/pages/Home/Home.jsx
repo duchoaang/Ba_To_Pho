@@ -18,10 +18,10 @@ import { CardActionArea } from '@mui/material';
 import get from '~/utils/request/get';
 
 const Home = () => {
-    const [showCourse, setCourse] = useState(false);
+    // const [showCourse, setCourse] = useState(false);
 
     const [newDocs, setNewDocs] = useState([]);
-    const [downDocs, setDownDocs] = useState(false);
+    // const [downDocs, setDownDocs] = useState(false);
 
     const [popularDocs, setPopularDocs] = useState([]);
     useEffect(() => {
@@ -42,11 +42,12 @@ const Home = () => {
                     <h1>Tài liệu phổ biến</h1>
                 </div>
                 <div className={cx('cardDocs')}>
-                    {console.log(popularDocs)}
+                  
                     {true &&
-                        popularDocs.slice(0, 4).map((docs) => (
+                        popularDocs.slice(0, 4).map((docs,index) => (
                             <>
-                                <Card
+
+                                <Card key ={index}
                                     className={cx('subCard')}
                                     sx={{ width: '20%', height: '350px', position: 'relative' }}
                                 >
@@ -87,11 +88,11 @@ const Home = () => {
                     <h1>Tài liệu mới nhất</h1>
                 </div>
                 <div className={cx('cardDocs')}>
-                    {console.log(popularDocs)}
+                
                     {true &&
-                        newDocs.slice(0, 4).map((docs) => (
+                        newDocs.slice(0, 4).map((docs, index) => (
                             <>
-                                <Card
+                                <Card key={index}
                                     className={cx('subCard')}
                                     sx={{ width: '20%', height: '350px', position: 'relative' }}
                                 >

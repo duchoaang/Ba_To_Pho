@@ -122,16 +122,14 @@ const Header = () => {
     const [ErrorUserNameEmail, setErrorUserNameEmail] = useState(false);
     const [results, setResults] = useState([]);
     const [loginFailed, setLoginFailed] = useState(false);
+    const [loginByGG, setLoginByGG] = useState(false);
 
-    const login = useGoogleLogin({
-        onSuccess: (codeResponse) => setUserGoogle(codeResponse),
-
-        onError: (error) => console.log('Login Failed:', error),
-    });
-    const logOut = () => {
-        googleLogout();
-        setProfile(null);
-    };
+   
+    // const logOut = () => {
+    //     googleLogout();
+    //     setProfile(null);
+        
+    // };
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -142,8 +140,10 @@ const Header = () => {
     };
 
     // lay thong tin user google
-    useEffect(() => {
+   useEffect(() => {
+       if(loginByGG) {
         if (userGoogle != null) {
+            
             axios
             .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
                     headers: {
@@ -153,12 +153,25 @@ const Header = () => {
                 })
                 .then((res) => {
                     setFormDataLoginGoogle(res.data);
+                    loginByGG(false)
                     // setProfile(res.data);
                 })
                 .catch((err) => {});
         }
-    }, [userGoogle]);
+        else{
+            console.log("loi dang nhap gg")
+        }
+       }
+    },[loginByGG])
+    const login = useGoogleLogin({
+        onSuccess: (codeResponse) =>{
+            setUserGoogle(codeResponse);
+            setLoginByGG(true);
+            // loginByGG();
+        } ,
 
+        onError: (error) => console.log('Login Failed:', error),
+    });
     // gui thong tin user google len server
     useEffect(() => {
         if (formDataLoginGoogle) {
@@ -557,36 +570,19 @@ const Header = () => {
                     <div className={cx('search')}>
                         <Input placeholder="12123123" />
                         
+                      
                     </div>
 
                     <button className="btn"></button>
                 </div>
+
                 <div className={cx('actions')}>
                     {user ? (
                         <>
                             <Link to="/upload">
                                 <Button className="me-5 btn btn-warning border">Tải lên</Button>
                             </Link>
-                            {/* <UserController show={true}>
-                                <div className={cx('user_controller')}>
-                                    <img
-                                        onClick={handleLogout}
-                                        className={cx('user_avatar')}
-                                        src={infoUser.avatar}
-                                        alt=""
-                                    />
-                                    <div className={cx('menu_controller')}>
-                                        <div className={cx('c_profile')}>
-                                            <FontAwesomeIcon icon={faUser} />
-                                            <h1>
-                                                <Link style={{ color: 'black' }} to={`/profile/${infoUser.id}`}>
-                                                    Profile
-                                                </Link>
-                                            </h1>
-                                        </div>
-                                    </div>
-                                </div>
-                            </UserController> */}
+                           
                             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                                 <Tooltip title="Account settings">
                                     <IconButton

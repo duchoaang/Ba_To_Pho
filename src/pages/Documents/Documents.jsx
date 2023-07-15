@@ -9,9 +9,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
-
-
+import SearchEngine from '@/SearchEngine'
 const PAGE_SIZE = 7;
 
 const handlePageClick = () => {};
@@ -30,6 +28,7 @@ const Documents = () => {
         setStart((numberPage - 1) * PAGE_SIZE);
     }, [numberPage]);
 
+   
     const handleChecklist = (checked, id) => {
         if (checked) {
             setUserChoice([...userChoice, id]);
@@ -182,19 +181,19 @@ const Documents = () => {
                                                         </span>
                                                         <h1>3062</h1>
                                                     </button>
-                                                   <div className={cx('buttonDown')}>
-                                                   <Link to={`/Documents/${document.id}`}>
-                                                        <button type="button" >
-                                                            <span
-                                                                style={{ color: '#99a8ba', fontSize: '15px' }}
-                                                                class="material-icons"
-                                                            >
-                                                                description
-                                                            </span>
-                                                            Docs
-                                                        </button>
-                                                    </Link>
-                                                   </div>
+                                                    <div className={cx('buttonDown')}>
+                                                        <Link to={`/Documents/${document.id}`}>
+                                                            <button type="button">
+                                                                <span
+                                                                    style={{ color: '#99a8ba', fontSize: '15px' }}
+                                                                    class="material-icons"
+                                                                >
+                                                                    description
+                                                                </span>
+                                                                Docs
+                                                            </button>
+                                                        </Link>
+                                                    </div>
                                                     <button type="button" class="btn btn-danger">
                                                         <span class="material-icons" style={{ fontSize: '15px' }}>
                                                             save_alt
@@ -221,7 +220,10 @@ const Documents = () => {
                 </div>
 
                 <div className={cx('main__right')}>
-                    <i>Tài liệu nhiều người ưa chuộng nhất gần đây</i>
+                    <i>Tìm kiếm tài liệu mới nhất</i>
+                    <SearchEngine style={{marginRight:'10px'}} />
+                                    
+                    {/* <div>1djn1jk1njkdwnjk</div> */}
                 </div>
             </div>
         </>
