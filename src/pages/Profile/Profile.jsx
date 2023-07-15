@@ -53,7 +53,6 @@ const Profile = () => {
     const [totalFavDocs, setTotalFavDocs] = useState('');
     const [totalUserDocs, setTotalUserDocs] = useState('');
     const [formInfoUser, setFormInfoUser] = useState({
-    
         fullName: '',
         bio: '',
         socialMedia: '',
@@ -130,8 +129,7 @@ const Profile = () => {
                 setTotalWaitDocs(data.waitDocs.length);
                 setTotalFavDocs(data.favDocs.length);
                 setTotalResultDocs(data.resultDocs.length);
-                // setTotalUserDocs(data.userDocs.length)
-                // setTotalUserDocs(data.userDocs.length)
+               
             })
             .catch((error) => {
                 console.log('Ko gui dc');
