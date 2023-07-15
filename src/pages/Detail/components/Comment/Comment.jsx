@@ -1,4 +1,4 @@
-import { lazy, useState } from 'react';
+import { lazy } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Comment.module.scss';

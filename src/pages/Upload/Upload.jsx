@@ -245,24 +245,6 @@ const Upload = () => {
                 {/*     /> */}
                 {/* </InputGroup> */}
             </section>
-            <section className="border border-primary-subtle bg-info">
-                <div className="d-flex align-items-center">
-                    <span className="material-icons text-warning">lock</span>
-                    <b className="ms-2 text-primary">Chính sách bảo mật thông tin</b>
-                </div>
-                <hr className="text-primary" />
-                <p>
-                    Chọn một tên người dùng <b>ẩn danh</b>
-                </p>
-                <input type="text" name="anonymous" className="form-control" />
-            </section>
-            <section className="border border-danger bg-danger text-danger d-flex">
-                <span className="material-icons fw-bolder">priority_high</span>
-                <p className="mb-0">
-                    Vì lý do bảo mật, chúng tôi thật sự khuyên bạn nên chọn tên người dùng khác với địa chỉ email của
-                    bạn (abc***@gmail.com)
-                </p>
-            </section>
             <section className="border border-warning bg-warning">
                 <input name="confirm" id="confirm" type="checkbox" />
                 <label htmlFor="confirm">Tôi đã đọc và đồng ý với các điều khoản của BaToPho</label>

@@ -171,7 +171,7 @@ const Detail = () => {
                                                     }).then((data) => (data.is_active ? data.id : ''));
 
                                                     if (userId === '') {
-                                                        console.log('Chua dang nhap');
+                                                        alert('Bạn chưa đăng nhập!');
                                                         return;
                                                     }
                                                     post('rate', {
