@@ -181,16 +181,49 @@ const Documents = () => {
                                                 </button>
                                                 <div className={cx('buttonDown')}>
                                                     <Link to={`/Documents/${document.id}`}>
-                                                        <button type="button">
-                                                            <span
-                                                                style={{ color: '#99a8ba', fontSize: '15px' }}
-                                                                className="material-icons"
-                                                            >
-                                                                description
-                                                            </span>
-                                                            Docs
-                                                        </button>
+                                                        <h1 style={{ color: '#3379b5' }}>{document.title}</h1>
                                                     </Link>
+                                                </div>
+
+                                                <div className={cx('content__right--main')}>
+                                                    <h1> {document.description}</h1>
+                                                </div>
+                                                <div className={cx('content__right--option')}>
+                                                    <button>
+                                                        <span style={{ fontSize: '20px' }} class="material-icons">
+                                                            file_download
+                                                        </span>
+                                                        <h1>366</h1>
+                                                    </button>
+
+                                                    <button>
+                                                        <span
+                                                            style={{ fontSize: '20px', marginRight: '5px' }}
+                                                            class="material-icons"
+                                                        >
+                                                            visibility
+                                                        </span>
+                                                        <h1>3062</h1>
+                                                    </button>
+                                                    <div className={cx('buttonDown')}>
+                                                        <Link to={`/Documents/${document.id}`}>
+                                                            <button type="button">
+                                                                <span
+                                                                    style={{ color: '#99a8ba', fontSize: '15px' }}
+                                                                    class="material-icons"
+                                                                >
+                                                                    description
+                                                                </span>
+                                                                Docs
+                                                            </button>
+                                                        </Link>
+                                                    </div>
+                                                    <button type="button" class="btn btn-danger">
+                                                        <span class="material-icons" style={{ fontSize: '15px' }}>
+                                                            save_alt
+                                                        </span>{' '}
+                                                        Download
+                                                    </button>
                                                 </div>
                                                 <button type="button" className="btn btn-danger">
                                                     <span className="material-icons" style={{ fontSize: '15px' }}>
@@ -219,8 +252,6 @@ const Documents = () => {
                 <div className={cx('main__right')}>
                     <i>Tìm kiếm tài liệu mới nhất</i>
                     <SearchEngine style={{ marginRight: '10px' }} />
-
-                    {/* <div>1djn1jk1njkdwnjk</div> */}
                 </div>
             </div>
         </>
