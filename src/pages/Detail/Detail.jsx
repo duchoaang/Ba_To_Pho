@@ -108,8 +108,6 @@ const Detail = () => {
         });
     };
 
-    useEffect(loadData, [location]);
-
     const handleDownDocs = (idDocs) => {
         checkLoginUser();
         try {
@@ -146,6 +144,8 @@ const Detail = () => {
             console.log('Error:', error);
         }
     };
+
+    useEffect(loadData, [location]);
 
     return (
         <div className="container">
@@ -269,9 +269,7 @@ const Detail = () => {
                     <SuggestSection />
                     <CommentSection doc_id={location.pathname.split('/')[2]} />
                 </div>
-                <div className="col-md-4">
-                    <section className="border border-warning"></section>
-                </div>
+                <div className="col-md-4"></div>
             </div>
         </div>
     );
