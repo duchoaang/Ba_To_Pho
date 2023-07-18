@@ -17,8 +17,17 @@
     <li onclick="clickStatUpload()" class="nav-item">
         <a class="nav-link" data-toggle="tab" href="#upload">Lượt đăng</a>
     </li>
+    <li onclick="clickStatView()" class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#view">Lượt xem</a>
+    </li>
     <li onclick="clickStatConversionRate()" class="nav-item">
         <a class="nav-link" data-toggle="tab" href="#conversionRate">Tỷ lệ chuyển đổi</a>
+    </li>
+    <li onclick="clickStatNewUser()" class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#newUser">Người dùng mới</a>
+    </li>
+    <li onclick="clickTopTen()" class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#topTen">Top 10</a>
     </li>
 </ul>
 <div id="myTabContent" class="tab-content">
@@ -154,6 +163,51 @@
             </div>
         </div>
     </div>
+    <div class="tab-pane fade" id="view">
+        <div class="p-3 bg-light my-4 mx-5">
+            <h5>Thống kê view</h5>
+            <div class="d-flex">
+                <div class="col-12">
+                    <canvas id="chartViews"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="newUser">
+        <div class="p-3 bg-light my-4 mx-5">
+            <h5>Thống kê user mới</h5>
+            <div class="d-flex">
+                <div class="col-12">
+                    <canvas id="chartNewUsers"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="topTen">
+        <div class="p-3 bg-light my-4 mx-5">
+            <h5>Top 10 tài liệu được yêu thích nhất</h5>
+            <div>
+                <div id="topTenContainer">
+                    {% for d in top_ten_favour_docs %}
+                    <div class="p-5 jumbotron d-flex no-wrap mb-3 w-100">
+                        <div class="col-1">
+                            <h1>{{ loop.index0 + 1 }}</h1>
+                        </div>
+                        <div class="col-2">
+                            <img src="{{d.image}}"/>
+                        </div>
+                        <div class="col-8">
+                            <p>{{d.doc}}</p>
+                        </div>
+                        <div class="col-2">
+                            <p>{{d.famous}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
@@ -195,20 +249,102 @@
             drawBasicChart(download_cate_values,download_cate_labels,"chartCateDownloads", "Lượt tải", "doughnut")
         }
 
-        function clickStatUpload() {
-                upload_values = {{upload_values}}
-                upload_labels = JSON.parse('{{ upload_labels|tojson }}');
-                drawBasicChart(upload_values,upload_labels,"chartUploads", "Lượt đăng", "bar")
+         function clickStatUpload() {
+            const canvas = document.getElementById("chartUploads")
+            var chart = Chart.getChart(canvas);
+            if (chart)
+                return
+            fetch('/admin/stat-upload', {
+                method: "post",
+                body: JSON.stringify({
+                    "period": "day",
+                    "start_time": "",
+                    "end_time": "",
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json()).then((data) => {
+                if (data) {
+                    console.log(data)
+                    if (data['status'] == 200) {
+                        uploadLabels = data["upload_labels"]
+                        uploadValues = data["upload_values"]
+                        drawBasicChart(uploadValues,uploadLabels,"chartUploads", "Lượt đăng", "bar")
 
-                upload_cate_values = JSON.parse('{{upload_cate_values|tojson}}');
-                upload_cate_labels = JSON.parse('{{ upload_cate_labels|tojson }}');
-                drawBasicChart(upload_cate_values, upload_cate_labels, "chartCateUploads", "Lượt đăng", "doughnut")
-            }
+                        uploadCateValues = data["upload_cate_values"]
+                        uploadCateLabels = data["upload_cate_labels"]
+                        drawBasicChart(uploadCateValues, uploadCateLabels, "chartCateUploads", "Lượt đăng", "doughnut")
+                    }
+                    else
+                        alert("Nhập liệu không hợp lệ")
+                }
+            })
+        }
 
         function clickStatConversionRate() {
                 conversion_rate_values = JSON.parse('{{conversion_rate_values|tojson}}');
                 conversion_rate_labels = JSON.parse('{{ conversion_rate_labels|tojson }}');
                 drawBasicChart(conversion_rate_values,conversion_rate_labels,"chartConversionRate", "%", "bar")
+        }
+
+        function clickStatView() {
+            const canvas = document.getElementById("chartViews")
+            var chart = Chart.getChart(canvas);
+            if (chart)
+                return
+            fetch('/admin/stat-view', {
+                method: "post",
+                body: JSON.stringify({
+                    "start_time": "",
+                    "end_time": "",
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json()).then((data) => {
+                if (data) {
+                    console.log(data)
+                    if (data['status'] == 200) {
+                        dataLabels = data["data_labels"]
+                        dataValues = data["data_values"]
+                        drawBasicChart(dataValues,dataLabels,"chartViews", "Lượt xem", "bar")
+                    }
+                    else
+                        alert("Nhập liệu không hợp lệ")
+                }
+            })
+
+        }
+
+        function clickStatNewUser() {
+            const canvas = document.getElementById("chartNewUsers")
+            var chart = Chart.getChart(canvas);
+            if (chart)
+                return
+            fetch('/admin/stat-new-user', {
+                method: "post",
+                body: JSON.stringify({
+                    "period": "day",
+                    "start_time": "",
+                    "end_time": "",
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json()).then((data) => {
+                if (data) {
+                    console.log(data)
+                    if (data['status'] == 200) {
+                        dataLabels = data["data_labels"]
+                        dataValues = data["data_values"]
+                        drawBasicChart(dataValues,dataLabels,"chartNewUsers", "Người dùng", "bar")
+                    }
+                    else
+                        alert("Nhập liệu không hợp lệ")
+                }
+            })
+
         }
 
 
@@ -266,6 +402,8 @@
             alert("Xác minh không thành công");
         }
     }
+
+
 </script>
 {% endif %}
 {% endblock %}
