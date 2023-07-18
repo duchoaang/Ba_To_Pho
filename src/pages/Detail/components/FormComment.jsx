@@ -19,6 +19,11 @@ const FormComment = ({ setReload, doc_id }) => {
             return;
         }
 
+        if (e.target['comment'].value.trim() === '') {
+            alert('Bình luận không được để trống!');
+            return;
+        }
+
         post('comments/add', {
             content: e.target['comment'].value,
             user_id: userId,
@@ -36,8 +41,7 @@ const FormComment = ({ setReload, doc_id }) => {
                 <Textarea
                     name="comment"
                     required
-                    pattern="\S(.*\S)?"
-                    placeholder="Type something here…"
+                    placeholder="Viết bình luận…"
                     minRows={3}
                     sx={{
                         width: '100%',
