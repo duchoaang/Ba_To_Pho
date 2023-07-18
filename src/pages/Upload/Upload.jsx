@@ -32,7 +32,6 @@ const INIT_FORM_DATA = {
     author: '',
     keywords: [],
     file: null,
-    image: null,
 };
 
 const Upload = () => {
@@ -56,7 +55,6 @@ const Upload = () => {
         Object.entries(formData).map(([key, value] = entry) => {
             switch (key) {
                 case 'file':
-                case 'image':
                     data.append(key, value, value.name);
                     break;
                 case 'categories':
@@ -226,34 +224,16 @@ const Upload = () => {
                         required
                     />
                 </InputGroup>
-                {/* <InputGroup */}
-                {/*     title="Hình ảnh về tài liệu" */}
-                {/* info="Hoàn thành đầy đủ thông tin giúp code của bạn được nhiều người biết đến và có thứ hạng cao trên kết quả tìm kiếm" */}
-                {/* > */}
-                {/*     <label htmlFor="image" className={cx('label-inp-img')}> */}
-                {/*         <span className="material-icons">add_circle</span> */}
-                {/*         Thêm ảnh... */}
-                {/*     </label> */}
-                {/*     <input */}
-                {/*         name="image" */}
-                {/*         id="image" */}
-                {/*         type="file" */}
-                {/*         accept="image/*" */}
-                {/*         hidden */}
-                {/*         onChange={handleFileChange} */}
-                {/*         required */}
-                {/*     /> */}
-                {/* </InputGroup> */}
             </section>
-            <section className="border border-warning bg-warning">
+            <section className="border border-info bg-info">
                 <input name="confirm" id="confirm" type="checkbox" />
-                <label htmlFor="confirm">Tôi đã đọc và đồng ý với các điều khoản của BaToPho</label>
+                <label htmlFor="confirm">&nbsp;Tôi đã đọc và đồng ý với các điều khoản của BaToPho</label>
                 <br />
                 <Button
                     disabled={disableButton}
                     variant="contained"
                     type="submit"
-                    color="warning"
+                    color="primary"
                     startIcon={<CloudUploadIcon />}
                 >
                     Tải lên ngay
