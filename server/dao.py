@@ -482,7 +482,7 @@ def get_view_stats_by_cate(start_time=None, end_time=None):
         query = query.filter(Document.created_date >= start_time)
     if end_time:
         query = query.filter(Document.created_date <= end_time)
-    query = query.group_by(Category.id).order_by('views')
+    query = query.group_by(Category.id)
     return query.all()
 
 
@@ -498,18 +498,19 @@ def get_new_user_stats_by_date(start_time=None, end_time=None, period='day'):
     else:
         return False
 
-    query = db.session.query(date_trunc.label('label'), func.sum(User.id).label('users_count'))
+    query = db.session.query(date_trunc.label('label'), func.count(User.id).label('users_count'))
+
     if start_time:
         query = query.filter(User.date_joined >= start_time)
     if end_time:
         query = query.filter(User.date_joined <= end_time)
-    query = query.group_by(User.date_joined)
+    query = query.group_by('label')
     return query.all()
 
 
 def get_top_ten_most_favourite(start_time=None, end_time=None):
     query = db.session.query(Document.id, Document.title.label('doc'), Document.img_link_download.label('image'),
-                             func.sum(FavourList.id).label('famous')). \
+                             func.count(FavourList.id).label('famous')). \
         join(FavourList, Document.id == FavourList.document_id)
     if start_time:
         query = query.filter(Document.created_date >= start_time)
@@ -549,7 +550,7 @@ if __name__ == '__main__':
     with app.app_context():
         period = 'hour'
 
-        results = get_new_user_stats_by_date(None,None,'day')
+        results = get_new_user_stats_by_date()
 
         for result in results:
             print(result)
