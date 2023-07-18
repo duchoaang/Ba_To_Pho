@@ -124,11 +124,10 @@ const Header = () => {
     const [loginFailed, setLoginFailed] = useState(false);
     const [loginByGG, setLoginByGG] = useState(false);
 
-   
     // const logOut = () => {
     //     googleLogout();
     //     setProfile(null);
-        
+
     // };
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -140,35 +139,33 @@ const Header = () => {
     };
 
     // lay thong tin user google
-   useEffect(() => {
-       if(loginByGG) {
-        if (userGoogle != null) {
-            
-            axios
-            .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
-                    headers: {
-                        Authorization: `Bearer ${user.access_token}`,
-                        Accept: 'application/json',
-                    },
-                })
-                .then((res) => {
-                    setFormDataLoginGoogle(res.data);
-                    loginByGG(false)
-                    // setProfile(res.data);
-                })
-                .catch((err) => {});
+    useEffect(() => {
+        if (loginByGG) {
+            if (userGoogle != null) {
+                axios
+                    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: 'application/json',
+                        },
+                    })
+                    .then((res) => {
+                        setFormDataLoginGoogle(res.data);
+                        loginByGG(false);
+                        // setProfile(res.data);
+                    })
+                    .catch((err) => {});
+            } else {
+                console.log('loi dang nhap gg');
+            }
         }
-        else{
-            console.log("loi dang nhap gg")
-        }
-       }
-    },[loginByGG])
+    }, [loginByGG]);
     const login = useGoogleLogin({
-        onSuccess: (codeResponse) =>{
+        onSuccess: (codeResponse) => {
             setUserGoogle(codeResponse);
             setLoginByGG(true);
             // loginByGG();
-        } ,
+        },
 
         onError: (error) => console.log('Login Failed:', error),
     });
@@ -290,18 +287,17 @@ const Header = () => {
                         'Content-Type': 'application/json',
                     },
                     credentials: 'include',
-                })
-                    .then((data) => {
-                        if (data.status === 200) {
-                            clearInterval(timer);
-                            setConfirmEmail(false);
-                            setShowLoading(false);
-                            setShowAlertConfirmEmail(true);
-                            console.log(' xac thuc email thanh cong');
-                        } else if (data.status === 404) {
-                            console.log('That bai');
-                        } else console.log('12123');
-                    });
+                }).then((data) => {
+                    if (data.status === 200) {
+                        clearInterval(timer);
+                        setConfirmEmail(false);
+                        setShowLoading(false);
+                        setShowAlertConfirmEmail(true);
+                        console.log(' xac thuc email thanh cong');
+                    } else if (data.status === 404) {
+                        console.log('That bai');
+                    } else console.log('12123');
+                });
             }, 3000);
             setTimeout(() => {
                 clearInterval(timer); // Dừng hàm setInterval sau 30 giây
@@ -316,13 +312,11 @@ const Header = () => {
             setShowLoading(true);
             setErrorMessage(false);
             // setShowRegister(false)
-           post('users/register', formData, {
-             
+            post('users/register', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                
             })
                 .then((data) => {
                     if (data.status === 200) {
@@ -356,6 +350,7 @@ const Header = () => {
                 });
                 setShowModal(false);
                 setLoginFailed(false);
+                window.location.reload();
             })
             .catch((error) => {
                 setLoginFailed(true);
@@ -384,7 +379,9 @@ const Header = () => {
     };
     const handleLogout = () => {
         post('users/logout', infoUser.id, { withCredentials: true })
-            .then((response) => {})
+            .then(() => {
+                window.location.reload();
+            })
             .catch((error) => {});
         setUser(false);
     };
@@ -566,11 +563,8 @@ const Header = () => {
                     </Link>
                 </div>
                 <div className={cx('input', 'd-flex align-items-center')} style={{ height: '40%' }}>
-                   
                     <div className={cx('search')}>
                         <Input placeholder="12123123" />
-                        
-                      
                     </div>
 
                     <button className="btn"></button>
@@ -582,7 +576,7 @@ const Header = () => {
                             <Link to="/upload">
                                 <Button className="me-5 btn btn-warning border">Tải lên</Button>
                             </Link>
-                           
+
                             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                                 <Tooltip title="Account settings">
                                     <IconButton

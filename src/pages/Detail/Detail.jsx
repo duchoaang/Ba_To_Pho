@@ -43,6 +43,8 @@ const Nav = () => (
 );
 
 const Detail = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [data, setData] = useState({
         title: '',
         img_link_download: '/src/assets/docImg.jpg',
@@ -89,9 +91,7 @@ const Detail = () => {
     };
     const [favorite, setFavorite] = useState(false);
 
-    const location = useLocation();
-    const navigate = useNavigate();
-    useEffect(() => {
+    const loadData = () => {
         let id = location.pathname.split('/')[2];
 
         get(`api/documents/${id}`, { withCredentials: true }).then((res) => {
@@ -106,7 +106,9 @@ const Detail = () => {
             setData({ ...data, ...res, created_date: date });
             setFavorite(res.is_favour);
         });
-    }, [location]);
+    };
+
+    useEffect(loadData, [location]);
 
     const handleDownDocs = (idDocs) => {
         checkLoginUser();
@@ -179,11 +181,7 @@ const Detail = () => {
                                                         document_id: location.pathname.split('/')[2],
                                                         number_star: newValue,
                                                     }).then(() => {
-                                                        let id = location.pathname.split('/')[2];
-
-                                                        get(`api/documents/${id}`).then((res) => {
-                                                            setData({ ...data, average_rate: res.average_rate });
-                                                        });
+                                                        loadData();
                                                     });
                                                 }}
                                             />
@@ -224,6 +222,12 @@ const Detail = () => {
                                                     user_id: userId,
                                                     document_id: location.pathname.split('/')[2],
                                                 }).then(() => {
+                                                    setData({
+                                                        ...data,
+                                                        num_favour_users: favorite
+                                                            ? data.num_favour_users - 1
+                                                            : data.num_favour_users + 1,
+                                                    });
                                                     setFavorite((prev) => !prev);
                                                 });
                                             }}
