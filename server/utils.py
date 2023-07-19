@@ -41,7 +41,7 @@ def save_file(file, file_name):
 # Convert PDF to PNG
 def convert_pdf_to_png(file_name, temp_pdf_path):
     # dùng file lưu tạm để lấy trang đầu tiên thành image
-    file = os.path.abspath(r"poppler-23.05.0\Library\bin")
+    file = os.path.abspath(r"poppler\Library\bin")
     try:
         images = convert_from_path(temp_pdf_path, poppler_path=file, first_page=1, last_page=1)
         image_path = f'{file_name}.png'
