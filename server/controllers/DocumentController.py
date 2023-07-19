@@ -54,12 +54,12 @@ def upload_cloudinary():
         "user_id": u_id,
         "document_type_id": dt_id
     }
-    categories = request.form.get('categories')
-
+    categories_string = request.form.get('categories')
+    categories = categories_string.split(',')
     kw = request.form.get('keywords').split(',')
     keywords = [utils.strip_accents(k.lower()) for k in kw]
 
     add_no_accept_document(fields, categories, keywords, download_path, path, download_path_img, path_img)
     os.remove(image)
-    os.remove(file)
+    os.remove(file_name)
     return jsonify({"status": "200", "message": "success"})

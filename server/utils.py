@@ -1,8 +1,13 @@
 import hashlib
+import os
+
+import unicodedata
+import fitz
 from pdf2image import convert_from_path
 
-import os
-import unicodedata
+from server import app
+
+
 # import aspose.slides as slides
 # import aspose.words as aw
 
@@ -13,6 +18,7 @@ def hash_text(plain_text):
 
 def strip_accents(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+
 
 # Save file
 def save_file(file, file_name):
@@ -41,14 +47,12 @@ def save_file(file, file_name):
 # Convert PDF to PNG
 def convert_pdf_to_png(file_name, temp_pdf_path):
     # dùng file lưu tạm để lấy trang đầu tiên thành image
-    file = os.path.abspath(r"poppler-23.05.0\Library\bin")
-    try:
-        images = convert_from_path(temp_pdf_path, poppler_path=file, first_page=1, last_page=1)
-        image_path = f'{file_name}.png'
-        images[0].save(image_path, "PNG")
-    except Exception as e:
-        print("Lỗi: " + str(e))
-    # Xóa file lưu tạm
-    os.remove(temp_pdf_path)
-    return image_path
+    doc = fitz.open(temp_pdf_path)
+    image_file = f'{file_name}.png'
+
+    # Chuyển đổi trang đầu tiên của tệp PDF sang hình ảnh PNG
+    page = doc[0]
+    pix = page.get_pixmap()
+    pix.save(image_file)
+    return image_file
 
