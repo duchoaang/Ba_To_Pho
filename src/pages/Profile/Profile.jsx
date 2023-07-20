@@ -12,8 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import ImageIcon from '@mui/icons-material/Image';
-import WorkIcon from '@mui/icons-material/Work';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import Divider from '@mui/material/Divider';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
 import { Link } from 'react-router-dom';
@@ -38,10 +36,7 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
-
-
-
-
+import get from '~/utils/request/get';
 const Profile = () => {
     const { id } = useParams();
     const [value, setValue] = useState(0);
@@ -61,24 +56,24 @@ const Profile = () => {
     });
     const decodeId = decodeURIComponent(id);
     const sendDataToServer = () => {
-        const url = `http://127.0.0.1:5000/users/${ decodeURIComponent(id)}`; // Thay thế bằng URL thực tế của bạn
+        const url = `http://127.0.0.1:5000/users/${decodeURIComponent(id)}`; // Thay thế bằng URL thực tế của bạn
         const data = { key: formInfoUser }; // Thay thế bằng dữ liệu thực tế bạn muốn gửi
-        console.log("da gui")
-        axios.patch(url, data)
-          .then(response => {
-            console.log("Gửi PATCH thành công!");
-            // Xử lý phản hồi từ server (nếu cần)
-          })
-          .catch(error => {
-            console.error("Gửi PATCH không thành công!");
-            // Xử lý lỗi (nếu cần)
-          });
-      };
+        console.log('da gui');
+        axios
+            .patch(url, data)
+            .then((response) => {
+                console.log('Gửi PATCH thành công!');
+                // Xử lý phản hồi từ server (nếu cần)
+            })
+            .catch((error) => {
+                console.error('Gửi PATCH không thành công!');
+                // Xử lý lỗi (nếu cần)
+            });
+    };
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-   
 
     const handleDocsType = {
         waitDocs: (responseData) => {
@@ -97,8 +92,8 @@ const Profile = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:5000/profile/${decodeId}`);
-                const responseData = response.data;
+                const response = await get(`profile/${decodeId}`);
+                const responseData = response;
 
                 if (handleDocsType.hasOwnProperty(docsType)) {
                     handleDocsType[docsType](responseData);
@@ -112,10 +107,11 @@ const Profile = () => {
     }, [docsType]);
 
     useEffect(() => {
-        axios
-            .get(`http://127.0.0.1:5000/profile/${decodeId}`)
+        
+            get(`profile/${decodeId}`)
             .then((response) => {
-                return response.data;
+                console.log(response);
+                return response;
             })
             .then((data) => {
                 setInfoUser({
@@ -129,7 +125,6 @@ const Profile = () => {
                 setTotalWaitDocs(data.waitDocs.length);
                 setTotalFavDocs(data.favDocs.length);
                 setTotalResultDocs(data.resultDocs.length);
-               
             })
             .catch((error) => {
                 console.log('Ko gui dc');
@@ -137,6 +132,8 @@ const Profile = () => {
         // Sử dụng giá trị `decodedId` trong ứng dụng của bạn
     }, [id]);
     console.log(formInfoUser);
+    
+
     return (
         <>
             <section style={{ backgroundColor: '#eee' }}>
@@ -260,11 +257,7 @@ const Profile = () => {
                                     </div>
                                 </Box>
                                 <div className={cx('btnChangeInfo')}>
-                                    <Button
-                                    
-                                    onClick={sendDataToServer}
-                                    variant="contained" color="success" size="small">
-                                      
+                                    <Button onClick={sendDataToServer} variant="contained" color="success" size="small">
                                         Lưu
                                     </Button>
                                     <Button variant="contained" color="inherit" size="small">

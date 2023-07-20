@@ -63,16 +63,17 @@ const Detail = () => {
     const [infoUser, setInfoUser] = useState([]);
     const [openCaptcha, setOpenCaptcha] = useState(false);
 
-    const handleVerified = (value) => {
-        post('verify-recaptcha', { token: value }).then((res) => {
+    const handleVerified = async (value) => {
+       
+        await post('verify-recaptcha', { token: value }).then((res) => {
             setOpenCaptcha(false);
-
+            
             if (res.success) handleDownDocs(data.id);
             else alert(res.message);
         });
     };
 
-    const checkLoginUser = () => {
+    useEffect(()=>{
         get('current-user', { withCredentials: true }).then((response) => {
             if (response.is_active === true) {
                 setUser(true);
@@ -86,7 +87,7 @@ const Detail = () => {
                 setInfoUser([]);
             }
         });
-    };
+    },[user]);
     const [favorite, setFavorite] = useState(false);
 
     const location = useLocation();
@@ -109,40 +110,38 @@ const Detail = () => {
     }, [location]);
 
     const handleDownDocs = (idDocs) => {
-        checkLoginUser();
-        try {
-            console.log(idDocs);
-            post(
-                'api/documents/download',
-                {
-                    idUser: infoUser.id,
-                    idDocs: idDocs,
-                },
-                { withCredentials: true },
-            )
-                .then((response) => {
-                    console.log(response);
-                    if (response.status === 200) {
-                        const url = response.download_link;
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = 'file_name.ext'; // Đặt tên tệp tin và định dạng mở rộng tùy ý
-                        link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
-                        link.click();
-                    } else if (response.status === 400) {
-                        alert('Gem của bạn không đủ để tải');
-                    } else if (response.status === 404) {
-                        alert('Không tìm thấy user/documents');
-                    } else if (response.status === 401) {
-                        alert('Bạn chưa đăng nhập');
-                    }
-                })
-                .catch((error) => {
-                    console.log('Error:', error);
-                });
-        } catch (error) {
-            console.log('Error:', error);
-        }
+            try {
+                post(
+                    'api/documents/download',
+                    {
+                        idUser: infoUser.id,
+                        idDocs: idDocs,
+                    },
+                    { withCredentials: true },
+                )
+                    .then((response) => {
+                        console.log(response);
+                        if (response.status === 200) {
+                            const url = response.download_link;
+                            const link = document.createElement('a');
+                            link.href = url;
+                         
+                            link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
+                            link.click();
+                        } else if (response.status === 400) {
+                            alert('Gem của bạn không đủ để tải');
+                        } else if (response.status === 404) {
+                            alert('Không tìm thấy user/documents');
+                        } else if (response.status === 401) {
+                            alert('Bạn chưa đăng nhập');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log('Error:', error);
+                    });
+            } catch (error) {
+                console.log('Error:', error);
+            }
     };
 
     return (

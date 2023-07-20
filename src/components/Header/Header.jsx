@@ -69,15 +69,17 @@ const MENU_ITEM = [
 const SubMenu = ({ data }) => {
     return (
         <li className={cx('sub-menu')}>
+              <Link to="/Documents">
             <div className="d-flex align-items-center pb-2">
                 {data.icon ? (
                     <span className="material-icons" style={{ color: '#1ab9f4' }}>
                         {data.icon}
                     </span>
                 ) : null}
-                <span className="ms-1">{data.title}</span>
+                <span style={{color:'black', fontWeight:'550'}} className="ms-1">{data.title}</span>
                 {data.subItem ? <span className="material-icons">arrow_drop_down</span> : null}
             </div>
+            </Link>
             <ul className="bg-white">
                 {data.subItem.map((title, index) => (
                     <li key={index} className="py-2 ps-4 pe-3">
@@ -100,7 +102,6 @@ const UserController = ({ show, children }) => {
 const Header = () => {
     const [user, setUser] = useState(false);
     const [userGoogle, setUserGoogle] = useState([]);
-    // const [profile, setProfile] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [infoUser, setInfoUser] = useState([]);
     const [infoUserGoogle, setInfoUserGoogle] = useState([]);
@@ -122,53 +123,42 @@ const Header = () => {
     const [ErrorUserNameEmail, setErrorUserNameEmail] = useState(false);
     const [results, setResults] = useState([]);
     const [loginFailed, setLoginFailed] = useState(false);
-    const [loginByGG, setLoginByGG] = useState(false);
+    // const [loginByGG, setLoginByGG] = useState(false);
 
-   
     // const logOut = () => {
     //     googleLogout();
     //     setProfile(null);
-        
+
     // };
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+        // setAnchorEl(event.currentTarget);
     };
-    const handleClose = () => {
-        setAnchorEl(null);
-        setUser(false);
-    };
-
-    // lay thong tin user google
-   useEffect(() => {
-       if(loginByGG) {
+  
+    useEffect(() => {
         if (userGoogle != null) {
-            
             axios
-            .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
+                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
                     headers: {
                         Authorization: `Bearer ${user.access_token}`,
                         Accept: 'application/json',
                     },
                 })
                 .then((res) => {
+                  
                     setFormDataLoginGoogle(res.data);
-                    loginByGG(false)
+                   
                     // setProfile(res.data);
                 })
                 .catch((err) => {});
+        } else {
+            console.log('loi dang nhap gg');
         }
-        else{
-            console.log("loi dang nhap gg")
-        }
-       }
-    },[loginByGG])
+    }, [userGoogle]);
     const login = useGoogleLogin({
-        onSuccess: (codeResponse) =>{
+        onSuccess: (codeResponse) => {
             setUserGoogle(codeResponse);
-            setLoginByGG(true);
-            // loginByGG();
-        } ,
+        },
 
         onError: (error) => console.log('Login Failed:', error),
     });
@@ -178,7 +168,7 @@ const Header = () => {
             post('users/loginGoogle', formDataLoginGoogle, { withCredentials: true })
                 .then((response) => {
                     setUser(true);
-                    setInfoUserGoogle({
+                    setInfoUser({
                         id: response.id,
                         name: response.name,
                         avatar: response.avatar,
@@ -192,7 +182,7 @@ const Header = () => {
                 });
         }
     }, [formDataLoginGoogle]);
-
+    console.log(infoUserGoogle);
     useEffect(() => {
         get('current-user', { withCredentials: true }).then((response) => {
             if (response.is_active === true) {
@@ -221,7 +211,7 @@ const Header = () => {
         let timerInterval;
         Swal.fire({
             title: 'Xác nhận email !',
-            html: 'Hãy xác nhận email của bạn trong <b></b> giây .',
+            html: 'Chúng tôi đã gửi một mã xác thực qua gmail, vui lòng xác thực để có thể sử dụng dịch vụ! .',
             timer: 5000,
             timerProgressBar: true,
             didOpen: () => {
@@ -234,7 +224,7 @@ const Header = () => {
                 }, 1000);
             },
             willClose: () => {
-                setConfirmEmail(false);
+                setShowAlertConfirmEmail(false); 
                 clearInterval(timerInterval);
             },
         }).then((result) => {
@@ -281,52 +271,49 @@ const Header = () => {
             });
     }, [userName, userEmail, userPassword]);
 
-    useEffect(() => {
-        let prevConfirmEmail = confirmEmail;
-        if (confirmEmail === true && prevConfirmEmail === true) {
-            const timer = setInterval(() => {
-                get('users/confirm-status/', {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                })
-                    .then((data) => {
-                        if (data.status === 200) {
-                            clearInterval(timer);
-                            setConfirmEmail(false);
-                            setShowLoading(false);
-                            setShowAlertConfirmEmail(true);
-                            console.log(' xac thuc email thanh cong');
-                        } else if (data.status === 404) {
-                            console.log('That bai');
-                        } else console.log('12123');
-                    });
-            }, 3000);
-            setTimeout(() => {
-                clearInterval(timer); // Dừng hàm setInterval sau 30 giây
-            }, 5000);
-        }
-    }, [confirmEmail]);
+    // useEffect(() => {
+    //     let prevConfirmEmail = confirmEmail;
+    //     if (confirmEmail === true && prevConfirmEmail === true) {
+    //         const timer = setInterval(() => {
+    //             get('users/confirm-status/', {
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 credentials: 'include',
+    //             }).then((data) => {
+    //                 if (data.status === 200) {
+    //                     clearInterval(timer);
+    //                     setConfirmEmail(false);
+    //                     setShowLoading(false);
+    //                     setShowAlertConfirmEmail(true);
+    //                     console.log(' xac thuc email thanh cong');
+    //                 } else if (data.status === 404) {
+    //                     console.log('That bai');
+    //                 } else console.log('12123');
+    //             });
+    //         }, 3000);
+    //         setTimeout(() => {
+    //             clearInterval(timer); // Dừng hàm setInterval sau 30 giây
+    //         }, 5000);
+    //     }
+    // }, [confirmEmail]);
     //dang ki
     const handleSubmit = (e) => {
         e.preventDefault();
-
         if (userPassword === confirmPassword) {
             setShowLoading(true);
             setErrorMessage(false);
             // setShowRegister(false)
-           post('users/register', formData, {
-             
+            post('users/register', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                
             })
                 .then((data) => {
                     if (data.status === 200) {
                         setShowRegister(false);
+                        setShowAlertConfirmEmail(true);
                         console.log('dang ki thanh cong');
 
                         setConfirmEmail(true);
@@ -379,14 +366,23 @@ const Header = () => {
     };
 
     const handleAlertClose = () => {
-        // setShowAlertConfirmEmail(false);
+        setShowAlertConfirmEmail(false);
         setShowLoading(false);
     };
     const handleLogout = () => {
         post('users/logout', infoUser.id, { withCredentials: true })
-            .then((response) => {})
-            .catch((error) => {});
-        setUser(false);
+            .then((response) => {
+                setUser(false);
+                const url = 'http://localhost:3000/';
+                const link = document.createElement('a');
+                link.href = url;
+
+                link.click();
+                console.log('thanh cong ');
+            })
+            .catch((error) => {
+                console.log('that bai ');
+            });
     };
 
     return (
@@ -562,15 +558,13 @@ const Header = () => {
             <header className={cx('wrapper')}>
                 <div className={cx('logo')}>
                     <Link to="/">
-                        <img src="/src/assets/logo.png" alt="Logo" className="w-100 h-100" />
+                        <img src="/src/assets/btplogo.png" alt="Logo" className="w-100 h-100" />
+                     
                     </Link>
                 </div>
                 <div className={cx('input', 'd-flex align-items-center')} style={{ height: '40%' }}>
-                   
                     <div className={cx('search')}>
                         <Input placeholder="12123123" />
-                        
-                      
                     </div>
 
                     <button className="btn"></button>
@@ -582,7 +576,7 @@ const Header = () => {
                             <Link to="/upload">
                                 <Button className="me-5 btn btn-warning border">Tải lên</Button>
                             </Link>
-                           
+
                             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                                 <Tooltip title="Account settings">
                                     <IconButton
@@ -593,79 +587,18 @@ const Header = () => {
                                         aria-haspopup="true"
                                         aria-expanded={open ? 'true' : undefined}
                                     >
+                                        <Link style={{ color: 'black' }} to={`/profile/${infoUser.id}`}>
+                                           
+                                           
                                         <Avatar sx={{ width: 32, height: 32 }}>
                                             <img className={cx('user_avatar')} src={infoUser.avatar} alt="" />
                                         </Avatar>
+                                        </Link>
                                     </IconButton>
                                 </Tooltip>
                             </Box>
-                            <Menu
-                                anchorEl={anchorEl}
-                                id="account-menu"
-                                open={open}
-                                onClose={handleClose}
-                                onClick={handleClose}
-                                PaperProps={{
-                                    elevation: 0,
-                                    sx: {
-                                        overflow: 'visible',
-                                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                                        mt: 1.5,
-                                        '& .MuiAvatar-root': {
-                                            width: 32,
-                                            height: 32,
-                                            ml: -0.5,
-                                            mr: 1,
-                                        },
-                                        '&:before': {
-                                            content: '""',
-                                            display: 'block',
-                                            position: 'absolute',
-                                            top: 0,
-                                            right: 14,
-                                            width: 10,
-                                            height: 10,
-                                            bgcolor: 'background.paper',
-                                            transform: 'translateY(-50%) rotate(45deg)',
-                                            zIndex: 0,
-                                        },
-                                    },
-                                }}
-                                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                            >
-                                <Link style={{ color: 'black' }} to={`/profile/${infoUser.id}`}>
-                                    <MenuItem onClick={handleClose}>
-                                        <Avatar /> Profile
-                                    </MenuItem>
-                                </Link>
-                                <MenuItem onClick={handleClose}>
-                                    <Avatar /> My account
-                                </MenuItem>
-                                <Divider />
-                                <MenuItem onClick={handleClose}>
-                                    <ListItemIcon>
-                                        <PersonAdd fontSize="small" />
-                                    </ListItemIcon>
-                                    Add another account
-                                </MenuItem>
-                                <MenuItem onClick={handleClose}>
-                                    <ListItemIcon>
-                                        <Settings fontSize="small" />
-                                    </ListItemIcon>
-                                    Settings
-                                </MenuItem>
-                                <MenuItem onClick={handleLogout}>
-                                    <ListItemIcon>
-                                        <Logout fontSize="small" />
-                                    </ListItemIcon>
-                                    Logout
-                                </MenuItem>
-                            </Menu>
-
-                            {/* <Tippy content="Tooltip">
-      <ThisWillWork />
-    </Tippy> */}
+                          
+                            <Button onClick={handleLogout}>Logout</Button>
                         </>
                     ) : (
                         <>

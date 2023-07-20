@@ -50,7 +50,7 @@ const Home = () => {
                                 className={cx('subCard')}
                                 sx={{ width: '20%', height: '350px', position: 'relative' }}
                             >
-                                <Link to={`/Documents/${docs.id}`}>
+                                <Link style={{color:'black'}} to={`/Documents/${docs.id}`}>
                                     <CardActionArea>
                                         <CardMedia
                                             component="img"
@@ -94,7 +94,7 @@ const Home = () => {
                                     className={cx('subCard')}
                                     sx={{ width: '20%', height: '350px', position: 'relative' }}
                                 >
-                                    <Link to={`/Documents/${docs.id}`}>
+                                    <Link style={{color:'black'}} to={`/Documents/${docs.id}`}>
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"

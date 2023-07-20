@@ -6,16 +6,14 @@ class SearchEngine extends Component {
         script.src = 'https://cse.google.com/cse.js?cx=412a124be8d714cde';
         script.async = true;
         document.body.appendChild(script);
-        window.__gcse = {
-            callback: () => {
-                const input = google.search.cse.element.getElement('gsc-i-id1');
-                input.onchange = () => {
-                    const value = input.value;
-                    console.log(value);
-                };
-            }
-        };
+        const input = document.querySelector('.gsc-input');
+        input.addEventListener('change', this.handleChange);
     }
+    handleChange = (event) => {
+        const value = event.target.value;
+        console.log(value);
+      }
+
     render() {
         return <div className="gcse-search" ></div>;
     }

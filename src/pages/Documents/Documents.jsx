@@ -221,7 +221,7 @@ const Documents = () => {
 
                 <div className={cx('main__right')}>
                     <i>Tìm kiếm tài liệu mới nhất</i>
-                    <SearchEngine style={{marginRight:'10px'}} />
+                   
                                     
                     {/* <div>1djn1jk1njkdwnjk</div> */}
                 </div>
