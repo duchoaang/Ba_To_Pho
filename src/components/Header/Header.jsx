@@ -123,7 +123,7 @@ const Header = () => {
     const [ErrorUserNameEmail, setErrorUserNameEmail] = useState(false);
     const [results, setResults] = useState([]);
     const [loginFailed, setLoginFailed] = useState(false);
-    // const [loginByGG, setLoginByGG] = useState(false);
+    const [loginByGG, setLoginByGG] = useState(false);
 
     // const logOut = () => {
     //     googleLogout();
@@ -132,40 +132,41 @@ const Header = () => {
 
     // };
     const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        // setAnchorEl(event.currentTarget);
-    };
   
     useEffect(() => {
-        if (userGoogle != null) {
-            axios
-                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
-                    headers: {
-                        Authorization: `Bearer ${user.access_token}`,
-                        Accept: 'application/json',
-                    },
-                })
-                .then((res) => {
-                  
-                    setFormDataLoginGoogle(res.data);
-                   
-                    // setProfile(res.data);
-                })
-                .catch((err) => {});
-        } else {
-            console.log('loi dang nhap gg');
+        if(loginByGG) {
+         if (userGoogle != null) {
+ 
+             axios
+             .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${userGoogle.access_token}`, {
+                     headers: {
+                         Authorization: `Bearer ${user.access_token}`,
+                         Accept: 'application/json',
+                     },
+                 })
+                 .then((res) => {
+                     setFormDataLoginGoogle(res.data);
+                     loginByGG(false)
+                     // setProfile(res.data);
+                 })
+                 .catch((err) => {});
+         }
+         else{
+             console.log("loi dang nhap gg")
+         }
         }
-    }, [userGoogle]);
+     },[loginByGG]);
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => {
             setUserGoogle(codeResponse);
+            setLoginByGG(true);
         },
 
         onError: (error) => console.log('Login Failed:', error),
     });
     // gui thong tin user google len server
     useEffect(() => {
-        if (formDataLoginGoogle) {
+        if (formDataLoginGoogle.length !== 0) {
             post('users/loginGoogle', formDataLoginGoogle, { withCredentials: true })
                 .then((response) => {
                     setUser(true);
@@ -176,6 +177,7 @@ const Header = () => {
                     });
                     setShowModal(false);
                     setLoginFailed(false);
+                    window.location.reload();
                 })
                 .catch((error) => {
                     // setLoginFailed(true);
@@ -183,20 +185,6 @@ const Header = () => {
                 });
         }
     }, [formDataLoginGoogle]);
-    console.log(infoUserGoogle);
-    useEffect(() => {
-        get('current-user', { withCredentials: true }).then((response) => {
-            if (response.is_active === true) {
-                setUser(true);
-
-                setInfoUser({
-                    id: response.id,
-                    username: response.username,
-                    avatar: response.avatar,
-                });
-            }
-        });
-    }, []);
 
     const AlertConfirmEmailSucess = () => {
         Swal.fire({
@@ -272,33 +260,6 @@ const Header = () => {
             });
     }, [userName, userEmail, userPassword]);
 
-    // useEffect(() => {
-    //     let prevConfirmEmail = confirmEmail;
-    //     if (confirmEmail === true && prevConfirmEmail === true) {
-    //         const timer = setInterval(() => {
-    //             get('users/confirm-status/', {
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 credentials: 'include',
-    //             }).then((data) => {
-    //                 if (data.status === 200) {
-    //                     clearInterval(timer);
-    //                     setConfirmEmail(false);
-    //                     setShowLoading(false);
-    //                     setShowAlertConfirmEmail(true);
-    //                     console.log(' xac thuc email thanh cong');
-    //                 } else if (data.status === 404) {
-    //                     console.log('That bai');
-    //                 } else console.log('12123');
-    //             });
-    //         }, 3000);
-    //         setTimeout(() => {
-    //             clearInterval(timer); // Dừng hàm setInterval sau 30 giây
-    //         }, 5000);
-    //     }
-    // }, [confirmEmail]);
-    //dang ki
     const handleSubmit = (e) => {
         e.preventDefault();
         if (userPassword === confirmPassword) {
@@ -342,6 +303,7 @@ const Header = () => {
                     username: response.username,
                     avatar: response.avatar,
                 });
+                console.log("dang nhap thanh cong")
                 setShowModal(false);
                 setLoginFailed(false);
                 window.location.reload();
@@ -378,7 +340,6 @@ const Header = () => {
                 const url = 'http://localhost:3000/';
                 const link = document.createElement('a');
                 link.href = url;
-
                 link.click();
                 console.log('thanh cong ');
             })
@@ -386,6 +347,19 @@ const Header = () => {
                 console.log('that bai ');
             });
     };
+    useEffect(()=>{
+        get('current-user', { withCredentials: true }).then((response) => {
+            if (response.is_active === true) {
+                console.log(response);
+                setUser(true);
+                setInfoUser({
+                    id: response.id,
+                    username: response.username,
+                    avatar: response.avatar,
+                }); 
+            }
+        });
+    },[user]);
 
     return (
         <>
@@ -582,7 +556,7 @@ const Header = () => {
                             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                                 <Tooltip title="Account settings">
                                     <IconButton
-                                        onClick={handleClick}
+                                      
                                         size="small"
                                         sx={{ ml: 2 }}
                                         aria-controls={open ? 'account-menu' : undefined}

@@ -11,8 +11,9 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import SearchEngine from '@/SearchEngine';
 const PAGE_SIZE = 7;
-
+import get from '~/utils/request/get';
 const handlePageClick = () => {};
+
 const Documents = () => {
     const [listID, setListID] = useState('');
     const [typeID, setTypeID] = useState('');
@@ -37,25 +38,22 @@ const Documents = () => {
     };
 
     useEffect(() => {
-        axios
-            .get('http://127.0.0.1:5000/api/categories')
+        get('api/categories')
             .then((response) => {
-                setListCategories(response.data);
+                setListCategories(response);
             })
             .catch((error) => {});
-        axios
-            .get('http://127.0.0.1:5000/api/types')
+        get('api/types')
             .then((response) => {
-                setListTypes(response.data);
-                setTypeID(response.data[0].id);
+                setListTypes(response);
+                setTypeID(response[0].id);
             })
             .catch((error) => {
                 console.log('that bai');
             });
-        axios
-            .get('http://127.0.0.1:5000/api/documents')
+        get('api/documents')
             .then((response) => {
-                setListDocs(response.data);
+                setListDocs(response);
             })
             .catch((error) => {
                 console.log('that bai');
@@ -147,39 +145,14 @@ const Documents = () => {
                             (document, index) =>
                                 userChoice.every((v) => document.categories.map((cate) => cate.id).includes(v)) &&
                                 typeID === document.document_type_id && (
-                                    <div className={cx('item')} key={index}>
-                                        <div className={cx('content__left')}>
-                                            {console.log(document)}
-                                            <img src={document.img_link_download} alt="preview" />
-                                        </div>
-                                        <div className={cx('content__right')}>
-                                            <div className={cx('content__right--title')}>
-                                                <Link to={`/Documents/${document.id}`}>
-                                                    <h1 style={{ color: '#3379b5' }}>{document.title}</h1>
-                                                </Link>
+                                    <>
+                                        <div className={cx('item')} key={index}>
+                                            <div className={cx('content__left')}>
+                                                {console.log(document)}
+                                                <img src={document.img_link_download} alt="preview" />
                                             </div>
-
-                                            <div className={cx('content__right--main')}>
-                                                <h1> {document.description}</h1>
-                                            </div>
-                                            <div className={cx('content__right--option')}>
-                                                <button>
-                                                    <span style={{ fontSize: '20px' }} className="material-icons">
-                                                        file_download
-                                                    </span>
-                                                    <h1>366</h1>
-                                                </button>
-
-                                                <button>
-                                                    <span
-                                                        style={{ fontSize: '20px', marginRight: '5px' }}
-                                                        className="material-icons"
-                                                    >
-                                                        visibility
-                                                    </span>
-                                                    <h1>3062</h1>
-                                                </button>
-                                                <div className={cx('buttonDown')}>
+                                            <div className={cx('content__right')}>
+                                                <div className={cx('content__right--title')}>
                                                     <Link to={`/Documents/${document.id}`}>
                                                         <h1 style={{ color: '#3379b5' }}>{document.title}</h1>
                                                     </Link>
@@ -190,7 +163,7 @@ const Documents = () => {
                                                 </div>
                                                 <div className={cx('content__right--option')}>
                                                     <button>
-                                                        <span style={{ fontSize: '20px' }} class="material-icons">
+                                                        <span style={{ fontSize: '20px' }} className="material-icons">
                                                             file_download
                                                         </span>
                                                         <h1>366</h1>
@@ -199,7 +172,7 @@ const Documents = () => {
                                                     <button>
                                                         <span
                                                             style={{ fontSize: '20px', marginRight: '5px' }}
-                                                            class="material-icons"
+                                                            className="material-icons"
                                                         >
                                                             visibility
                                                         </span>
@@ -207,7 +180,7 @@ const Documents = () => {
                                                     </button>
                                                     <div className={cx('buttonDown')}>
                                                         <Link to={`/Documents/${document.id}`}>
-                                                            <button type="button">
+                                                            <button style={{borer:'2px'}} type="button">
                                                                 <span
                                                                     style={{ color: '#99a8ba', fontSize: '15px' }}
                                                                     class="material-icons"
@@ -218,25 +191,21 @@ const Documents = () => {
                                                             </button>
                                                         </Link>
                                                     </div>
-                                                    <button type="button" class="btn btn-danger">
-                                                        <span class="material-icons" style={{ fontSize: '15px' }}>
+
+                                                    <button type="button" className="btn btn-danger">
+                                                        <span className="material-icons" style={{ fontSize: '15px' }}>
                                                             save_alt
                                                         </span>{' '}
                                                         Download
                                                     </button>
                                                 </div>
-                                                <button type="button" className="btn btn-danger">
-                                                    <span className="material-icons" style={{ fontSize: '15px' }}>
-                                                        save_alt
-                                                    </span>{' '}
-                                                    Download
-                                                </button>
                                             </div>
                                         </div>
-                                    </div>
+                                    </>
                                 ),
                         )}
                     </div>
+
                     <div className={cx('paginate')}>
                         <Stack spacing={2}>
                             <Pagination
@@ -251,13 +220,8 @@ const Documents = () => {
 
                 <div className={cx('main__right')}>
                     <i>Tìm kiếm tài liệu mới nhất</i>
-<<<<<<< HEAD
-                   
-                                    
+
                     {/* <div>1djn1jk1njkdwnjk</div> */}
-=======
-                    <SearchEngine style={{ marginRight: '10px' }} />
->>>>>>> 9149a37a73bdb74c00e21d587f1a2e51de84a90d
                 </div>
             </div>
         </>
