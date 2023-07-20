@@ -21,19 +21,24 @@ def login():
 
 
 '''
-    TODO: assets -> static folder
+THIS SECTION IS FOR REACT_APP
 '''
+@app.route('/', methods=["GET"])
+def fe_index():
+    return app.send_static_file('index.html')
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def fe(path):
+@app.errorhandler(404)
+def fe_not_found_handler(e):
     return app.send_static_file('index.html')
 
 
 @app.route('/src/assets/<path:path>')
-def send_assets(path):
+def fe_send_assets(path):
     return send_from_directory('static/img', path)
+'''
+END SECTION
+'''
 
 
 @app.route('/search')
