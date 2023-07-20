@@ -113,7 +113,7 @@ def confirm_email(token):
 #         return jsonify(response_data)
 
 
-# "/resend-confirm" ['GET']
+# "/resend-confirm" ['POST']
 def resend_confirmation():
     user_id = request.json.get('user_id')
     if user_id is None:
@@ -147,6 +147,12 @@ def user_login():
 
         user = check_login(username=username, password=password)
         if user:
+            if user.is_active is False:
+                response_data = {
+                    'message': "Tài khoản đã bị vô hiệu hóa",
+                    'status': 403
+                }
+                return jsonify(response_data), 403
             login_user(user=user)
             response_data = {
                 'message': "Success",
@@ -154,6 +160,7 @@ def user_login():
                 'name': current_user.name,
                 'username': current_user.username,
                 'avatar': current_user.avatar,
+                'is_confirm': current_user.is_confirm,
                 'status': 200
             }
             return jsonify(response_data), 200
@@ -186,6 +193,12 @@ def user_login_by_google():
 
     # Tài khoản đã tồn tại
     if user:
+        if user.is_active is False:
+            response_data = {
+                'message': "Tài khoản đã bị vô hiệu hóa",
+                'status': 403
+            }
+            return jsonify(response_data), 403
         login_user(user=user)
         response_data = user.to_dict(fields=["id", "username", "name", "email", "avatar"])
         response_data['status'] = 200

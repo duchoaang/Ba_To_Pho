@@ -9,7 +9,7 @@ user_bp.route('/register', methods=['POST'])(user_register)
 user_bp.route('/login', methods=['POST'])(user_login)
 user_bp.route('/loginGoogle', methods=['POST'])(user_login_by_google)
 user_bp.route('/logout', methods=['POST'])(user_logout)
-user_bp.route('/resend-confirm', methods=['GET'])(resend_confirmation)
+user_bp.route('/resend-confirm', methods=['POST'])(resend_confirmation)
 user_bp.route('/confirm/<token>', methods=['GET'])(confirm_email)
 user_bp.route('/<id>', methods=['PATCH'])(user_update)
 

@@ -51,7 +51,7 @@ def api_popular_new_documents():
 # "/documents/<id>" ['GET']
 def api_document_by_id(id):
     doc = get_document_by_id(id)
-    if doc == None:
+    if doc is None:
         return jsonify({"message": "Document does not exist"}), 404
 
     doc_info = doc.to_dict(
