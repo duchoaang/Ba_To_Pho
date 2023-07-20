@@ -173,13 +173,8 @@ def user_login():
 
 
 def user_logout():
-    data = request.form
-    id = next(data.items())[0]
-    if current_user.id == id:
-        logout_user()
-        return "success"
-    else:
-        return "logged out before"
+    logout_user()
+    return "success"
 
 
 def user_login_by_google():
