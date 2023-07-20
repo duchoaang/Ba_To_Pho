@@ -4,6 +4,12 @@ import classNames from 'classnames/bind';
 import styles from './Comment.module.scss';
 
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 import post from '~/utils/request/post';
 
@@ -12,6 +18,8 @@ const DeleteForeverIcon = lazy(() => import('@mui/icons-material/DeleteForever')
 
 const cx = classNames.bind(styles);
 const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) => {
+    const [open, setOpen] = useState(false);
+
     const stringToColor = (string) => {
         let hash = 0;
         let i;
@@ -36,6 +44,7 @@ const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) 
                 sx={{
                     bgcolor: stringToColor(userName),
                     display: 'inline-flex',
+                    marginTop: '6px',
                 }}
             >
                 {userName[0].toUpperCase()}
@@ -65,19 +74,49 @@ const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) 
                         <IconButton
                             size="small"
                             onClick={() => {
-                                post('comments/remove', {
-                                    comment_id: cmtId,
-                                }).then(() => {
-                                    setReload((prev) => !prev);
-                                });
+                                setOpen(true);
                             }}
                         >
                             <DeleteForeverIcon fontSize="inherit" />
                         </IconButton>
                     </div>
                 </div>
-                <div>{content}</div>
+                <div className="text-break">{content}</div>
             </div>
+            <Dialog
+                open={open}
+                onClose={() => {
+                    setOpen(false);
+                }}
+            >
+                <DialogTitle id="alert-dialog-title">{'Cảnh báo!!!!'}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Bạn có chắc chắn muốn xóa bình luận này?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            setOpen(false);
+                        }}
+                        autoFocus
+                    >
+                        Hủy
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            post('comments/remove', {
+                                comment_id: cmtId,
+                            }).then(() => {
+                                setReload((prev) => !prev);
+                            });
+                        }}
+                    >
+                        Xóa
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

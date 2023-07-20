@@ -9,7 +9,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import SearchEngine from '@/SearchEngine'
+import SearchEngine from '@/SearchEngine';
 const PAGE_SIZE = 7;
 
 const handlePageClick = () => {};
@@ -28,7 +28,6 @@ const Documents = () => {
         setStart((numberPage - 1) * PAGE_SIZE);
     }, [numberPage]);
 
-   
     const handleChecklist = (checked, id) => {
         if (checked) {
             setUserChoice([...userChoice, id]);
@@ -71,7 +70,7 @@ const Documents = () => {
             <div className={cx('main')}>
                 <div className={cx('main__left')}>
                     <div className={cx('title__left')}>
-                        <span style={{ fontSize: '15px' }} class="material-icons">
+                        <span style={{ fontSize: '15px' }} className="material-icons">
                             bookmarks
                         </span>{' '}
                         <h1> Bộ lọc tìm kiếm</h1>
@@ -103,7 +102,7 @@ const Documents = () => {
                                     ))}
                             </ul>
                             <h2 onClick={handleShowList} className={cx('showMore')} style={{ marginBottom: '20px' }}>
-                                <span class="material-icons">arrow_drop_down</span>
+                                <span className="material-icons">arrow_drop_down</span>
                                 Thêm
                             </h2>
                         </div>
@@ -125,19 +124,19 @@ const Documents = () => {
                     </div>
                     <div className={cx('rate')}>
                         <h1>Đánh giá</h1>
-                        <span class="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
+                        <span className="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
                             star
                         </span>
-                        <span class="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
+                        <span className="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
                             star
                         </span>
-                        <span class="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
+                        <span className="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
                             star
                         </span>
-                        <span class="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
+                        <span className="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
                             star
                         </span>
-                        <span class="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
+                        <span className="material-icons" style={{ color: 'orange', fontSize: '16px' }}>
                             star
                         </span>
                     </div>
@@ -148,14 +147,39 @@ const Documents = () => {
                             (document, index) =>
                                 userChoice.every((v) => document.categories.map((cate) => cate.id).includes(v)) &&
                                 typeID === document.document_type_id && (
-                                    <>
-                                        <div className={cx('item')} key={index}>
-                                            <div className={cx('content__left')}>
-                                                {console.log(document)}
-                                                <img src={document.img_link_download} alt="preview" />
+                                    <div className={cx('item')} key={index}>
+                                        <div className={cx('content__left')}>
+                                            {console.log(document)}
+                                            <img src={document.img_link_download} alt="preview" />
+                                        </div>
+                                        <div className={cx('content__right')}>
+                                            <div className={cx('content__right--title')}>
+                                                <Link to={`/Documents/${document.id}`}>
+                                                    <h1 style={{ color: '#3379b5' }}>{document.title}</h1>
+                                                </Link>
                                             </div>
-                                            <div className={cx('content__right')}>
-                                                <div className={cx('content__right--title')}>
+
+                                            <div className={cx('content__right--main')}>
+                                                <h1> {document.description}</h1>
+                                            </div>
+                                            <div className={cx('content__right--option')}>
+                                                <button>
+                                                    <span style={{ fontSize: '20px' }} className="material-icons">
+                                                        file_download
+                                                    </span>
+                                                    <h1>366</h1>
+                                                </button>
+
+                                                <button>
+                                                    <span
+                                                        style={{ fontSize: '20px', marginRight: '5px' }}
+                                                        className="material-icons"
+                                                    >
+                                                        visibility
+                                                    </span>
+                                                    <h1>3062</h1>
+                                                </button>
+                                                <div className={cx('buttonDown')}>
                                                     <Link to={`/Documents/${document.id}`}>
                                                         <h1 style={{ color: '#3379b5' }}>{document.title}</h1>
                                                     </Link>
@@ -201,9 +225,15 @@ const Documents = () => {
                                                         Download
                                                     </button>
                                                 </div>
+                                                <button type="button" className="btn btn-danger">
+                                                    <span className="material-icons" style={{ fontSize: '15px' }}>
+                                                        save_alt
+                                                    </span>{' '}
+                                                    Download
+                                                </button>
                                             </div>
                                         </div>
-                                    </>
+                                    </div>
                                 ),
                         )}
                     </div>
@@ -221,9 +251,13 @@ const Documents = () => {
 
                 <div className={cx('main__right')}>
                     <i>Tìm kiếm tài liệu mới nhất</i>
+<<<<<<< HEAD
                    
                                     
                     {/* <div>1djn1jk1njkdwnjk</div> */}
+=======
+                    <SearchEngine style={{ marginRight: '10px' }} />
+>>>>>>> 9149a37a73bdb74c00e21d587f1a2e51de84a90d
                 </div>
             </div>
         </>

@@ -129,6 +129,7 @@ const Header = () => {
     //     googleLogout();
     //     setProfile(null);
 
+
     // };
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -343,6 +344,7 @@ const Header = () => {
                 });
                 setShowModal(false);
                 setLoginFailed(false);
+                window.location.reload();
             })
             .catch((error) => {
                 setLoginFailed(true);

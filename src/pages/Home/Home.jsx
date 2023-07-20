@@ -42,7 +42,6 @@ const Home = () => {
                     <h1>Tài liệu phổ biến</h1>
                 </div>
                 <div className={cx('cardDocs')}>
-                  
                     {true &&
                         popularDocs.slice(0, 4).map((docs, index) => (
                             <Card
@@ -86,7 +85,6 @@ const Home = () => {
                     <h1>Tài liệu mới nhất</h1>
                 </div>
                 <div className={cx('cardDocs')}>
-                
                     {true &&
                         newDocs.slice(0, 4).map((docs, index) => (
                             <>
