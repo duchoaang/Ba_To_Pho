@@ -36,27 +36,18 @@ def user_register():
         password = hashlib.md5(password.encode()).hexdigest()
         fields['password'] = password
 
+        add_user(fields)
+
         token = generate_confirmation_token(email)
-        start_time = time.time()
         confirm_url = url_for('user_bp.confirm_email', token=token, _external=True)
         html = render_template('confirm.html', confirm_url=confirm_url)
         subject = "Vui lòng xác thực email"
         send_email(email, subject, html)
-        end_time = time.time()
-        elapsed_time = end_time - start_time
 
         msg = f"Đã gửi link xác nhận đến {email}."
         response_data = {
             'message': msg,
             'status': 200
-        }
-        key = app.config['USER_TEMP_KEY']
-        session[key] = {
-            "username": username,
-            "password": password,
-            "email": email,
-            "is_confirm": False,
-            "elapsed_time": elapsed_time,
         }
         return jsonify(response_data), 200
     except Exception as e:
@@ -70,21 +61,11 @@ def user_register():
 
 # "/confirm/<token>" ['GET']
 def confirm_email(token):
-    key = app.config['USER_TEMP_KEY']
-
-    if key not in session:
-        response_data = {
-            'message': "Không tìm thấy thông tin đăng ký",
-            'status': 404
-        }
-        return jsonify(response_data), 404
-    data = session[key]
-
-    elapsed_time = data['elapsed_time']
     try:
-        email = my_token.confirm_token(token, expiration=elapsed_time + 90)
-    except:
+        email = my_token.confirm_token(token, expiration=1800)
+    except IntegrityError:
         email = False
+
     if email is False:
         response_data = {
             'message': "Link xác thực đã hết hạn",
@@ -92,95 +73,70 @@ def confirm_email(token):
         }
         return jsonify(response_data), 404
 
-    mail = data['email']
-
     u = get_user_by_email(email)
     if u:
+        confirm_user(u)
         response_data = {
-            'message': "Tài khoản đã xác thực rồi",
-            'status': 304
-        }
-        return jsonify(response_data), 304
-
-    if email != mail:
-        response_data = {
-            'message': "Email xác nhận không trùng với thông tin đăng ký hiện tại",
-            'status': 404
-        }
-        return jsonify(response_data), 404
-
-    try:
-        new_user = add_user(data)
-    except IntegrityError as e:
-        msg = ""
-        if "username" in str(e):
-            msg += "Username đã được sử dụng"
-        elif "email" in str(e):
-            if msg != "":
-                msg += "\n"
-            msg += "Email này đã đuợc xác nhận bởi tài khoản khác"
-        response_data = {
-            'message': msg,
-            'status': 404
-        }
-        return jsonify(response_data), 404
-
-    response_data = {
-        'message': "Bạn đã xác thực tài khoản thành công!",
-        'status': 200
-    }
-
-    data = session[key]
-    data['is_confirm'] = True
-    session[key] = data
-    return jsonify(response_data), 200
-
-
-def get_confirm_status():
-    key = app.config['USER_TEMP_KEY']
-    if key not in session:
-        response_data = {
-            'message': "Không tìm thấy thông tin đăng ký",
-            'status': 404
-        }
-        return jsonify(response_data)
-    data = session[key]
-
-    if data['is_confirm']:
-        response_data = {
-            'message': "Xác thực thành công!",
-            'status': 200
-        }
-        return jsonify(response_data)
-    else:
-        response_data = {
-            'message': "Chưa xác thực",
+            'message': "Tài khoản xác thực thành công",
             'status': 204
         }
-        return jsonify(response_data)
-
-
-# "/resend/confirm" ['GET']
-def resend_confirmation():
-    if current_user.is_authenticated:
-        token = my_token.generate_confirmation_token(current_user.email)
-        confirm_url = url_for('confirm_email', token=token, _external=True)
-        html = render_template('confirm.html', confirm_url=confirm_url)
-        subject = "Vui lòng xác thực email"
-        send_email(current_user.email, subject, html)
-        msg = f"Đã gửi link xác nhận đến {current_user.email}."
-        response_data = {
-            'message': msg,
-            'status': 200
-        }
-        return jsonify(response_data), 200
+        return jsonify(response_data), 204
     else:
-        msg = f"Vui lòng đăng nhập."
         response_data = {
-            'message': msg,
+            'message': "Không tìm thấy tài khoản",
             'status': 404
         }
         return jsonify(response_data), 404
+
+
+# def get_confirm_status():
+#     key = app.config['USER_TEMP_KEY']
+#     if key not in session:
+#         response_data = {
+#             'message': "Không tìm thấy thông tin đăng ký",
+#             'status': 404
+#         }
+#         return jsonify(response_data)
+#     data = session[key]
+#
+#     if data['is_confirm']:
+#         response_data = {
+#             'message': "Xác thực thành công!",
+#             'status': 200
+#         }
+#         return jsonify(response_data)
+#     else:
+#         response_data = {
+#             'message': "Chưa xác thực",
+#             'status': 204
+#         }
+#         return jsonify(response_data)
+
+
+# "/resend-confirm" ['GET']
+def resend_confirmation():
+    user_id = request.json.get('user_id')
+    if user_id is None:
+        response_data = {
+            'message': "userId không hợp lệ",
+            'status': 404
+        }
+        return jsonify(response_data), 404
+
+    user = dao.get_user_by_id(user_id)
+    email = user.email
+
+    token = my_token.generate_confirmation_token(email)
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = render_template('confirm.html', confirm_url=confirm_url)
+    subject = "Vui lòng xác thực email"
+    send_email(email, subject, html)
+    msg = f"Đã gửi link xác nhận đến {email}."
+    response_data = {
+        'message': msg,
+        'status': 200
+    }
+    return jsonify(response_data), 200
 
 
 # "/login" ['POST']
@@ -221,6 +177,9 @@ def user_logout():
 
 def user_login_by_google():
     data = request.json
+    if not data:
+        response_data = {'status': 404, 'message': "Request is empty"}
+        return jsonify(response_data)
     email_verified = data.get('verified_email')
     fields = {'email': data.get('email'), 'name': data.get('name'), 'avatar': data.get('picture')}
     user = dao.get_user_by_email(fields['email'])
@@ -260,5 +219,3 @@ def user_update(id):
     fields = {'name': data.get('fullName'), 'bio': data.get('bio'), 'social_media': data.get('socialMedia'),
               'address': data.get('address'), 'phone_number': data.get('phoneNumber')}
     return jsonify(update_user(id, fields))
-
-
