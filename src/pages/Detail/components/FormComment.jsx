@@ -47,6 +47,7 @@ const FormComment = ({ setReload, doc_id }) => {
                         width: '100%',
                         flex: '1',
                     }}
+                    slotProps={{ textarea: { maxLength: '1000' } }}
                     endDecorator={
                         <Button
                             type="submit"

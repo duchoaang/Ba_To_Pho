@@ -111,6 +111,7 @@ const Comment = ({ userName, content, created_date, userId, cmtId, setReload }) 
                             }).then(() => {
                                 setReload((prev) => !prev);
                             });
+                            setOpen(false);
                         }}
                     >
                         Xóa
