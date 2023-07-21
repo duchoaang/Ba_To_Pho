@@ -197,23 +197,18 @@ const Header = () => {
     };
 
     const AlertConfirmEmail = () => {
+        
         Swal.fire({
-            title: 'Xác nhận email !',
-            html: 'Chúng tôi đã gửi một mã xác thực qua gmail, vui lòng xác thực để có thể sử <b></b>dụng dịch vụ! .',
-            timer: 5000,
+            title: 'Hãy xác thực email !',
+            html: 'Cảm ơn bạn đã đăng kí. Chúng tôi đã gửi một mã xác thực qua gmail, vui lòng xác thực để có thể sử dụng dịch vụ! .',
+            timer: 6000,
             timerProgressBar: true,
             didOpen: () => {
                 Swal.showLoading();
-                const b = Swal.getHtmlContainer().querySelector('b');
-                let remainingTime;
-                timerInterval = setInterval(() => {
-                    remainingTime = Math.floor(Swal.getTimerLeft() / 1000);
-                    b.textContent = remainingTime;
-                }, 1000);
             },
             willClose: () => {
                 setShowAlertConfirmEmail(false); 
-                clearInterval(timerInterval);
+
             },
         }).then((result) => {
             /* Read more about handling dismissals below */
@@ -264,7 +259,7 @@ const Header = () => {
         if (userPassword === confirmPassword) {
             setShowLoading(true);
             setErrorMessage(false);
-            // setShowRegister(false)
+          
             post('users/register', formData, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -272,14 +267,15 @@ const Header = () => {
                 credentials: 'include',
             })
                 .then((data) => {
+                    console.log(data);
                     if (data.status === 200) {
                         setShowRegister(false);
                         setShowAlertConfirmEmail(true);
-                        console.log('dang ki thanh cong');
-
+                        
                         setConfirmEmail(true);
                     } else if (data.status === 404) {
-                        console.log('dang ki That bai');
+                        console.log('bi trung user');
+
                         setShowLoading(false);
                         setErrorUserNameEmail(true);
                         setConfirmEmail(false);
@@ -296,7 +292,7 @@ const Header = () => {
         post('users/login', formDataLogin, { withCredentials: true })
             .then((response) => {
                 setUser(true);
-                // console.log(response.data);
+                
                 setInfoUser({
                     id: response.id,
                     username: response.username,
@@ -313,6 +309,7 @@ const Header = () => {
             });
     };
     const handleRegister = () => {
+        setShowAlertConfirmEmail(false);
         setErrorUserNameEmail(false);
         setUserPassword('');
         setUserEmail('');
@@ -322,6 +319,7 @@ const Header = () => {
         setShowModal(false);
         setShowRegister(true);
     };
+
     const handleCancel = () => {
         setUserName('');
         setShowRegister(false);
@@ -362,7 +360,7 @@ const Header = () => {
 
     return (
         <>
-            {showAlertConfirmEmail && <AlertConfirmEmailSucess onClose={handleAlertClose} />}
+            {showAlertConfirmEmail && <AlertConfirmEmail onClose={handleAlertClose} />}
 
             <ModalWrapper show={showModal}>
                 <div className={cx('modal-inner')}>
@@ -528,7 +526,7 @@ const Header = () => {
                 </div>
             </ModalWrapper>
 
-            {confirmEmail && <AlertConfirmEmail />}
+            {/* {confirmEmail && <AlertConfirmEmail />} */}
 
             <header className={cx('wrapper')}>
                 <div className={cx('logo')}>
