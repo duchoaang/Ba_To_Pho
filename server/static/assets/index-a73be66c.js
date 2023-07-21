@@ -1,0 +1,1 @@
+import{r as o,H as r}from"./get-498fd3bb.js";import{m as l}from"./get-498fd3bb.js";import{p as w}from"./post-2c5752a7.js";import{p as E}from"./patch-b220b3bf.js";import"./index-c915fb63.js";const p=async(t,s={},e={})=>(await o.put(t,s,{...r,...e})).data,u=p,n=async(t,s={},e={})=>(await o.delete(t,s,{...r,...e})).data,d=n;export{d as del,l as get,E as patch,w as post,u as put};
