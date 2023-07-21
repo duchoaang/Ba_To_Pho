@@ -29,7 +29,7 @@ def user_register():
                 'message': msg,
                 'status': 404
             }
-            return jsonify(response_data), 404
+            return jsonify(response_data)
 
         fields = {'email': email, 'username': username}
         password = request.json.get('password')
@@ -49,14 +49,14 @@ def user_register():
             'message': msg,
             'status': 200
         }
-        return jsonify(response_data), 200
+        return jsonify(response_data)
     except Exception as e:
         response_data = {
             'message': "Lỗi server",
             'status': 505
         }
         print(e)
-        return jsonify(response_data), 505
+        return jsonify(response_data)
 
 
 # "/confirm/<token>" ['GET']
@@ -67,26 +67,17 @@ def confirm_email(token):
         email = False
 
     if email is False:
-        response_data = {
-            'message': "Link xác thực đã hết hạn",
-            'status': 404
-        }
-        return jsonify(response_data), 404
+        return render_template("confirm_result.html", message="Link xác thực đã hết hạn")
 
     u = get_user_by_email(email)
     if u:
-        confirm_user(u)
-        response_data = {
-            'message': "Tài khoản xác thực thành công",
-            'status': 204
-        }
-        return jsonify(response_data), 204
+        if not u.is_confirm:
+            confirm_user(u)
+            return render_template("confirm_result.html", message="Xác thực thành công")
+        else:
+            return render_template("confirm_result.html", message="Tài khoản đã được xác thực trước đây")
     else:
-        response_data = {
-            'message': "Không tìm thấy tài khoản",
-            'status': 404
-        }
-        return jsonify(response_data), 404
+        return render_template("confirm_result.html", message="Không tìm thấy thông tin đăng ký")
 
 
 # def get_confirm_status():
