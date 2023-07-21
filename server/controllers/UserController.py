@@ -29,7 +29,7 @@ def user_register():
                 'message': msg,
                 'status': 404
             }
-            return jsonify(response_data), 404
+            return jsonify(response_data)
 
         fields = {'email': email, 'username': username}
         password = request.json.get('password')
@@ -49,14 +49,14 @@ def user_register():
             'message': msg,
             'status': 200
         }
-        return jsonify(response_data), 200
+        return jsonify(response_data)
     except Exception as e:
         response_data = {
             'message': "Lỗi server",
             'status': 505
         }
         print(e)
-        return jsonify(response_data), 505
+        return jsonify(response_data)
 
 
 # "/confirm/<token>" ['GET']
@@ -67,26 +67,17 @@ def confirm_email(token):
         email = False
 
     if email is False:
-        response_data = {
-            'message': "Link xác thực đã hết hạn",
-            'status': 404
-        }
-        return jsonify(response_data), 404
+        return render_template("confirm_result.html", message="Link xác thực đã hết hạn")
 
     u = get_user_by_email(email)
     if u:
-        confirm_user(u)
-        response_data = {
-            'message': "Tài khoản xác thực thành công",
-            'status': 204
-        }
-        return jsonify(response_data), 204
+        if not u.is_confirm:
+            confirm_user(u)
+            return render_template("confirm_result.html", message="Xác thực thành công")
+        else:
+            return render_template("confirm_result.html", message="Tài khoản đã được xác thực trước đây")
     else:
-        response_data = {
-            'message': "Không tìm thấy tài khoản",
-            'status': 404
-        }
-        return jsonify(response_data), 404
+        return render_template("confirm_result.html", message="Không tìm thấy thông tin đăng ký")
 
 
 # def get_confirm_status():
@@ -113,7 +104,7 @@ def confirm_email(token):
 #         return jsonify(response_data)
 
 
-# "/resend-confirm" ['GET']
+# "/resend-confirm" ['POST']
 def resend_confirmation():
     user_id = request.json.get('user_id')
     if user_id is None:
@@ -147,6 +138,12 @@ def user_login():
 
         user = check_login(username=username, password=password)
         if user:
+            if user.is_active is False:
+                response_data = {
+                    'message': "Tài khoản đã bị vô hiệu hóa",
+                    'status': 403
+                }
+                return jsonify(response_data), 403
             login_user(user=user)
             response_data = {
                 'message': "Success",
@@ -154,6 +151,7 @@ def user_login():
                 'name': current_user.name,
                 'username': current_user.username,
                 'avatar': current_user.avatar,
+                'is_confirm': current_user.is_confirm,
                 'status': 200
             }
             return jsonify(response_data), 200
@@ -166,13 +164,8 @@ def user_login():
 
 
 def user_logout():
-    data = request.form
-    id = next(data.items())[0]
-    if current_user.id == id:
-        logout_user()
-        return "success"
-    else:
-        return "logged out before"
+    logout_user()
+    return "success"
 
 
 def user_login_by_google():
@@ -186,6 +179,12 @@ def user_login_by_google():
 
     # Tài khoản đã tồn tại
     if user:
+        if user.is_active is False:
+            response_data = {
+                'message': "Tài khoản đã bị vô hiệu hóa",
+                'status': 403
+            }
+            return jsonify(response_data), 403
         login_user(user=user)
         response_data = user.to_dict(fields=["id", "username", "name", "email", "avatar"])
         response_data['status'] = 200

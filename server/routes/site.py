@@ -10,3 +10,5 @@ site_bp.route('/current-user', methods=['POST', 'GET'])(get_current_user)
 site_bp.route('/profile/<id>', methods=['GET'])(get_user_info)
 site_bp.route('/verify-recaptcha', methods=["POST"])(verify_recaptcha)
 site_bp.route('/keywords', methods=["POST"])(save_keywords)
+site_bp.route('/views', methods=["POST"])(update_view)
+

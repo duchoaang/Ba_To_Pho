@@ -60,3 +60,13 @@ def save_keywords():
 
     response, status_code = dao.save_keyword_search_by_user(user_id, keywords.strip().lower())
     return jsonify(response), status_code
+
+
+def update_view():
+    doc_id = request.json.get('document_id')
+
+    result = dao.update_view(doc_id)
+    if result:
+        return jsonify({"status": 200, "msg": "Success"})
+    else:
+        return jsonify({"status": 404, "msg": "Document không tồn tại hoặc chưa được duyệt"})
