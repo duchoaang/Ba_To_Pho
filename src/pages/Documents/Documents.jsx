@@ -153,7 +153,7 @@ const Documents = () => {
                                             </div>
                                             <div className={cx('content__right')}>
                                                 <div className={cx('content__right--title')}>
-                                                    <Link to={`/Documents/${document.id}`}>
+                                                    <Link to={`/documents/${document.id}`}>
                                                         <h1 style={{ color: '#3379b5' }}>{document.title}</h1>
                                                     </Link>
                                                 </div>
@@ -179,8 +179,8 @@ const Documents = () => {
                                                         <h1>3062</h1>
                                                     </button>
                                                     <div className={cx('buttonDown')}>
-                                                        <Link to={`/Documents/${document.id}`}>
-                                                            <button style={{borer:'2px'}} type="button">
+                                                        <Link to={`/documents/${document.id}`}>
+                                                            <button style={{ borer: '2px' }} type="button">
                                                                 <span
                                                                     style={{ color: '#99a8ba', fontSize: '15px' }}
                                                                     class="material-icons"

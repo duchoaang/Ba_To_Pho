@@ -1,10 +1,8 @@
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import styles from './Profile.module.scss';
 import classNames from 'classnames/bind';
-import 'bootstrap/dist/css/bootstrap.min.css';
 const cx = classNames.bind(styles);
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -14,7 +12,6 @@ import Avatar from '@mui/material/Avatar';
 import ImageIcon from '@mui/icons-material/Image';
 import Divider from '@mui/material/Divider';
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>;
-import { Link } from 'react-router-dom';
 import {
     MDBCol,
     MDBContainer,
@@ -36,17 +33,27 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
+
 import get from '~/utils/request/get';
+import patch from '~/utils/request/patch';
 const Profile = () => {
     const { id } = useParams();
     const [value, setValue] = useState(0);
-    const [infoUser, setInfoUser] = useState([]);
+    const [infoUser, setInfoUser] = useState({
+        id: id,
+        name: '',
+        avatar: '',
+        email: '',
+        gem: 0,
+        docsCount: {
+            userDocs: 0,
+            waitDocs: 0,
+            favDocs: 0,
+            resultDocs: 0,
+        },
+    });
     const [docsType, setDocsType] = useState('userDocs');
     const [listDocs, setListDocs] = useState([]);
-    const [totalWaitDocs, setTotalWaitDocs] = useState('');
-    const [totalResultDocs, setTotalResultDocs] = useState('');
-    const [totalFavDocs, setTotalFavDocs] = useState('');
-    const [totalUserDocs, setTotalUserDocs] = useState('');
     const [formInfoUser, setFormInfoUser] = useState({
         fullName: '',
         bio: '',
@@ -56,22 +63,12 @@ const Profile = () => {
     });
     const decodeId = decodeURIComponent(id);
     const sendDataToServer = () => {
-        const url = `http://127.0.0.1:5000/users/${decodeURIComponent(id)}`; // Thay thế bằng URL thực tế của bạn
-        const data = { key: formInfoUser }; // Thay thế bằng dữ liệu thực tế bạn muốn gửi
-        console.log('da gui');
-        axios
-            .patch(url, data)
-            .then((response) => {
-                console.log('Gửi PATCH thành công!');
-                // Xử lý phản hồi từ server (nếu cần)
-            })
-            .catch((error) => {
-                console.error('Gửi PATCH không thành công!');
-                // Xử lý lỗi (nếu cần)
-            });
+        patch(`users/${decodeId}`, { key: formInfoUser }).then(() => {
+            fetchUserData();
+        });
     };
 
-    const handleChange = (event, newValue) => {
+    const handleChange = (_, newValue) => {
         setValue(newValue);
     };
 
@@ -93,10 +90,9 @@ const Profile = () => {
         const fetchData = async () => {
             try {
                 const response = await get(`profile/${decodeId}`);
-                const responseData = response;
 
                 if (handleDocsType.hasOwnProperty(docsType)) {
-                    handleDocsType[docsType](responseData);
+                    handleDocsType[docsType](response);
                 }
             } catch (error) {
                 console.log('Không gửi được yêu cầu.');
@@ -106,241 +102,222 @@ const Profile = () => {
         fetchData();
     }, [docsType]);
 
-    useEffect(() => {
-        
-            get(`profile/${decodeId}`)
-            .then((response) => {
-                console.log(response);
-                return response;
-            })
-            .then((data) => {
-                setInfoUser({
-                    id: data.id,
-                    name: data.name,
-                    avatar: data.avatar,
-                    email: data.email,
-                    gem: data.gem,
-                });
-                setTotalUserDocs(data.userDocs.length);
-                setTotalWaitDocs(data.waitDocs.length);
-                setTotalFavDocs(data.favDocs.length);
-                setTotalResultDocs(data.resultDocs.length);
-            })
-            .catch((error) => {
-                console.log('Ko gui dc');
+    const fetchUserData = () => {
+        get(`profile/${decodeId}`).then((data) => {
+            setInfoUser({
+                id: data.id,
+                name: data.name,
+                avatar: data.avatar,
+                email: data.email,
+                gem: data.gem,
+                docsCount: {
+                    userDocs: data.userDocs.length,
+                    waitDocs: data.waitDocs.length,
+                    favDocs: data.favDocs.length,
+                    resultDocs: data.resultDocs.length,
+                },
             });
-        // Sử dụng giá trị `decodedId` trong ứng dụng của bạn
-    }, [id]);
-    console.log(formInfoUser);
-    
+            setFormInfoUser({
+                fullName: data.name,
+                bio: data.bio,
+                socialMedia: data.social_media,
+                address: data.address,
+                phoneNumber: data.phone_number,
+            });
+        });
+    };
+
+    useEffect(fetchUserData, [id]);
 
     return (
-        <>
-            <section style={{ backgroundColor: '#eee' }}>
-                <MDBContainer className="py-5">
-                    <MDBRow>
-                        <MDBCol>
-                            <MDBBreadcrumb className="bg-light rounded-3 p-3 mb-4">
-                                <MDBBreadcrumbItem>
-                                    <a href="#">Home</a>
-                                </MDBBreadcrumbItem>
-                                <MDBBreadcrumbItem>
-                                    <a href="#">{infoUser.name}</a>
-                                </MDBBreadcrumbItem>
-                                <MDBBreadcrumbItem active>User Profile</MDBBreadcrumbItem>
-                            </MDBBreadcrumb>
-                        </MDBCol>
-                    </MDBRow>
+        <section style={{ backgroundColor: '#eee' }}>
+            <MDBContainer className="py-5">
+                <MDBRow>
+                    <MDBCol>
+                        <MDBBreadcrumb className="bg-light rounded-3 p-3 mb-4">
+                            <MDBBreadcrumbItem>
+                                <a href="#">Home</a>
+                            </MDBBreadcrumbItem>
+                            <MDBBreadcrumbItem>
+                                <a href="#">{infoUser.name}</a>
+                            </MDBBreadcrumbItem>
+                            <MDBBreadcrumbItem active>User Profile</MDBBreadcrumbItem>
+                        </MDBBreadcrumb>
+                    </MDBCol>
+                </MDBRow>
 
-                    <MDBRow>
-                        <MDBCol lg="4">
-                            <MDBCard className="mb-4">
-                                <MDBCardBody className="text-center">
-                                    <MDBCardImage
-                                        src={infoUser.avatar}
-                                        alt="avatar"
-                                        className="rounded-circle"
-                                        style={{ width: '150px' }}
-                                        fluid
-                                    />
-                                    <p className="">{infoUser.name}</p>
-                                    <p className="">Email: {infoUser.email}</p>
-                                    <p>Số gem hiện tại : {infoUser.gem}</p>
-                                    <div className="d-flex justify-content-center mb-2">
-                                        <Button variant="contained" style={{ fontSize: '13px', marginTop: '-10px' }}>
-                                            Chỉnh sửa thông tin
-                                        </Button>
-                                    </div>
-                                </MDBCardBody>
-                            </MDBCard>
-
-                            <MDBCard className="mb-4 mb-lg-0">
-                                <Box
-                                    component="form"
-                                    sx={{
-                                        '& > :not(style)': { m: 1, width: '50%' },
-                                    }}
-                                    noValidate
-                                    autoComplete="off"
-                                >
-                                    <div className={cx('changeInfo', 'changeName')}>
-                                        <h1>Họ và tên</h1>
-                                        <TextField
-                                            style={{ width: '96%' }}
-                                            size="small"
-                                            id="outlined-basic"
-                                            placeholder="Họ tên"
-                                            variant="outlined"
-                                            value={formInfoUser.fullName}
-                                            onChange={(e) =>
-                                                setFormInfoUser({ ...formInfoUser, fullName: e.target.value })
-                                            }
-                                        />
-                                    </div>
-                                    <div className={cx('changeInfo', 'changeBio')}>
-                                        <h1>Giới thiệu</h1>
-                                        <TextField
-                                            type="text"
-                                            style={{ width: '96%' }}
-                                            size="medium"
-                                            id="outlined-basic"
-                                            placeholder="Giới thiệu"
-                                            variant="outlined"
-                                            value={formInfoUser.bio}
-                                            onChange={(e) => setFormInfoUser({ ...formInfoUser, bio: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className={cx('changeInfo', 'changeSocialMedia')}>
-                                        <h1>Mạng xã hội</h1>
-                                        <TextField
-                                            type="text"
-                                            style={{ width: '96%' }}
-                                            size="small"
-                                            id="outlined-basic"
-                                            placeholder="Link facebook/instagram/twitter"
-                                            variant="outlined"
-                                            value={formInfoUser.socialMedia}
-                                            onChange={(e) =>
-                                                setFormInfoUser({ ...formInfoUser, socialMedia: e.target.value })
-                                            }
-                                        />
-                                    </div>
-                                    <div className={cx('changeInfo', 'changeAddress')}>
-                                        <h1>Địa chỉ</h1>
-                                        <TextField
-                                            type="text"
-                                            style={{ width: '96%' }}
-                                            size="small"
-                                            id="outlined-basic"
-                                            placeholder="Địa chỉ"
-                                            variant="outlined"
-                                            value={formInfoUser.address}
-                                            onChange={(e) =>
-                                                setFormInfoUser({ ...formInfoUser, address: e.target.value })
-                                            }
-                                        />
-                                    </div>
-                                    <div className={cx('changeInfo', 'changePhone')}>
-                                        <h1>Số điện thoại</h1>
-                                        <TextField
-                                            type="text"
-                                            style={{ width: '96%' }}
-                                            size="small"
-                                            id="outlined-basic"
-                                            placeholder="Số điện thoại"
-                                            variant="outlined"
-                                            value={formInfoUser.phoneNumber}
-                                            onChange={(e) =>
-                                                setFormInfoUser({ ...formInfoUser, phoneNumber: e.target.value })
-                                            }
-                                        />
-                                    </div>
-                                </Box>
-                                <div className={cx('btnChangeInfo')}>
-                                    <Button onClick={sendDataToServer} variant="contained" color="success" size="small">
-                                        Lưu
-                                    </Button>
-                                    <Button variant="contained" color="inherit" size="small">
-                                        Hủy
+                <MDBRow>
+                    <MDBCol lg="4">
+                        <MDBCard className="mb-4">
+                            <MDBCardBody className="text-center">
+                                <MDBCardImage
+                                    src={infoUser.avatar}
+                                    alt="avatar"
+                                    className="rounded-circle"
+                                    style={{ width: '150px' }}
+                                    fluid
+                                />
+                                <p className="">{infoUser.name}</p>
+                                <p className="">Email: {infoUser.email}</p>
+                                <p>Số gem hiện tại : {infoUser.gem}</p>
+                                <div className="d-flex justify-content-center mb-2">
+                                    <Button variant="contained" style={{ fontSize: '13px', marginTop: '-10px' }}>
+                                        Chỉnh sửa thông tin
                                     </Button>
                                 </div>
-                            </MDBCard>
-                        </MDBCol>
-                        <MDBCol style={{ background: '#fff' }} lg="8">
-                            <div className="div" style={{ width: '100%', background: '#fff' }}>
-                                <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                                    <Tabs
-                                        className={cx('tabController')}
-                                        value={value}
-                                        onChange={handleChange}
-                                        centered
-                                    >
-                                        <Tab
-                                            name="userDocs"
-                                            style={{ fontSize: '13px' }}
-                                            onClick={(e) => setDocsType(e.target.name)}
-                                            label={`Tài liệu cá nhân (${totalUserDocs})`}
-                                        />
+                            </MDBCardBody>
+                        </MDBCard>
 
-                                        <Tab
-                                            name="waitDocs"
-                                            style={{ fontSize: '13px' }}
-                                            onClick={(e) => setDocsType(e.target.name)}
-                                            label={`Tài liệu chờ duyệt (${totalWaitDocs})`}
-                                        />
-                                        <Tab
-                                            name="resultDocs"
-                                            style={{ fontSize: '13px' }}
-                                            onClick={(e) => setDocsType(e.target.name)}
-                                            label={`Kết quả duyệt (${totalResultDocs})`}
-                                        />
-                                        <Tab
-                                            name="favDocs"
-                                            style={{ fontSize: '13px' }}
-                                            onClick={(e) => setDocsType(e.target.name)}
-                                            label={`Tài liệu yêu thích (${totalFavDocs})`}
-                                        />
-                                    </Tabs>
-                                </Box>
+                        <MDBCard className="mb-4 mb-lg-0">
+                            <Box
+                                component="form"
+                                sx={{
+                                    '& > :not(style)': { m: 1, width: '50%' },
+                                }}
+                                noValidate
+                                autoComplete="off"
+                            >
+                                <div className={cx('changeInfo', 'changeName')}>
+                                    <h1>Họ và tên</h1>
+                                    <TextField
+                                        style={{ width: '96%' }}
+                                        size="small"
+                                        id="outlined-basic"
+                                        placeholder="Họ tên"
+                                        variant="outlined"
+                                        value={formInfoUser.fullName}
+                                        onChange={(e) => setFormInfoUser({ ...formInfoUser, fullName: e.target.value })}
+                                    />
+                                </div>
+                                <div className={cx('changeInfo', 'changeBio')}>
+                                    <h1>Giới thiệu</h1>
+                                    <TextField
+                                        type="text"
+                                        style={{ width: '96%' }}
+                                        size="medium"
+                                        id="outlined-basic"
+                                        placeholder="Giới thiệu"
+                                        variant="outlined"
+                                        value={formInfoUser.bio}
+                                        onChange={(e) => setFormInfoUser({ ...formInfoUser, bio: e.target.value })}
+                                    />
+                                </div>
+                                <div className={cx('changeInfo', 'changeSocialMedia')}>
+                                    <h1>Mạng xã hội</h1>
+                                    <TextField
+                                        type="text"
+                                        style={{ width: '96%' }}
+                                        size="small"
+                                        id="outlined-basic"
+                                        placeholder="Link facebook/instagram/twitter"
+                                        variant="outlined"
+                                        value={formInfoUser.socialMedia}
+                                        onChange={(e) =>
+                                            setFormInfoUser({ ...formInfoUser, socialMedia: e.target.value })
+                                        }
+                                    />
+                                </div>
+                                <div className={cx('changeInfo', 'changeAddress')}>
+                                    <h1>Địa chỉ</h1>
+                                    <TextField
+                                        type="text"
+                                        style={{ width: '96%' }}
+                                        size="small"
+                                        id="outlined-basic"
+                                        placeholder="Địa chỉ"
+                                        variant="outlined"
+                                        value={formInfoUser.address}
+                                        onChange={(e) => setFormInfoUser({ ...formInfoUser, address: e.target.value })}
+                                    />
+                                </div>
+                                <div className={cx('changeInfo', 'changePhone')}>
+                                    <h1>Số điện thoại</h1>
+                                    <TextField
+                                        type="text"
+                                        style={{ width: '96%' }}
+                                        size="small"
+                                        id="outlined-basic"
+                                        placeholder="Số điện thoại"
+                                        variant="outlined"
+                                        value={formInfoUser.phoneNumber}
+                                        onChange={(e) =>
+                                            setFormInfoUser({ ...formInfoUser, phoneNumber: e.target.value })
+                                        }
+                                    />
+                                </div>
+                            </Box>
+                            <div className={cx('btnChangeInfo')}>
+                                <Button onClick={sendDataToServer} variant="contained" color="success" size="small">
+                                    Lưu
+                                </Button>
+                                <Button variant="contained" color="inherit" size="small">
+                                    Hủy
+                                </Button>
                             </div>
+                        </MDBCard>
+                    </MDBCol>
+                    <MDBCol style={{ background: '#fff' }} lg="8">
+                        <div className="div" style={{ width: '100%', background: '#fff' }}>
+                            <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                                <Tabs className={cx('tabController')} value={value} onChange={handleChange} centered>
+                                    <Tab
+                                        name="userDocs"
+                                        style={{ fontSize: '13px' }}
+                                        onClick={(e) => setDocsType(e.target.name)}
+                                        label={`Tài liệu cá nhân (${infoUser.docsCount.userDocs})`}
+                                    />
+                                    <Tab
+                                        name="waitDocs"
+                                        style={{ fontSize: '13px' }}
+                                        onClick={(e) => setDocsType(e.target.name)}
+                                        label={`Tài liệu chờ duyệt (${infoUser.docsCount.waitDocs})`}
+                                    />
+                                    <Tab
+                                        name="resultDocs"
+                                        style={{ fontSize: '13px' }}
+                                        onClick={(e) => setDocsType(e.target.name)}
+                                        label={`Kết quả duyệt (${infoUser.docsCount.resultDocs})`}
+                                    />
+                                    <Tab
+                                        name="favDocs"
+                                        style={{ fontSize: '13px' }}
+                                        onClick={(e) => setDocsType(e.target.name)}
+                                        label={`Tài liệu yêu thích (${infoUser.docsCount.favDocs})`}
+                                    />
+                                </Tabs>
+                            </Box>
+                        </div>
 
-                            <div className={cx('searchParent')}>
-                                <span className={cx('iconSearch', 'material-icons')}>search</span>
-                                <input
-                                    className={cx('search')}
-                                    type="text"
-                                    placeholder="Tìm kiếm tài liệu của bạn..."
-                                />
-                            </div>
-                            <div className="contentDocs">
-                                {listDocs.map((docs) => (
-                                    <>
-                                        <List
-                                            sx={{
-                                                width: '100%',
-
-                                                bgcolor: 'background.paper',
-                                            }}
-                                        >
-                                            <ListItem button>
-                                                <ListItemAvatar>
-                                                    <Avatar>
-                                                        <ImageIcon />
-                                                    </Avatar>
-                                                </ListItemAvatar>
-                                                <ListItemText primary={docs.title} secondary="Jan 9, 2014" />
-                                            </ListItem>
-                                            <Divider variant="inset" component="li" />
-                                        </List>
-                                        {/* <div>{docs.title}</div> */}
-                                    </>
-                                ))}
-                            </div>
-                        </MDBCol>
-                    </MDBRow>
-                </MDBContainer>
-            </section>
-        </>
+                        <div className={cx('searchParent')}>
+                            <span className={cx('iconSearch', 'material-icons')}>search</span>
+                            <input className={cx('search')} type="text" placeholder="Tìm kiếm tài liệu của bạn..." />
+                        </div>
+                        <div className="contentDocs">
+                            {listDocs.map((docs, index) => (
+                                <List
+                                    key={index}
+                                    sx={{
+                                        width: '100%',
+                                        bgcolor: 'background.paper',
+                                    }}
+                                >
+                                    <ListItem button>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <ImageIcon />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary={docs.title} secondary="Jan 9, 2014" />
+                                    </ListItem>
+                                    <Divider variant="inset" component="li" />
+                                </List>
+                                // {/* <div>{docs.title}</div> */}
+                            ))}
+                        </div>
+                    </MDBCol>
+                </MDBRow>
+            </MDBContainer>
+        </section>
     );
 };
 export default Profile;
