@@ -206,11 +206,8 @@ const Header = () => {
             didOpen: () => {
                 Swal.showLoading();
                 const b = Swal.getHtmlContainer().querySelector('b');
-                let remainingTime;
-                timerInterval = setInterval(() => {
-                    remainingTime = Math.floor(Swal.getTimerLeft() / 1000);
-                    b.textContent = remainingTime;
-                }, 1000);
+                
+                
             },
             willClose: () => {
                 setShowAlertConfirmEmail(false); 
