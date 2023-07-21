@@ -197,17 +197,19 @@ const Header = () => {
     };
 
     const AlertConfirmEmail = () => {
-        let timerInterval;
         Swal.fire({
             title: 'Xác nhận email !',
-            html: 'Chúng tôi đã gửi một mã xác thực qua gmail, vui lòng xác thực để có thể sử dụng dịch vụ! .',
+            html: 'Chúng tôi đã gửi một mã xác thực qua gmail, vui lòng xác thực để có thể sử <b></b>dụng dịch vụ! .',
             timer: 5000,
             timerProgressBar: true,
             didOpen: () => {
                 Swal.showLoading();
                 const b = Swal.getHtmlContainer().querySelector('b');
-                
-                
+                let remainingTime;
+                timerInterval = setInterval(() => {
+                    remainingTime = Math.floor(Swal.getTimerLeft() / 1000);
+                    b.textContent = remainingTime;
+                }, 1000);
             },
             willClose: () => {
                 setShowAlertConfirmEmail(false); 
