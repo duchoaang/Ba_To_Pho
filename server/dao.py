@@ -246,6 +246,16 @@ def get_comment_by_doc(doc_id, is_active=None):
     return comments.all()
 
 
+def update_view(doc_id):
+    document = Document.query.get(doc_id)
+    if document and document.status == Status.ACCEPT:
+        document.view_count += 1
+        db.session.commit()
+        return True
+    else:
+        return False
+
+
 def get_document_type_id_by_extension(extension):
     if extension == "pdf":
         doc_type = DocumentType.query.filter(DocumentType.name.__eq__("PDF")).first()
@@ -304,7 +314,8 @@ def rate_document(doc_id, number_star, user_id):
 
 
 def favour(doc_id, user_id):
-    fav = FavourList.query.filter(and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
+    fav = FavourList.query.filter(
+        and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
     if fav:
         db.session.delete(fav)
     else:
@@ -314,7 +325,8 @@ def favour(doc_id, user_id):
 
 
 def get_favour(doc_id, user_id):
-    return FavourList.query.filter(and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
+    return FavourList.query.filter(
+        and_(FavourList.document_id.__eq__(doc_id), FavourList.user_id.__eq__(user_id))).first()
 
 
 def get_users():
