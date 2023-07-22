@@ -30,7 +30,8 @@ def get_user_info(id):
 
 def get_current_user():
     if current_user.is_authenticated:
-        data = current_user.to_dict(fields=["id", "username", "name", "gender", "avatar", "is_active", "bio", "gem"])
+        data = current_user.to_dict(
+            fields=["id", "username", "name", "gender", "avatar", "is_active", "bio", "gem", "is_active", "is_confirm"])
         data["is_authenticated"] = True
         return jsonify(data)
     return jsonify({"is_authenticated": False})

@@ -15,7 +15,8 @@ CORS(app, origins=["http://localhost:3000", "https://tailieubtp.com"], supports_
 
 app.secret_key = config['SECRET_KEY']
 app.config['SECURITY_PASSWORD_SALT'] = config['SECURITY_PASSWORD_SALT']
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{config['DATABASE_USER']}:{quote(config['DATABASE_PASSWORD'])}@{config['DATABASE_HOST']}/{config['DATABASE_NAME']}?charset=utf8mb4"
+app.config[
+    'SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{config['DATABASE_USER']}:{quote(config['DATABASE_PASSWORD'])}@{config['DATABASE_HOST']}/{config['DATABASE_NAME']}?charset=utf8mb4"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['PAGE_SIZE'] = config['PAGE_SIZE']
 app.config['COMMENT_SIZE'] = config['COMMENT_SIZE']
