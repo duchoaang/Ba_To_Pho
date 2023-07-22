@@ -24,7 +24,7 @@ def get_user_info(id):
     user = dao.get_user_by_id(id)
     user_info = user.to_dict(
         fields=["id", "username", "name", "email", "phone_number", "gender", "dob", "avatar", "bio", "social_media",
-                "address", "gem", "warn_time", "user_docs", "wait_docs", "result_docs", "fav_docs"])
+                "address", "gem", "warn_time", "user_docs", "wait_docs", "result_docs", "fav_docs", "is_confirm", "is_active"])
     return jsonify(user_info)
 
 
