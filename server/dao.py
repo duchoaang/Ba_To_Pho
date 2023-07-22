@@ -291,11 +291,14 @@ def add_comment(content, user_id, document_id):
     db.session.commit()
 
 
-def del_comment(comment_id):
+def del_comment(comment_id, user_id):
     comment = Comment.query.get(comment_id)
-    if comment:
+    if comment and comment.user_id == user_id:
         comment.is_active = False
         db.session.commit()
+        return True
+    else:
+        return False
 
 
 def get_document_by_id(doc_id):

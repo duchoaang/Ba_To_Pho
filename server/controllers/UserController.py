@@ -118,7 +118,7 @@ def resend_confirmation():
     email = user.email
 
     token = my_token.generate_confirmation_token(email)
-    confirm_url = url_for('confirm_email', token=token, _external=True)
+    confirm_url = url_for('user_bp.confirm_email', token=token, _external=True)
     html = render_template('confirm.html', confirm_url=confirm_url)
     subject = "Vui lòng xác thực email"
     send_email(email, subject, html)

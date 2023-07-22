@@ -6,18 +6,24 @@ from server import dao
 
 
 def rate():
-    document_id = request.json.get('document_id')
-    number_star = request.json.get('number_star')
-    user_id = request.json.get('user_id')
-    dao.rate_document(document_id, number_star, user_id)
-    return jsonify({"status": 200})
+    if current_user.is_authenticated:
+        document_id = request.json.get('document_id')
+        number_star = request.json.get('number_star')
+        user_id = request.json.get('user_id')
+        dao.rate_document(document_id, number_star, user_id)
+        return jsonify({"status": 200})
+    else:
+        return jsonify({"status": 403, "msg": 'chưa đăng nhập'})
 
 
 def favour():
-    document_id = request.json.get('document_id')
-    user_id = request.json.get('user_id')
-    dao.favour(document_id, user_id)
-    return jsonify({"status": 200})
+    if current_user.is_authenticated:
+        document_id = request.json.get('document_id')
+        user_id = request.json.get('user_id')
+        dao.favour(document_id, user_id)
+        return jsonify({"status": 200, "msg": 'thành công'})
+    else:
+        return jsonify({"status": 403, "msg": 'chưa đăng nhập'})
 
 
 def get_user_info(id):
