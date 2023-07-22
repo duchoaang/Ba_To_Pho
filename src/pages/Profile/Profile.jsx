@@ -35,6 +35,7 @@ import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 
 import get from '~/utils/request/get';
+import post from '~/utils/request/post';
 import patch from '~/utils/request/patch';
 const Profile = () => {
     const { id } = useParams();
@@ -45,6 +46,7 @@ const Profile = () => {
         avatar: '',
         email: '',
         gem: 0,
+        confirmEmail: false,
         docsCount: {
             userDocs: 0,
             waitDocs: 0,
@@ -94,9 +96,7 @@ const Profile = () => {
                 if (handleDocsType.hasOwnProperty(docsType)) {
                     handleDocsType[docsType](response);
                 }
-            } catch (error) {
-            
-            }
+            } catch (error) {}
         };
 
         fetchData();
@@ -110,6 +110,7 @@ const Profile = () => {
                 avatar: data.avatar,
                 email: data.email,
                 gem: data.gem,
+                confirmEmail: data.is_confirm,
                 docsCount: {
                     userDocs: data.userDocs.length,
                     waitDocs: data.waitDocs.length,
@@ -126,9 +127,15 @@ const Profile = () => {
             });
         });
     };
-
     useEffect(fetchUserData, [id]);
-
+    const handleResend = () => {
+        post('/resend-confirm', { user_id: infoUser.id })
+        .then((res)=> {
+            alert("Đã gửi email xác thực lại")
+        }).catch((error) => {
+            alert("loi")
+        });
+    }
     return (
         <section style={{ backgroundColor: '#eee' }}>
             <MDBContainer className="py-5">
@@ -160,11 +167,13 @@ const Profile = () => {
                                 <p className="">{infoUser.name}</p>
                                 <p className="">Email: {infoUser.email}</p>
                                 <p>Số gem hiện tại : {infoUser.gem}</p>
-                                <div className="d-flex justify-content-center mb-2">
-                                    <Button variant="contained" style={{ fontSize: '13px', marginTop: '-10px' }}>
-                                        Chỉnh sửa thông tin
-                                    </Button>
-                                </div>
+                                {!infoUser.confirmEmail && (
+                                    <div className="d-flex justify-content-center mb-2">
+                                        <Button variant="contained" onClick={handleResend} style={{ fontSize: '13px', marginTop: '-10px' }}>
+                                           Xác thực email
+                                        </Button>
+                                    </div>
+                                )}
                             </MDBCardBody>
                         </MDBCard>
 
