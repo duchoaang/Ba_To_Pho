@@ -66,7 +66,6 @@ const Detail = () => {
     const [openCaptcha, setOpenCaptcha] = useState(false);
 
     const handleVerified = async (value) => {
-       
         await post('verify-recaptcha', { token: value }).then((res) => {
             setOpenCaptcha(false);
             
@@ -78,11 +77,13 @@ const Detail = () => {
     useEffect(()=>{
         get('current-user', { withCredentials: true }).then((response) => {
             if (response.is_active === true) {
+                
                 setUser(true);
                 setInfoUser({
                     id: response.id,
                     username: response.username,
                     avatar: response.avatar,
+                    confirmEmail: response.is_confirm,
                 });
             } else {
                 setUser(false);
@@ -110,37 +111,42 @@ const Detail = () => {
     };
 
     const handleDownDocs = (idDocs) => {
-            try {
-                post(
-                    'api/documents/download',
-                    {
-                        idUser: infoUser.id,
-                        idDocs: idDocs,
-                    },
-                    { withCredentials: true },
-                )
-                    .then((response) => {
-                        console.log(response);
-                        if (response.status === 200) {
-                            const url = response.download_link;
-                            const link = document.createElement('a');
-                            link.href = url;
-                         
-                            link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
-                            link.click();
-                        } else if (response.status === 400) {
-                            alert('Gem của bạn không đủ để tải');
-                        } else if (response.status === 404) {
-                            alert('Không tìm thấy user/documents');
-                        } else if (response.status === 401) {
-                            alert('Bạn chưa đăng nhập');
-                        }
-                    })
-                    .catch((error) => {
-                        console.log('Error:', error);
-                    });
-            } catch (error) {
-                console.log('Error:', error);
+            if(infoUser.confirmEmail){
+                try {
+                    post(
+                        'api/documents/download',
+                        {
+                            idUser: infoUser.id,
+                            idDocs: idDocs,
+                        },
+                        { withCredentials: true },
+                    )
+                        .then((response) => {
+                            console.log(response);
+                            if (response.status === 200) {
+                                const url = response.download_link;
+                                const link = document.createElement('a');
+                                link.href = url;
+                             
+                                link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
+                                link.click();
+                            } else if (response.status === 400) {
+                                alert('Gem của bạn không đủ để tải');
+                            } else if (response.status === 404) {
+                                alert('Không tìm thấy user/documents');
+                            } else if (response.status === 401) {
+                                alert('Bạn chưa đăng nhập');
+                            }
+                        })
+                        .catch((error) => {
+                            console.log('Error:', error);
+                        });
+                } catch (error) {
+                    console.log('Error:', error);
+                }
+            }
+            {
+                alert("Hãy xác thực email của bạn để tải xuống")
             }
     };
 

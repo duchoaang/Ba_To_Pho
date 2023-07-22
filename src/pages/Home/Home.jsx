@@ -72,10 +72,12 @@ const Home = () => {
                                         </CardContent>
                                     </CardActionArea>
                                 </Link>
+                                <Link to={`/Documents`}>
                                 <CardActions style={{ position: 'absolute', bottom: '0px' }}>
                                     {/* <Button size="small">Share</Button> */}
                                     <Button size="small">Xem chi tiết</Button>
                                 </CardActions>
+                                </Link>
                             </Card>
                         ))}
                 </div>
@@ -115,10 +117,12 @@ const Home = () => {
                                             </CardContent>
                                         </CardActionArea>
                                     </Link>
+                                    <Link to={`/Documents`}>
                                     <CardActions style={{ position: 'absolute', bottom: '0px' }}>
                                         {/* <Button size="small">Share</Button> */}
                                         <Button size="small">Xem chi tiết</Button>
                                     </CardActions>
+                                    </Link>
                                 </Card>
                             </>
                         ))}

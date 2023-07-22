@@ -124,7 +124,7 @@ const Header = () => {
     const [results, setResults] = useState([]);
     const [loginFailed, setLoginFailed] = useState(false);
     const [loginByGG, setLoginByGG] = useState(false);
-
+    const [resendEmail, setResendEmail] = useState(false);
     // const logOut = () => {
     //     googleLogout();
     //     setProfile(null);
@@ -267,15 +267,14 @@ const Header = () => {
                 credentials: 'include',
             })
                 .then((data) => {
-                    console.log(data);
+                    
                     if (data.status === 200) {
+                        alert(data.message);
                         setShowRegister(false);
-                        setShowAlertConfirmEmail(true);
-                        
+                        // setShowAlertConfirmEmail(true);
                         setConfirmEmail(true);
                     } else if (data.status === 404) {
-                        console.log('bi trung user');
-
+                        alert(data.message);
                         setShowLoading(false);
                         setErrorUserNameEmail(true);
                         setConfirmEmail(false);
@@ -285,24 +284,23 @@ const Header = () => {
         } else setErrorMessage(true);
     };
     //search
-
+    // resend-confirm
     // dang nhap
     const handleSubmitLogin = (e) => {
         e.preventDefault();
         post('users/login', formDataLogin, { withCredentials: true })
             .then((response) => {
                 setUser(true);
-                
                 setInfoUser({
                     id: response.id,
                     username: response.username,
                     avatar: response.avatar,
-                });
-                console.log("dang nhap thanh cong")
+                });  
                 setShowModal(false);
                 setLoginFailed(false);
                 window.location.reload();
-            })
+             
+        })
             .catch((error) => {
                 setLoginFailed(true);
                 console.log('dang nhap k thanh cong');
@@ -410,6 +408,15 @@ const Header = () => {
                                 placeholder="Mật khẩu..."
                             />
                         </div>
+                        {/* <div className="text-start">
+                            <label htmlFor="login-password" className="form-label">
+                               Resend Email
+                            </label>
+                            <button
+                                onClick={(e) => {handleResendEmail}}
+                               value="Gửi lại xác thực"
+                            />
+                        </div> */}
                         <div className="d-flex justify-content-between mt-3">
                             <div>
                                 <input type="checkbox" id="login-remember" name="login-remember" />

@@ -58,16 +58,14 @@ const Profile = () => {
     const sendDataToServer = () => {
         const url = `http://127.0.0.1:5000/users/${decodeURIComponent(id)}`; // Thay thế bằng URL thực tế của bạn
         const data = { key: formInfoUser }; // Thay thế bằng dữ liệu thực tế bạn muốn gửi
-        console.log('da gui');
-        axios
+        console.log('da gui');        axios
             .patch(url, data)
             .then((response) => {
-                console.log('Gửi PATCH thành công!');
-                // Xử lý phản hồi từ server (nếu cần)
+               
             })
             .catch((error) => {
                 console.error('Gửi PATCH không thành công!');
-                // Xử lý lỗi (nếu cần)
+     
             });
     };
 
@@ -99,7 +97,7 @@ const Profile = () => {
                     handleDocsType[docsType](responseData);
                 }
             } catch (error) {
-                console.log('Không gửi được yêu cầu.');
+            
             }
         };
 
@@ -110,7 +108,7 @@ const Profile = () => {
         
             get(`profile/${decodeId}`)
             .then((response) => {
-                console.log(response);
+          
                 return response;
             })
             .then((data) => {
@@ -127,11 +125,11 @@ const Profile = () => {
                 setTotalResultDocs(data.resultDocs.length);
             })
             .catch((error) => {
-                console.log('Ko gui dc');
+      
             });
         // Sử dụng giá trị `decodedId` trong ứng dụng của bạn
     }, [id]);
-    console.log(formInfoUser);
+
     
 
     return (
