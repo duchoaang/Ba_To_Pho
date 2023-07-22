@@ -129,13 +129,14 @@ const Profile = () => {
     };
     useEffect(fetchUserData, [id]);
     const handleResend = () => {
-        post('/resend-confirm', { user_id: infoUser.id })
-        .then((res)=> {
-            alert("Đã gửi email xác thực lại")
-        }).catch((error) => {
-            alert("loi")
-        });
-    }
+        post('users/resend-confirm', { user_id: infoUser.id })
+            .then((res) => {
+                alert('Đã gửi email xác thực lại');
+            })
+            .catch((error) => {
+                alert('loi');
+            });
+    };
     return (
         <section style={{ backgroundColor: '#eee' }}>
             <MDBContainer className="py-5">
@@ -164,13 +165,26 @@ const Profile = () => {
                                     style={{ width: '150px' }}
                                     fluid
                                 />
-                                <p className="">{infoUser.name}</p>
-                                <p className="">Email: {infoUser.email}</p>
+                                <p className="">{infoUser.name} </p>
+                                <p className="">Email: {infoUser.email}  </p>
                                 <p>Số gem hiện tại : {infoUser.gem}</p>
-                                {!infoUser.confirmEmail && (
+                                {(!infoUser.confirmEmail && (
                                     <div className="d-flex justify-content-center mb-2">
-                                        <Button variant="contained" onClick={handleResend} style={{ fontSize: '13px', marginTop: '-10px' }}>
-                                           Xác thực email
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleResend}
+                                            style={{ fontSize: '13px', marginTop: '-10px' }}
+                                        >
+                                            Xác thực email
+                                        </Button>
+                                    </div>
+                                ) || <div className="d-flex justify-content-center mb-2">
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleResend}
+                                            style={{ fontSize: '13px', marginTop: '-10px' }}
+                                        >
+                                            Tài khoản đã xác thực
                                         </Button>
                                     </div>
                                 )}

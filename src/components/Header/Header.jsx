@@ -152,7 +152,7 @@ const Header = () => {
                  .catch((err) => {});
          }
          else{
-             console.log("loi dang nhap gg")
+            
          }
         }
      },[loginByGG]);
@@ -181,7 +181,7 @@ const Header = () => {
                 })
                 .catch((error) => {
                     // setLoginFailed(true);
-                    console.log('dang nhap k thanh cong');
+               
                 });
         }
     }, [formDataLoginGoogle]);
@@ -213,7 +213,7 @@ const Header = () => {
         }).then((result) => {
             /* Read more about handling dismissals below */
             if (result.dismiss === Swal.DismissReason.timer) {
-                console.log('I was closed by the timer');
+              
             }
         });
     };
@@ -303,7 +303,7 @@ const Header = () => {
         })
             .catch((error) => {
                 setLoginFailed(true);
-                console.log('dang nhap k thanh cong');
+        
             });
     };
     const handleRegister = () => {
@@ -336,16 +336,15 @@ const Header = () => {
                 const link = document.createElement('a');
                 link.href = url;
                 link.click();
-                console.log('thanh cong ');
-            })
+             })
             .catch((error) => {
-                console.log('that bai ');
+                
             });
     };
     useEffect(()=>{
         get('current-user', { withCredentials: true }).then((response) => {
             if (response.is_active === true) {
-                console.log(response);
+               
                 setUser(true);
                 setInfoUser({
                     id: response.id,

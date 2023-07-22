@@ -20,27 +20,9 @@ import Status from '~/utils/StatusCode';
 
 const cx = classNames.bind(styles);
 
-const Nav = () => (
-    <nav
-        style={{
-            '--bs-breadcrumb-divider': '">"',
-        }}
-        aria-label="breadcrumb"
-        className={cx('breadcrumb')}
-    >
-        <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-                <Link to="/">Trang chủ</Link>
-            </li>
-            <li className="breadcrumb-item">
-                <Link to="/documents">Tài liệu</Link>
-            </li>
-            <li className="breadcrumb-item active" aria-current="page">
-                Visual C#
-            </li>
-        </ol>
-    </nav>
-);
+// const Nav = () => (
+
+// );
 
 const Detail = () => {
     const { id } = useParams();
@@ -57,10 +39,12 @@ const Detail = () => {
         view_count: 0,
         document_type: 'PDF',
         created_date: '01-01-1970',
+
         file_link_download: '',
         file_size: 0,
         is_favour: false,
     });
+    
     const [user, setUser] = useState(false);
     const [infoUser, setInfoUser] = useState([]);
     const [openCaptcha, setOpenCaptcha] = useState(false);
@@ -70,7 +54,6 @@ const Detail = () => {
     const handleVerified = async (value) => {
         await post('verify-recaptcha', { token: value }).then((res) => {
             setOpenCaptcha(false);
-
             if (res.success) handleDownDocs(data.id);
             else alert(res.message);
         });
@@ -79,7 +62,6 @@ const Detail = () => {
     useEffect(() => {
         get('current-user', { withCredentials: true }).then((response) => {
             if (response.is_active === true) {
-                
                 setUser(true);
                 setInfoUser({
                     id: response.id,
@@ -97,6 +79,7 @@ const Detail = () => {
 
     const loadData = () => {
         get(`api/documents/${id}`, { withCredentials: true }).then((res) => {
+            console.log(res)
             if (res.status === Status.NOT_FOUND) {
                 navigate('/error');
                 return;
@@ -111,43 +94,43 @@ const Detail = () => {
     };
 
     const handleDownDocs = (idDocs) => {
-            if(infoUser.confirmEmail){
-                try {
-                    post(
-                        'api/documents/download',
-                        {
-                            idUser: infoUser.id,
-                            idDocs: idDocs,
-                        },
-                        { withCredentials: true },
-                    )
-                        .then((response) => {
-                            console.log(response);
-                            if (response.status === 200) {
-                                const url = response.download_link;
-                                const link = document.createElement('a');
-                                link.href = url;
-                             
-                                link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
-                                link.click();
-                            } else if (response.status === 400) {
-                                alert('Gem của bạn không đủ để tải');
-                            } else if (response.status === 404) {
-                                alert('Không tìm thấy user/documents');
-                            } else if (response.status === 401) {
-                                alert('Bạn chưa đăng nhập');
-                            }
-                        })
-                        .catch((error) => {
-                            console.log('Error:', error);
-                        });
-                } catch (error) {
-                    console.log('Error:', error);
-                }
+        if (infoUser.confirmEmail) {
+            try {
+                post(
+                    'api/documents/download',
+                    {
+                        idUser: infoUser.id,
+                        idDocs: idDocs,
+                    },
+                    { withCredentials: true },
+                )
+                    .then((response) => {
+                        console.log(response);
+                        if (response.status === 200) {
+                            const url = response.download_link;
+                            const link = document.createElement('a');
+                            link.href = url;
+
+                            link.target = '_blank'; // Mở tệp tin trong cửa sổ mới (tùy chọn)
+                            link.click();
+                        } else if (response.status === 400) {
+                            alert('Gem của bạn không đủ để tải');
+                        } else if (response.status === 404) {
+                            alert('Không tìm thấy user/documents');
+                        } else if (response.status === 401) {
+                            alert('Bạn chưa đăng nhập');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log('Error:', error);
+                    });
+            } catch (error) {
+                console.log('Error:', error);
             }
-            {
-                alert("Hãy xác thực email của bạn để tải xuống")
-            }
+        }
+        {
+            alert('Hãy xác thực email của bạn để tải xuống');
+        }
     };
 
     useEffect(loadData, [id]);
@@ -161,7 +144,25 @@ const Detail = () => {
         <div className="container">
             <div className="row">
                 <div className="col-md-8 col-sm-12">
-                    <Nav />
+                    <nav
+                        style={{
+                            '--bs-breadcrumb-divider': '">"',
+                        }}
+                        aria-label="breadcrumb"
+                        className={cx('breadcrumb')}
+                    >
+                        <ol className="breadcrumb">
+                            <li className="breadcrumb-item">
+                                <Link to="/">Trang chủ</Link>
+                            </li>
+                            <li className="breadcrumb-item">
+                                <Link to="/documents">Tài liệu</Link>
+                            </li>
+                            <li className="breadcrumb-item active" aria-current="page">
+                                Visual C#
+                            </li>
+                        </ol>
+                    </nav>
                     <div className="info">
                         <div className={cx('doc-info', 'row')}>
                             <div className="col-md-4 border rounded p-2">
