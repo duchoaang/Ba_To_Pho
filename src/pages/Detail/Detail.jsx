@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './Detail.module.scss';
 
@@ -43,7 +43,7 @@ const Nav = () => (
 );
 
 const Detail = () => {
-    const location = useLocation();
+    const { id } = useParams();
     const navigate = useNavigate();
     const [data, setData] = useState({
         title: '',
@@ -64,17 +64,19 @@ const Detail = () => {
     const [user, setUser] = useState(false);
     const [infoUser, setInfoUser] = useState([]);
     const [openCaptcha, setOpenCaptcha] = useState(false);
+    const [buttonFavoriteDisabled, setButtonFavoriteDisabled] = useState(false);
+    const [ratingReadOnly, setRatingReadOnly] = useState(false);
 
     const handleVerified = async (value) => {
         await post('verify-recaptcha', { token: value }).then((res) => {
             setOpenCaptcha(false);
-            
+
             if (res.success) handleDownDocs(data.id);
             else alert(res.message);
         });
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         get('current-user', { withCredentials: true }).then((response) => {
             if (response.is_active === true) {
                 
@@ -90,12 +92,10 @@ const Detail = () => {
                 setInfoUser([]);
             }
         });
-    },[user]);
+    }, [user]);
     const [favorite, setFavorite] = useState(false);
 
     const loadData = () => {
-        let id = location.pathname.split('/')[2];
-
         get(`api/documents/${id}`, { withCredentials: true }).then((res) => {
             if (res.status === Status.NOT_FOUND) {
                 navigate('/error');
@@ -150,7 +150,12 @@ const Detail = () => {
             }
     };
 
-    useEffect(loadData, [location]);
+    useEffect(loadData, [id]);
+    useEffect(() => {
+        post('views', {
+            document_id: id,
+        });
+    }, []);
 
     return (
         <div className="container">
@@ -170,9 +175,11 @@ const Detail = () => {
                                     <div className="d-flex justify-content-between">
                                         <div className="d-flex align-items-center">
                                             <Rating
+                                                readOnly={ratingReadOnly}
                                                 precision={0.5}
                                                 value={data.average_rate}
                                                 onChange={async (_, newValue) => {
+                                                    setRatingReadOnly(true);
                                                     let userId = await get('/current-user', {
                                                         withCredentials: true,
                                                     }).then((data) => (data.is_active ? data.id : ''));
@@ -183,10 +190,11 @@ const Detail = () => {
                                                     }
                                                     post('rate', {
                                                         user_id: userId,
-                                                        document_id: location.pathname.split('/')[2],
+                                                        document_id: id,
                                                         number_star: newValue,
                                                     }).then(() => {
                                                         loadData();
+                                                        setRatingReadOnly(false);
                                                     });
                                                 }}
                                             />
@@ -210,10 +218,12 @@ const Detail = () => {
                                     <div className="d-flex justify-content-between">
                                         <InfoList title="Phí tải" value={`${data.gem_cost} CodeGem`} />
                                         <Button
+                                            disabled={buttonFavoriteDisabled}
                                             variant="outlined"
                                             color="error"
                                             startIcon={favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                                             onClick={async () => {
+                                                setButtonFavoriteDisabled(true);
                                                 let userId = await get('/current-user', { withCredentials: true }).then(
                                                     (data) => (data.is_active ? data.id : ''),
                                                 );
@@ -225,7 +235,7 @@ const Detail = () => {
 
                                                 post('favour', {
                                                     user_id: userId,
-                                                    document_id: location.pathname.split('/')[2],
+                                                    document_id: id,
                                                 }).then(() => {
                                                     setData({
                                                         ...data,
@@ -234,6 +244,7 @@ const Detail = () => {
                                                             : data.num_favour_users + 1,
                                                     });
                                                     setFavorite((prev) => !prev);
+                                                    setButtonFavoriteDisabled(false);
                                                 });
                                             }}
                                         >
@@ -272,7 +283,7 @@ const Detail = () => {
                         <p className={cx('description-text')}>{data.description}</p>
                     </div>
                     <SuggestSection />
-                    <CommentSection doc_id={location.pathname.split('/')[2]} />
+                    <CommentSection doc_id={id} />
                 </div>
                 <div className="col-md-4"></div>
             </div>
