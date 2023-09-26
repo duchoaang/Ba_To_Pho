@@ -1,5 +1,5 @@
 # Ba_To_Pho
-Hệ thống chia sẻ tài liệu drive, word
++ You can run project by following steps:
 - git clone <url>
 - open project, and open with terminal
 - npm i
